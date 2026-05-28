@@ -11,9 +11,9 @@ const Footer = () => {
           <div className="lg:col-span-1">
             <div className="flex items-center mb-6">
               <img 
-                src="https://res.cloudinary.com/dap91fhxh/image/upload/v1759863437/Screenshot_from_2025-10-07_21-56-04_sspduo.png" 
+                src="/public/logo.png" 
                 alt="Dubois Beauty" 
-                className="h-12 w-auto object-contain"
+                className="h-16 w-auto object-contain"
               />
             </div>
             <p className="text-gray-700 mb-6 leading-relaxed">

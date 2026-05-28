@@ -100,9 +100,9 @@ const Navbar = () => {
           <Link to="/" className="flex-shrink-0 z-10" onClick={handleLogoClick}>
             <div className="cursor-pointer transition-transform duration-300 hover:scale-105 flex items-center">
               <img 
-                src="https://res.cloudinary.com/dap91fhxh/image/upload/v1759863437/Screenshot_from_2025-10-07_21-56-04_sspduo.png" 
+                src="/public/logo.png" 
                 alt="Dubois Beauty" 
-                className="h-12 w-auto object-contain"
+                className="h-16 w-auto object-contain"
               />
             </div>
           </Link>
