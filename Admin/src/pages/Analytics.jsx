@@ -1,556 +1,445 @@
-import { useState, useEffect } from "react";
-import { userRequest } from "../requestMethods";
-import { 
-  FaUsers, 
-  FaEye, 
-  FaDesktop, 
-  FaMobile, 
-  FaChartBar, 
-  FaInfoCircle,
-  FaUser,
-  FaGlobe,
-  FaMapMarkerAlt,
-  FaLaptop,
-  FaTablet,
-  FaLink,
+import { DataGrid } from "@mui/x-data-grid";
+import { useEffect, useMemo, useState } from "react";
+import {
+  FaChartBar,
   FaClock,
+  FaDesktop,
+  FaEye,
+  FaGlobe,
+  FaMobile,
+  FaMousePointer,
+  FaRedo,
   FaSearch,
   FaShoppingCart,
-  FaSignInAlt,
-  FaCreditCard,
-  FaMousePointer
+  FaTablet,
+  FaUser,
+  FaUsers,
 } from "react-icons/fa";
-import { DataGrid } from '@mui/x-data-grid';
-import { 
-  Box, 
-  Card, 
-  CardContent, 
-  Typography, 
-  Select, 
-  MenuItem, 
-  FormControl,
-  InputLabel,
-  Chip,
-  Tooltip,
-  IconButton
-} from '@mui/material';
+import { userRequest } from "../requestMethods";
+
+const actionLabels = {
+  page_view: "Page View",
+  button_click: "Button Click",
+  login: "Login",
+  purchase: "Purchase",
+  add_to_cart: "Add To Cart",
+  search: "Search",
+  product_view: "Product View",
+  bundle_view: "Bundle View",
+};
 
 const Analytics = () => {
   const [summary, setSummary] = useState(null);
-  const [recentActivity, setRecentActivity] = useState([]);
+  const [activity, setActivity] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [timeRange, setTimeRange] = useState(7);
+  const [actionFilter, setActionFilter] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedRow, setSelectedRow] = useState(null);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    pageSize: 5,
+    pageSize: 10,
   });
   const [rowCount, setRowCount] = useState(0);
-  const [selectedRow, setSelectedRow] = useState(null);
-  const [detailModalOpen, setDetailModalOpen] = useState(false);
+
+  const fetchAnalyticsData = async ({ silent = false } = {}) => {
+    try {
+      silent ? setRefreshing(true) : setLoading(true);
+
+      const page = paginationModel.page + 1;
+      const params = new URLSearchParams({
+        limit: String(paginationModel.pageSize),
+        page: String(page),
+      });
+
+      if (actionFilter !== "all") {
+        params.set("actionType", actionFilter);
+      }
+
+      const [summaryRes, activityRes] = await Promise.all([
+        userRequest.get(`/analytics/summary?days=${timeRange}`),
+        userRequest.get(`/analytics?${params.toString()}`),
+      ]);
+
+      setSummary(summaryRes.data?.data || null);
+      setActivity(Array.isArray(activityRes.data?.data) ? activityRes.data.data : []);
+      setRowCount(activityRes.data?.pagination?.totalRecords || 0);
+    } catch (error) {
+      console.log("Fetch analytics error:", error);
+      setSummary(null);
+      setActivity([]);
+      setRowCount(0);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
   useEffect(() => {
     fetchAnalyticsData();
-  }, [timeRange, paginationModel]);
+  }, [timeRange, actionFilter, paginationModel.page, paginationModel.pageSize]);
 
-  const fetchAnalyticsData = async () => {
-    try {
-      setLoading(true);
-      const skip = paginationModel.page * paginationModel.pageSize;
-      
-      const [summaryRes, activityRes] = await Promise.all([
-        userRequest.get(`/analytics/summary?days=${timeRange}`),
-        userRequest.get(`/analytics?limit=${paginationModel.pageSize}&skip=${skip}`)
-      ]);
+  const formatDateTime = (dateString) => {
+    if (!dateString) return "Not available";
 
-      setSummary(summaryRes.data.data);
-      setRecentActivity(activityRes.data.data);
-      setRowCount(activityRes.data.total || activityRes.data.data.length);
-    } catch (error) {
-      console.error("Error fetching analytics:", error);
-    } finally {
-      setLoading(false);
-    }
+    return new Date(dateString).toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
-  const formatActionType = (actionType) => {
-    const types = {
-      'page_view': 'Page View',
-      'button_click': 'Button Click',
-      'login': 'User Login',
-      'purchase': 'Purchase',
-      'add_to_cart': 'Add to Cart',
-      'search': 'Search',
-      'form_submit': 'Form Submit',
-      'animation': 'Animation',
-      'product_view': 'Product View',
-      'bundle_view': 'Bundle View'
-    };
-    return types[actionType] || actionType;
-  };
-
-  const getActionIcon = (actionType) => {
-    const icons = {
-      'login': <FaSignInAlt size={12} />,
-      'purchase': <FaCreditCard size={12} />,
-      'page_view': <FaEye size={12} />,
-      'add_to_cart': <FaShoppingCart size={12} />,
-      'button_click': <FaMousePointer size={12} />,
-      'search': <FaSearch size={12} />,
-      'default': <FaChartBar size={12} />
-    };
-    return icons[actionType] || icons['default'];
-  };
-
-  const getActionColor = (actionType) => {
-    const colors = {
-      'login': 'success',
-      'purchase': 'primary',
-      'page_view': 'default',
-      'add_to_cart': 'warning',
-      'button_click': 'secondary',
-      'search': 'info',
-      'default': 'info'
-    };
-    return colors[actionType] || colors['default'];
-  };
+  const formatActionType = (actionType) =>
+    actionLabels[actionType] || actionType || "Activity";
 
   const getDeviceIcon = (deviceType) => {
     switch (deviceType) {
-      case 'desktop': return <FaDesktop size={14} />;
-      case 'mobile': return <FaMobile size={14} />;
-      case 'tablet': return <FaTablet size={14} />;
-      default: return <FaLaptop size={14} />;
+      case "desktop":
+        return <FaDesktop />;
+      case "mobile":
+        return <FaMobile />;
+      case "tablet":
+        return <FaTablet />;
+      default:
+        return <FaGlobe />;
     }
   };
 
-  const handleViewDetails = (row) => {
-    setSelectedRow(row);
-    setDetailModalOpen(true);
+  const getActionIcon = (actionType) => {
+    switch (actionType) {
+      case "page_view":
+        return <FaEye />;
+      case "button_click":
+        return <FaMousePointer />;
+      case "add_to_cart":
+        return <FaShoppingCart />;
+      case "login":
+        return <FaUser />;
+      default:
+        return <FaChartBar />;
+    }
   };
 
-  // DataGrid columns configuration
+  const rows = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+
+    return activity
+      .filter((item) => {
+        const searchable = [
+          item.userName,
+          item.userEmail,
+          item.actionType,
+          item.action,
+          item.pageUrl,
+          item.deviceType,
+          item.browser,
+          item.country,
+          item.city,
+          item.sessionId,
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+
+        return !term || searchable.includes(term);
+      })
+      .map((item) => ({
+        id: item._id,
+        ...item,
+      }));
+  }, [activity, searchTerm]);
+
+  const deviceBreakdown = summary?.deviceBreakdown || [];
+  const desktopCount = deviceBreakdown.find((item) => item._id === "desktop")?.count || 0;
+  const mobileCount = deviceBreakdown.find((item) => item._id === "mobile")?.count || 0;
+
   const columns = [
     {
-      field: 'user',
-      headerName: 'User',
+      field: "user",
+      headerName: "Visitor",
+      width: 230,
+      renderCell: (params) => (
+        <div>
+          <div className="font-semibold text-gray-900">
+            {params.row.userName || "Anonymous visitor"}
+          </div>
+          <div className="text-xs text-gray-500">{params.row.userEmail || "No email"}</div>
+        </div>
+      ),
+    },
+    {
+      field: "actionType",
+      headerName: "Action",
+      width: 170,
+      renderCell: (params) => (
+        <span className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+          {getActionIcon(params.row.actionType)}
+          {formatActionType(params.row.actionType)}
+        </span>
+      ),
+    },
+    {
+      field: "action",
+      headerName: "Details",
+      width: 220,
+      renderCell: (params) => (
+        <span className="truncate text-sm text-gray-700">{params.row.action || "-"}</span>
+      ),
+    },
+    {
+      field: "pageUrl",
+      headerName: "Page",
+      width: 230,
+      renderCell: (params) => (
+        <span className="truncate text-sm text-gray-700" title={params.row.pageUrl}>
+          {params.row.pageUrl || "-"}
+        </span>
+      ),
+    },
+    {
+      field: "device",
+      headerName: "Device",
       width: 180,
       renderCell: (params) => (
-        <Box>
-          {params.row.userName || params.row.userEmail ? (
-            <>
-              <Typography variant="body2" fontWeight="medium">
-                {params.row.userName || 'User'}
-              </Typography>
-              {params.row.userEmail && (
-                <Typography variant="caption" color="textSecondary" noWrap>
-                  {params.row.userEmail}
-                </Typography>
-              )}
-            </>
-          ) : (
-            <Typography variant="body2" color="textSecondary">
-              Anonymous
-            </Typography>
-          )}
-        </Box>
-      ),
-    },
-    {
-      field: 'actionType',
-      headerName: 'Action',
-      width: 150,
-      renderCell: (params) => (
-        <Chip 
-          label={formatActionType(params.value)}
-          color={getActionColor(params.value)}
-          size="small"
-          variant="outlined"
-          icon={getActionIcon(params.value)}
-        />
-      ),
-    },
-    {
-      field: 'action',
-      headerName: 'Action Details',
-      width: 200,
-      renderCell: (params) => (
-        <Tooltip title={params.value || 'No details'} arrow>
-          <Typography variant="body2" noWrap>
-            {params.value || '-'}
-          </Typography>
-        </Tooltip>
-      ),
-    },
-    {
-      field: 'pageUrl',
-      headerName: 'Page',
-      width: 200,
-      renderCell: (params) => (
-        <Tooltip title={params.value} arrow>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <FaLink size={12} color="#666" />
-            <Typography variant="body2" noWrap>
-              {params.value.split('/').pop() || 'Home'}
-            </Typography>
-          </Box>
-        </Tooltip>
-      ),
-    },
-    {
-      field: 'device',
-      headerName: 'Device & Browser',
-      width: 180,
-      renderCell: (params) => (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <div className="flex items-center gap-2 text-sm text-gray-700">
           {getDeviceIcon(params.row.deviceType)}
-          <Box>
-            <Typography variant="body2" fontWeight="medium" textTransform="capitalize">
-              {params.row.deviceType}
-            </Typography>
-            <Typography variant="caption" color="textSecondary">
-              {params.row.browser !== 'unknown' ? params.row.browser : 'Unknown'}
-            </Typography>
-          </Box>
-        </Box>
+          <div>
+            <div className="font-semibold capitalize">{params.row.deviceType || "unknown"}</div>
+            <div className="text-xs text-gray-500">{params.row.browser || "Unknown browser"}</div>
+          </div>
+        </div>
       ),
     },
     {
-      field: 'location',
-      headerName: 'Location',
-      width: 150,
+      field: "location",
+      headerName: "Location",
+      width: 170,
       renderCell: (params) => (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <FaMapMarkerAlt size={12} color="#666" />
-          <Typography variant="body2">
-            {params.row.country !== 'unknown' ? params.row.country : 'Unknown'}
-          </Typography>
-        </Box>
+        <div className="text-sm text-gray-700">
+          <div>{params.row.city && params.row.city !== "unknown" ? params.row.city : "Unknown"}</div>
+          <div className="text-xs text-gray-500">
+            {params.row.country && params.row.country !== "unknown"
+              ? params.row.country
+              : "Unknown country"}
+          </div>
+        </div>
       ),
     },
     {
-      field: 'referrer',
-      headerName: 'Referrer',
-      width: 150,
+      field: "createdAt",
+      headerName: "Time",
+      width: 180,
       renderCell: (params) => (
-        <Typography variant="body2" noWrap>
-          {params.value && params.value !== 'direct' ? 
-            new URL(params.value).hostname.replace('www.', '') : 
-            'Direct'
-          }
-        </Typography>
+        <span className="text-sm text-gray-600">{formatDateTime(params.row.createdAt)}</span>
       ),
     },
     {
-      field: 'createdAt',
-      headerName: 'Time',
-      width: 150,
-      renderCell: (params) => (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <FaClock size={12} color="#666" />
-          <Box>
-            <Typography variant="body2">
-              {new Date(params.value).toLocaleDateString()}
-            </Typography>
-            <Typography variant="caption" color="textSecondary">
-              {new Date(params.value).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            </Typography>
-          </Box>
-        </Box>
-      ),
-    },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      width: 80,
+      field: "actions",
+      headerName: "Action",
+      width: 120,
       sortable: false,
-      filterable: false,
       renderCell: (params) => (
-        <Tooltip title="View details" arrow>
-          <IconButton 
-            size="small" 
-            onClick={() => handleViewDetails(params.row)}
-            color="primary"
-          >
-            <FaEye size={14} />
-          </IconButton>
-        </Tooltip>
+        <button
+          onClick={() => setSelectedRow(params.row)}
+          className="rounded bg-gray-900 px-3 py-1 text-xs font-semibold text-white hover:bg-gray-800"
+        >
+          Details
+        </button>
       ),
     },
   ];
 
-  // Prepare data for DataGrid
-  const rows = recentActivity.map((activity, index) => ({
-    id: activity._id || index,
-    ...activity
-  }));
-
-  const StatsCard = ({ title, value, icon, color = "primary" }) => (
-    <Card sx={{ height: '100%' }}>
-      <CardContent>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Box>
-            <Typography color="textSecondary" gutterBottom variant="overline">
-              {title}
-            </Typography>
-            <Typography variant="h4" component="div" fontWeight="bold">
-              {value}
-            </Typography>
-          </Box>
-          <Box
-            sx={{
-              backgroundColor: `${color}.light`,
-              color: `${color}.main`,
-              borderRadius: 2,
-              p: 1.5,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            {icon}
-          </Box>
-        </Box>
-      </CardContent>
-    </Card>
-  );
-
-  if (loading && recentActivity.length === 0) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <Box className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></Box>
-      </Box>
-    );
-  }
-
   return (
-    <Box sx={{ p: 3, bgcolor: 'grey.50', minHeight: '100vh' }}>
-      <Box sx={{ maxWidth: '100%', mx: 'auto' }}>
-        {/* Header */}
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" component="h1" fontWeight="bold" gutterBottom>
-            Analytics Dashboard
-          </Typography>
-          <Typography variant="body1" color="textSecondary">
-            Comprehensive user behavior and platform insights
-          </Typography>
-        </Box>
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Tracking & Analytics</h1>
+            <p className="mt-2 text-gray-600">
+              Review visitor behavior, device mix, popular pages, and recent user actions.
+            </p>
+          </div>
 
-        {/* Time Range Selector */}
-        <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', gap: 2 }}>
-          <FormControl size="small" sx={{ minWidth: 200 }}>
-            <InputLabel>Time Range</InputLabel>
-            <Select
-              value={timeRange}
-              label="Time Range"
-              onChange={(e) => {
-                setTimeRange(e.target.value);
-                setPaginationModel({ ...paginationModel, page: 0 });
-              }}
-            >
-              <MenuItem value={1}>Last 24 Hours</MenuItem>
-              <MenuItem value={7}>Last 7 Days</MenuItem>
-              <MenuItem value={30}>Last 30 Days</MenuItem>
-              <MenuItem value={90}>Last 90 Days</MenuItem>
-            </Select>
-          </FormControl>
-          
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'text.secondary' }}>
-            <FaInfoCircle size={16} />
-            <Typography variant="caption">
-              Click the eye icon to view full details
-            </Typography>
-          </Box>
-        </Box>
+          <button
+            onClick={() => fetchAnalyticsData({ silent: true })}
+            disabled={refreshing}
+            className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 font-semibold text-white hover:bg-gray-800 disabled:opacity-60"
+          >
+            <FaRedo className={refreshing ? "animate-spin" : ""} />
+            Refresh
+          </button>
+        </div>
 
-        {/* Stats Cards */}
-        {summary && (
-          <Box sx={{ mb: 4 }}>
-            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }, gap: 3 }}>
-              <StatsCard
-                title="Total Sessions"
-                value={summary.totalSessions || summary.totalPageViews}
-                icon={<FaEye size={24} />}
-                color="primary"
-              />
-              <StatsCard
-                title="Unique Visitors"
-                value={summary.uniqueVisitors}
-                icon={<FaUsers size={24} />}
-                color="success"
-              />
-              <StatsCard
-                title="Desktop Users"
-                value={summary.deviceBreakdown?.find(d => d._id === 'desktop')?.count || 0}
-                icon={<FaDesktop size={24} />}
-                color="secondary"
-              />
-              <StatsCard
-                title="Mobile Users"
-                value={summary.deviceBreakdown?.find(d => d._id === 'mobile')?.count || 0}
-                icon={<FaMobile size={24} />}
-                color="warning"
-              />
-            </Box>
-          </Box>
-        )}
+        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-4">
+          <StatCard label="Page Views" value={summary?.totalPageViews || 0} icon={<FaEye />} color="bg-blue-100 text-blue-700" />
+          <StatCard label="Unique Visitors" value={summary?.uniqueVisitors || 0} icon={<FaUsers />} color="bg-green-100 text-green-700" />
+          <StatCard label="Desktop" value={desktopCount} icon={<FaDesktop />} color="bg-purple-100 text-purple-700" />
+          <StatCard label="Mobile" value={mobileCount} icon={<FaMobile />} color="bg-yellow-100 text-yellow-700" />
+        </div>
 
-        {/* DataGrid */}
-        <Card>
-          <CardContent sx={{ p: 0 }}>
-            <Box sx={{ height: 500, width: '100%' }}>
+        <div className="mb-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="relative max-w-xl flex-1">
+              <FaSearch className="absolute left-3 top-3 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search visitors, actions, pages, device, location..."
+                className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <select
+                value={timeRange}
+                onChange={(e) => {
+                  setTimeRange(Number(e.target.value));
+                  setPaginationModel((prev) => ({ ...prev, page: 0 }));
+                }}
+                className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 outline-none"
+              >
+                <option value={1}>Last 24 hours</option>
+                <option value={7}>Last 7 days</option>
+                <option value={30}>Last 30 days</option>
+                <option value={90}>Last 90 days</option>
+              </select>
+              <select
+                value={actionFilter}
+                onChange={(e) => {
+                  setActionFilter(e.target.value);
+                  setPaginationModel((prev) => ({ ...prev, page: 0 }));
+                }}
+                className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 outline-none"
+              >
+                <option value="all">All actions</option>
+                {Object.entries(actionLabels).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+          <div className="overflow-x-auto p-6">
+            <div className="min-w-[1500px]">
               <DataGrid
                 rows={rows}
                 columns={columns}
                 loading={loading}
                 paginationModel={paginationModel}
                 onPaginationModelChange={setPaginationModel}
-                pageSizeOptions={[5, 10, 25, 50]}
+                pageSizeOptions={[10, 25, 50]}
                 rowCount={rowCount}
                 paginationMode="server"
                 disableRowSelectionOnClick
-                sx={{
-                  border: 0,
-                  '& .MuiDataGrid-columnHeaders': {
-                    backgroundColor: 'grey.50',
-                    borderBottom: '2px solid',
-                    borderColor: 'grey.200',
-                  },
-                  '& .MuiDataGrid-cell': {
-                    borderBottom: '1px solid',
-                    borderColor: 'grey.100',
-                  },
-                  '& .MuiDataGrid-row:hover': {
-                    backgroundColor: 'primary.lightest',
-                  },
-                }}
+                autoHeight
+                rowHeight={68}
+                sx={gridSx}
               />
-            </Box>
-          </CardContent>
-        </Card>
+            </div>
+          </div>
+        </div>
 
-        {/* Detail Modal */}
-        {selectedRow && detailModalOpen && (
-          <Box
-            sx={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: 'rgba(0,0,0,0.5)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              zIndex: 1300,
-              p: 2,
-            }}
-            onClick={() => setDetailModalOpen(false)}
+        {summary?.popularPages?.length > 0 && (
+          <div className="mt-8 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <h2 className="text-xl font-bold text-gray-900">Popular Pages</h2>
+            <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+              {summary.popularPages.slice(0, 6).map((page) => (
+                <div key={page.pageUrl} className="rounded-lg border border-gray-100 p-4">
+                  <div className="truncate font-semibold text-gray-900">{page.pageUrl}</div>
+                  <div className="mt-1 text-sm text-gray-500">
+                    {page.visits} visits | {page.uniqueVisitors} unique
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {selectedRow && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+            onClick={() => setSelectedRow(null)}
           >
-            <Card
-              sx={{
-                maxWidth: 600,
-                maxHeight: '90vh',
-                overflow: 'auto',
-              }}
+            <div
+              className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-white p-6 shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <CardContent sx={{ p: 3 }}>
-                <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <FaInfoCircle size={18} color="#1976d2" />
-                  Activity Details
-                </Typography>
+              <div className="mb-5 flex items-start justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">Activity Details</h2>
+                  <p className="mt-1 text-sm text-gray-500">{formatDateTime(selectedRow.createdAt)}</p>
+                </div>
+                <button
+                  onClick={() => setSelectedRow(null)}
+                  className="rounded-lg border border-gray-300 px-3 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                >
+                  Close
+                </button>
+              </div>
 
-                <Box sx={{ mt: 2, display: 'grid', gap: 3 }}>
-                  {/* User Information */}
-                  <Box>
-                    <Typography variant="subtitle2" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <FaUser size={14} />
-                      User Information
-                    </Typography>
-                    <Box sx={{ pl: 2 }}>
-                      <Typography variant="body2"><strong>Name:</strong> {selectedRow.userName || 'Anonymous'}</Typography>
-                      <Typography variant="body2"><strong>Email:</strong> {selectedRow.userEmail || 'Not provided'}</Typography>
-                      <Typography variant="body2"><strong>User ID:</strong> {selectedRow.userId || 'Not logged in'}</Typography>
-                    </Box>
-                  </Box>
-
-                  {/* Technical Details */}
-                  <Box>
-                    <Typography variant="subtitle2" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <FaLaptop size={14} />
-                      Technical Details
-                    </Typography>
-                    <Box sx={{ pl: 2 }}>
-                      <Typography variant="body2"><strong>Session ID:</strong> {selectedRow.sessionId}</Typography>
-                      <Typography variant="body2"><strong>IP Address:</strong> {selectedRow.ipAddress}</Typography>
-                      <Typography variant="body2"><strong>Screen:</strong> {selectedRow.screenResolution}</Typography>
-                      <Typography variant="body2"><strong>Language:</strong> {selectedRow.language}</Typography>
-                    </Box>
-                  </Box>
-
-                  {/* Device & Browser */}
-                  <Box>
-                    <Typography variant="subtitle2" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <FaDesktop size={14} />
-                      Device & Browser
-                    </Typography>
-                    <Box sx={{ pl: 2 }}>
-                      <Typography variant="body2"><strong>Device:</strong> {selectedRow.deviceType}</Typography>
-                      <Typography variant="body2"><strong>Browser:</strong> {selectedRow.browser} ({selectedRow.os})</Typography>
-                      <Typography variant="body2"><strong>User Agent:</strong> </Typography>
-                      <Typography variant="caption" sx={{ wordBreak: 'break-all', display: 'block', mt: 0.5 }}>
-                        {selectedRow.userAgent}
-                      </Typography>
-                    </Box>
-                  </Box>
-
-                  {/* Location */}
-                  <Box>
-                    <Typography variant="subtitle2" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <FaGlobe size={14} />
-                      Location
-                    </Typography>
-                    <Box sx={{ pl: 2 }}>
-                      <Typography variant="body2"><strong>Country:</strong> {selectedRow.country !== 'unknown' ? selectedRow.country : 'Unknown'}</Typography>
-                      <Typography variant="body2"><strong>City:</strong> {selectedRow.city !== 'unknown' ? selectedRow.city : 'Unknown'}</Typography>
-                      <Typography variant="body2"><strong>Region:</strong> {selectedRow.region !== 'unknown' ? selectedRow.region : 'Unknown'}</Typography>
-                      <Typography variant="body2"><strong>Timezone:</strong> {selectedRow.timezone !== 'unknown' ? selectedRow.timezone : 'Unknown'}</Typography>
-                    </Box>
-                  </Box>
-
-                  {/* Navigation */}
-                  <Box>
-                    <Typography variant="subtitle2" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <FaLink size={14} />
-                      Navigation
-                    </Typography>
-                    <Box sx={{ pl: 2 }}>
-                      <Typography variant="body2"><strong>Page:</strong> {selectedRow.pageUrl}</Typography>
-                      <Typography variant="body2"><strong>Title:</strong> {selectedRow.pageTitle}</Typography>
-                      <Typography variant="body2"><strong>Referrer:</strong> {selectedRow.referrer}</Typography>
-                    </Box>
-                  </Box>
-
-                  {/* Action Details */}
-                  <Box>
-                    <Typography variant="subtitle2" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <FaChartBar size={14} />
-                      Action Details
-                    </Typography>
-                    <Box sx={{ pl: 2 }}>
-                      <Typography variant="body2"><strong>Type:</strong> {formatActionType(selectedRow.actionType)}</Typography>
-                      <Typography variant="body2"><strong>Action:</strong> {selectedRow.action}</Typography>
-                      <Typography variant="body2"><strong>Time:</strong> {new Date(selectedRow.createdAt).toLocaleString()}</Typography>
-                    </Box>
-                  </Box>
-                </Box>
-              </CardContent>
-            </Card>
-          </Box>
+              <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
+                <Detail label="User" value={selectedRow.userName || "Anonymous"} />
+                <Detail label="Email" value={selectedRow.userEmail || "Not provided"} />
+                <Detail label="Action" value={formatActionType(selectedRow.actionType)} />
+                <Detail label="Details" value={selectedRow.action || "-"} />
+                <Detail label="Page" value={selectedRow.pageUrl || "-"} />
+                <Detail label="Device" value={`${selectedRow.deviceType || "unknown"} / ${selectedRow.browser || "unknown"}`} />
+                <Detail label="Location" value={`${selectedRow.city || "Unknown"}, ${selectedRow.country || "Unknown"}`} />
+                <Detail label="Session" value={selectedRow.sessionId || "-"} />
+                <Detail label="IP" value={selectedRow.ipAddress || "-"} />
+                <Detail label="Screen" value={selectedRow.screenResolution || "-"} />
+              </div>
+            </div>
+          </div>
         )}
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
+};
+
+const StatCard = ({ label, value, icon, color }) => (
+  <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+    <div className="flex items-center justify-between gap-4">
+      <div>
+        <p className="text-sm font-medium text-gray-600">{label}</p>
+        <p className="mt-2 text-2xl font-bold text-gray-900">{value}</p>
+      </div>
+      <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${color}`}>
+        {icon}
+      </div>
+    </div>
+  </div>
+);
+
+const Detail = ({ label, value }) => (
+  <div className="rounded-lg bg-gray-50 p-3">
+    <div className="text-xs font-semibold uppercase text-gray-500">{label}</div>
+    <div className="mt-1 break-words font-medium text-gray-900">{value}</div>
+  </div>
+);
+
+const gridSx = {
+  border: "none",
+  "& .MuiDataGrid-cell": {
+    borderBottom: "1px solid #f3f4f6",
+    alignItems: "center",
+  },
+  "& .MuiDataGrid-columnHeaders": {
+    backgroundColor: "#f9fafb",
+    borderBottom: "2px solid #e5e7eb",
+  },
+  "& .MuiDataGrid-footerContainer": {
+    backgroundColor: "#f9fafb",
+    borderTop: "1px solid #e5e7eb",
+  },
 };
 
 export default Analytics;

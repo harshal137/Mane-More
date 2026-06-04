@@ -1,14 +1,26 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+
 dotenv.config();
+
 const dbConnection = async () => {
-  const DB = process.env.DB;
   try {
-    await mongoose.connect(DB).then(() => {
-      console.log("Database is connected successfully");
+    const uri = process.env.MONGODB_URI;
+    if (!uri) {
+      throw new Error("MONGODB_URI is not defined in environment variables");
+    }
+
+    mongoose.connection.on("connected", () => {
+      console.log("Background services MongoDB connected");
     });
+
+    mongoose.connection.on("error", (error) => {
+      console.error("MongoDB connection error:", error.message);
+    });
+
+    await mongoose.connect(uri);
   } catch (error) {
-    console.log(error);
+    console.error(error.message || error);
     setTimeout(dbConnection, 5000);
   }
 };

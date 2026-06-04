@@ -1,184 +1,402 @@
-import { FaCheckCircle, FaTimesCircle, FaClock, FaSearch, FaMoneyBillWave, FaSync, FaEye, FaCalendar } from "react-icons/fa";
-import { DataGrid } from '@mui/x-data-grid';
-import { useState, useEffect } from "react";
+import {
+  FaCheckCircle,
+  FaClock,
+  FaCreditCard,
+  FaExclamationTriangle,
+  FaFilter,
+  FaMoneyBillWave,
+  FaRedo,
+  FaSearch,
+  FaTimesCircle,
+  FaTruck,
+} from "react-icons/fa";
+import { DataGrid } from "@mui/x-data-grid";
+import { Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
 import { userRequest } from "../requestMethods";
+
+const statusOptions = ["all", "success", "pending", "failed", "cancelled", "incomplete"];
+
+const statusMap = {
+  completed: {
+    text: "Completed",
+    color: "bg-green-100 text-green-800",
+    icon: FaCheckCircle,
+  },
+  success: {
+    text: "Success",
+    color: "bg-green-100 text-green-800",
+    icon: FaCheckCircle,
+  },
+  paid: {
+    text: "Paid",
+    color: "bg-green-100 text-green-800",
+    icon: FaCheckCircle,
+  },
+  pending: {
+    text: "Pending",
+    color: "bg-yellow-100 text-yellow-800",
+    icon: FaClock,
+  },
+  initiated: {
+    text: "Initiated",
+    color: "bg-blue-100 text-blue-800",
+    icon: FaClock,
+  },
+  failed: {
+    text: "Failed",
+    color: "bg-red-100 text-red-800",
+    icon: FaTimesCircle,
+  },
+  cancelled: {
+    text: "Cancelled",
+    color: "bg-gray-100 text-gray-800",
+    icon: FaTimesCircle,
+  },
+  incomplete: {
+    text: "Incomplete",
+    color: "bg-orange-100 text-orange-800",
+    icon: FaExclamationTriangle,
+  },
+};
 
 const Payments = () => {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [methodFilter, setMethodFilter] = useState("all");
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
   });
 
-  // Format date for display (DD/MM/YYYY)
-  const formatDate = (dateString) => {
+  const formatCurrency = (amount) =>
+    `₹ ${Number(amount || 0).toLocaleString("en-IN", {
+      maximumFractionDigits: 2,
+    })}`;
+
+  const formatDateTime = (dateString) => {
+    if (!dateString) return "Not available";
+
+    return new Date(dateString).toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  const getPaymentStatus = (payment) =>
+    String(
+      payment.payment_status ||
+        payment.status ||
+        payment.status_of_transaction ||
+        "pending"
+    ).toLowerCase();
+
+  const getTransactionStatus = (payment) =>
+    String(payment.status_of_transaction || "").toLowerCase();
+
+  const isSuccessfulPayment = (payment) => {
+    const paymentStatus = getPaymentStatus(payment);
+    const transactionStatus = getTransactionStatus(payment);
+
+    return (
+      paymentStatus === "success" ||
+      paymentStatus === "completed" ||
+      transactionStatus === "paid"
+    );
+  };
+
+  const isFailedPayment = (payment) => {
+    const paymentStatus = getPaymentStatus(payment);
+
+    return (
+      paymentStatus === "failed" ||
+      paymentStatus === "cancelled" ||
+      paymentStatus === "incomplete"
+    );
+  };
+
+  const isPendingPayment = (payment) =>
+    !isSuccessfulPayment(payment) && !isFailedPayment(payment);
+
+  const getStatusInfo = (payment) => {
+    const status = getPaymentStatus(payment);
+    return statusMap[status] || statusMap.pending;
+  };
+
+  const getCustomerName = (payment) =>
+    payment.customer?.name ||
+    [payment.first_name, payment.last_name].filter(Boolean).join(" ") ||
+    payment.orderId?.name ||
+    "Customer";
+
+  const getCustomerEmail = (payment) =>
+    payment.customer?.email || payment.email || payment.orderId?.email || "No email";
+
+  const getCustomerPhone = (payment) =>
+    payment.customer?.phone || payment.phone || payment.orderId?.phone || "No phone";
+
+  const getTotalAmount = (payment) =>
+    Number(payment.totalAmount ?? payment.orderId?.totalAmount ?? payment.amount ?? 0);
+
+  const getSubtotal = (payment) =>
+    Number(payment.amount ?? payment.orderId?.subtotal ?? payment.orderId?.amount ?? 0);
+
+  const getShippingFee = (payment) =>
+    Number(payment.shippingFee ?? payment.orderId?.shippingFee ?? 0);
+
+  const getOrderId = (payment) => payment.orderId?._id || payment.orderId || "";
+
+  const getFailureReason = (payment) =>
+    payment.failureReason ||
+    payment.failure_reason ||
+    payment.rawStatusDetails?.last_payment_error?.message ||
+    payment.rawStatusDetails?.failure_message ||
+    "No failure reason recorded";
+
+  const fetchPayments = async ({ silent = false } = {}) => {
     try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
+      if (silent) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
+
+      const res = await userRequest.get("/payments");
+      setPayments(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
-      console.error("Date formatting error:", error);
-      return 'Invalid Date';
+      console.log("Fetch payments error:", error);
+      setPayments([]);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
     }
   };
 
-  // Format time only (HH:MM AM/PM)
-  const formatTime = (dateString) => {
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleString('en-GB', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
-      });
-    } catch (error) {
-      console.error("Time formatting error:", error);
-      return 'Invalid Time';
-    }
-  };
+  useEffect(() => {
+    fetchPayments();
+  }, []);
 
-  // Format full date and time
-  const formatFullDateTime = (dateString) => {
+  const handleUpdatePayment = async (id, nextStatus) => {
     try {
-      const date = new Date(dateString);
-      return date.toLocaleString('en-GB', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true
-      });
-    } catch (error) {
-      console.error("Full DateTime formatting error:", error);
-      return 'Invalid Date';
-    }
-  };
+      const payload =
+        nextStatus === "completed"
+          ? {
+              status: "completed",
+              payment_status: "success",
+              status_of_transaction: "paid",
+            }
+          : {
+              status: "failed",
+              payment_status: "failed",
+              status_of_transaction: "unpaid",
+              failureReason: "Marked failed by admin",
+              failure_reason: "Marked failed by admin",
+            };
 
-  const handleUpdatePayment = async (id, newStatus) => {
-    try {
-      await userRequest.put(`/payments/${id}`, {
-        status: newStatus,
-        payment_status: newStatus === 'completed' ? 'success' : newStatus
-      });
-      
-      // Update local state
-      setPayments(payments.map(payment => 
-        payment._id === id ? { 
-          ...payment, 
-          status: newStatus,
-          payment_status: newStatus === 'completed' ? 'success' : newStatus,
-          updated_at: new Date().toISOString() // Update the timestamp
-        } : payment
-      ));
+      const res = await userRequest.put(`/payments/${id}`, payload);
+
+      setPayments((prev) =>
+        prev.map((payment) => (payment._id === id ? res.data : payment))
+      );
     } catch (error) {
       console.log("Update payment error:", error);
+      alert(error.response?.data?.message || "Payment update failed");
     }
   };
 
   const handleDeletePayment = async (id) => {
-    if (window.confirm("Are you sure you want to delete this payment record?")) {
-      try {
-        await userRequest.delete(`/payments/${id}`);
-        setPayments(payments.filter(payment => payment._id !== id));
-      } catch (error) {
-        console.log("Delete payment error:", error);
-      }
+    if (!window.confirm("Delete this payment record?")) return;
+
+    try {
+      await userRequest.delete(`/payments/${id}`);
+      setPayments((prev) => prev.filter((payment) => payment._id !== id));
+    } catch (error) {
+      console.log("Delete payment error:", error);
+      alert(error.response?.data?.message || "Payment delete failed");
     }
   };
 
-  const getStatusInfo = (status, paymentStatus) => {
-    const statusMap = {
-      completed: { text: 'Completed', color: 'bg-green-100 text-green-800', icon: FaCheckCircle },
-      success: { text: 'Success', color: 'bg-green-100 text-green-800', icon: FaCheckCircle },
-      initiated: { text: 'Initiated', color: 'bg-blue-100 text-blue-800', icon: FaClock },
-      pending: { text: 'Pending', color: 'bg-yellow-100 text-yellow-800', icon: FaClock },
-      failed: { text: 'Failed', color: 'bg-red-100 text-red-800', icon: FaTimesCircle },
-      cancelled: { text: 'Cancelled', color: 'bg-gray-100 text-gray-800', icon: FaTimesCircle }
+  const methods = useMemo(() => {
+    const uniqueMethods = new Set(
+      payments
+        .map((payment) => payment.mode_of_transaction || "Unknown")
+        .filter(Boolean)
+    );
+
+    return ["all", ...Array.from(uniqueMethods)];
+  }, [payments]);
+
+  const filteredPayments = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+
+    return payments.filter((payment) => {
+      const status = getPaymentStatus(payment);
+      const method = payment.mode_of_transaction || "Unknown";
+      const orderId = getOrderId(payment);
+
+      const matchesStatus =
+        statusFilter === "all" ||
+        status === statusFilter ||
+        (statusFilter === "success" && isSuccessfulPayment(payment)) ||
+        (statusFilter === "pending" && isPendingPayment(payment)) ||
+        (statusFilter === "failed" && isFailedPayment(payment));
+
+      const matchesMethod =
+        methodFilter === "all" || method.toLowerCase() === methodFilter.toLowerCase();
+
+      const searchable = [
+        payment._id,
+        orderId,
+        getCustomerName(payment),
+        getCustomerEmail(payment),
+        getCustomerPhone(payment),
+        payment.transactionId,
+        payment.transaction_id,
+        payment.stripeSessionId,
+        payment.stripe_session_id,
+        getFailureReason(payment),
+        method,
+        status,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      return matchesStatus && matchesMethod && (!term || searchable.includes(term));
+    });
+  }, [methodFilter, payments, searchTerm, statusFilter]);
+
+  const stats = useMemo(() => {
+    const successfulPayments = payments.filter(isSuccessfulPayment);
+    const failedPayments = payments.filter(isFailedPayment);
+    const pendingPayments = payments.filter(isPendingPayment);
+    const codPending = payments.filter(
+      (payment) =>
+        String(payment.mode_of_transaction || "").toLowerCase() === "cod" &&
+        isPendingPayment(payment)
+    );
+
+    return {
+      totalPayments: payments.length,
+      successfulCount: successfulPayments.length,
+      pendingCount: pendingPayments.length,
+      failedCount: failedPayments.length,
+      totalRevenue: successfulPayments.reduce(
+        (sum, payment) => sum + getTotalAmount(payment),
+        0
+      ),
+      failedValue: failedPayments.reduce(
+        (sum, payment) => sum + getTotalAmount(payment),
+        0
+      ),
+      pendingValue: pendingPayments.reduce(
+        (sum, payment) => sum + getTotalAmount(payment),
+        0
+      ),
+      codPendingCount: codPending.length,
     };
-
-    // Use payment_status if available, otherwise use status
-    const mainStatus = paymentStatus || status;
-    return statusMap[mainStatus] || statusMap.pending;
-  };
-
-  const getAmountColor = (amount, status) => {
-    if (status === 'completed' || status === 'success') return 'text-green-700 font-bold';
-    if (status === 'failed' || status === 'cancelled') return 'text-red-700';
-    return 'text-gray-900 font-semibold';
-  };
+  }, [payments]);
 
   const columns = [
-    { 
-      field: "_id", 
-      headerName: "Payment ID", 
-      width: 120,
-      headerClassName: 'font-bold text-gray-700',
-      renderCell: (params) => (
-        <span className="font-mono text-sm text-gray-600">
-          #{params.row._id.slice(-6)}
-        </span>
-      )
-    },
-    { 
-      field: "reference", 
-      headerName: "Order ID", 
-      width: 120,
-      headerClassName: 'font-bold text-gray-700',
-      renderCell: (params) => (
-        <span className="font-mono text-sm text-blue-600">
-          #{params.row.reference?.slice(-6) || 'N/A'}
-        </span>
-      )
-    },
-    { 
-      field: "customer", 
-      headerName: "Customer", 
-      width: 200,
-      headerClassName: 'font-bold text-gray-700',
+    {
+      field: "_id",
+      headerName: "Payment",
+      width: 130,
+      headerClassName: "font-bold text-gray-700",
       renderCell: (params) => (
         <div>
-          <div className="font-medium text-gray-900">{params.row.first_name} {params.row.last_name}</div>
-          <div className="text-sm text-gray-500">{params.row.email}</div>
+          <div className="font-mono text-sm font-semibold text-gray-700">
+            #{params.row._id.slice(-8).toUpperCase()}
+          </div>
+          <div className="text-xs text-gray-400">
+            {params.row.currency?.toUpperCase() || "INR"}
+          </div>
         </div>
-      )
+      ),
     },
-    { 
-      field: "phone", 
-      headerName: "Phone", 
-      width: 140,
-      headerClassName: 'font-bold text-gray-700',
-      renderCell: (params) => (
-        <span className="text-sm text-gray-600">{params.row.phone}</span>
-      )
+    {
+      field: "order",
+      headerName: "Order",
+      width: 130,
+      headerClassName: "font-bold text-gray-700",
+      renderCell: (params) => {
+        const orderId = getOrderId(params.row);
+
+        if (!orderId) {
+          return <span className="text-sm text-gray-400">No order yet</span>;
+        }
+
+        return (
+          <Link
+            to={`/order/${orderId}`}
+            className="font-mono text-sm font-semibold text-blue-600 hover:text-blue-800"
+          >
+            #{orderId.slice(-8).toUpperCase()}
+          </Link>
+        );
+      },
     },
-    { 
-      field: "amount", 
-      headerName: "Amount", 
-      width: 120,
-      headerClassName: 'font-bold text-gray-700',
+    {
+      field: "customer",
+      headerName: "Customer",
+      width: 240,
+      headerClassName: "font-bold text-gray-700",
       renderCell: (params) => (
-        <span className={`${getAmountColor(params.row.amount, params.row.payment_status)}`}>
-          KES {params.row.amount?.toLocaleString() || '0'}
-        </span>
-      )
+        <div>
+          <div className="font-semibold text-gray-900">
+            {getCustomerName(params.row)}
+          </div>
+          <div className="text-xs text-gray-500">{getCustomerEmail(params.row)}</div>
+          <div className="text-xs text-gray-400">{getCustomerPhone(params.row)}</div>
+        </div>
+      ),
+    },
+    {
+      field: "totalAmount",
+      headerName: "Total Amount",
+      width: 150,
+      headerClassName: "font-bold text-gray-700",
+      renderCell: (params) => (
+        <div>
+          <div
+            className={`text-sm font-bold ${
+              isSuccessfulPayment(params.row)
+                ? "text-green-700"
+                : isFailedPayment(params.row)
+                  ? "text-red-700"
+                  : "text-gray-900"
+            }`}
+          >
+            {formatCurrency(getTotalAmount(params.row))}
+          </div>
+          <div className="text-xs text-gray-500">
+            Subtotal {formatCurrency(getSubtotal(params.row))}
+          </div>
+          <div className="text-xs text-gray-500">
+            Shipping {formatCurrency(getShippingFee(params.row))}
+          </div>
+        </div>
+      ),
     },
     {
       field: "payment_status",
-      headerName: "Payment Status",
+      headerName: "Status",
       width: 150,
-      headerClassName: 'font-bold text-gray-700',
+      headerClassName: "font-bold text-gray-700",
       renderCell: (params) => {
-        const statusInfo = getStatusInfo(params.row.status, params.row.payment_status);
+        const statusInfo = getStatusInfo(params.row);
         const StatusIcon = statusInfo.icon;
+
         return (
-          <div className={`flex items-center space-x-2 px-3 py-1 rounded-full ${statusInfo.color} text-xs font-medium`}>
+          <div
+            className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${statusInfo.color}`}
+          >
             <StatusIcon size={12} />
             <span>{statusInfo.text}</span>
           </div>
@@ -186,94 +404,107 @@ const Payments = () => {
       },
     },
     {
-      field: "provider",
-      headerName: "Provider",
-      width: 120,
-      headerClassName: 'font-bold text-gray-700',
+      field: "failureReason",
+      headerName: "Failure Reason",
+      width: 260,
+      headerClassName: "font-bold text-gray-700",
+      renderCell: (params) => {
+        if (!isFailedPayment(params.row)) {
+          return <span className="text-sm text-gray-400">Not applicable</span>;
+        }
+
+        return (
+          <span className="text-sm text-red-700" title={getFailureReason(params.row)}>
+            {getFailureReason(params.row)}
+          </span>
+        );
+      },
+    },
+    {
+      field: "method",
+      headerName: "Method",
+      width: 130,
+      headerClassName: "font-bold text-gray-700",
       renderCell: (params) => (
-        <span className="text-sm text-gray-600 capitalize">{params.row.payment_provider}</span>
-      )
+        <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
+          {params.row.mode_of_transaction || "Unknown"}
+        </span>
+      ),
     },
     {
-      field: "created_at",
-      headerName: "Created At",
-      width: 160,
-      headerClassName: 'font-bold text-gray-700',
-      renderCell: (params) => {
-        const fullDateTime = formatFullDateTime(params.row.created_at);
-        
-        return (
-          <div className="text-sm text-gray-600" title={`Full: ${fullDateTime}`}>
-            <div className="flex items-center space-x-1">
-              <FaCalendar size={10} className="text-gray-400" />
-              <span>{formatDate(params.row.created_at)}</span>
-            </div>
-            <div className="text-xs text-gray-400">
-              {formatTime(params.row.created_at)}
-            </div>
-          </div>
-        );
-      }
+      field: "transaction",
+      headerName: "Transaction ID",
+      width: 220,
+      headerClassName: "font-bold text-gray-700",
+      renderCell: (params) => (
+        <span className="font-mono text-xs text-gray-600">
+          {params.row.transactionId ||
+            params.row.transaction_id ||
+            params.row.stripePaymentIntentId ||
+            params.row.stripe_payment_intent_id ||
+            params.row.stripeSessionId ||
+            "Not available"}
+        </span>
+      ),
     },
     {
-      field: "updated_at",
-      headerName: "Updated At",
-      width: 160,
-      headerClassName: 'font-bold text-gray-700',
-      renderCell: (params) => {
-        const fullDateTime = formatFullDateTime(params.row.updated_at);
-        
-        return (
-          <div className="text-sm text-gray-600" title={`Full: ${fullDateTime}`}>
-            <div className="flex items-center space-x-1">
-              <FaCalendar size={10} className="text-gray-400" />
-              <span>{formatDate(params.row.updated_at)}</span>
-            </div>
-            <div className="text-xs text-gray-400">
-              {formatTime(params.row.updated_at)}
-            </div>
-          </div>
-        );
-      }
+      field: "createdAt",
+      headerName: "Created",
+      width: 170,
+      headerClassName: "font-bold text-gray-700",
+      renderCell: (params) => (
+        <span className="text-sm text-gray-600">
+          {formatDateTime(params.row.createdAt || params.row.created_at)}
+        </span>
+      ),
+    },
+    {
+      field: "updatedAt",
+      headerName: "Updated",
+      width: 170,
+      headerClassName: "font-bold text-gray-700",
+      renderCell: (params) => (
+        <span className="text-sm text-gray-600">
+          {formatDateTime(params.row.updatedAt || params.row.updated_at)}
+        </span>
+      ),
     },
     {
       field: "actions",
       headerName: "Actions",
-      width: 250,
-      headerClassName: 'font-bold text-gray-700',
+      width: 230,
+      sortable: false,
+      headerClassName: "font-bold text-gray-700",
       renderCell: (params) => {
-        const canUpdate = params.row.status !== 'completed' && params.row.status !== 'success';
+        const successful = isSuccessfulPayment(params.row);
+        const failed = isFailedPayment(params.row);
+
         return (
-          <div className="flex items-center space-x-2">
-            {canUpdate ? (
-              <>
-                <button
-                  onClick={() => handleUpdatePayment(params.row._id, 'completed')}
-                  className="flex items-center space-x-1 px-2 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700 transition-colors duration-200"
-                  title="Mark as Completed"
-                >
-                  <FaCheckCircle size={10} />
-                  <span>Complete</span>
-                </button>
-                <button
-                  onClick={() => handleUpdatePayment(params.row._id, 'failed')}
-                  className="flex items-center space-x-1 px-2 py-1 bg-red-600 text-white rounded text-xs hover:bg-red-700 transition-colors duration-200"
-                  title="Mark as Failed"
-                >
-                  <FaTimesCircle size={10} />
-                  <span>Fail</span>
-                </button>
-              </>
-            ) : (
-              <span className="text-gray-400 text-xs">Completed</span>
+          <div className="flex items-center gap-2">
+            {!successful && (
+              <button
+                onClick={() => handleUpdatePayment(params.row._id, "completed")}
+                className="rounded bg-green-600 px-2 py-1 text-xs font-semibold text-white hover:bg-green-700"
+                title="Mark payment as successful"
+              >
+                Complete
+              </button>
+            )}
+            {!failed && (
+              <button
+                onClick={() => handleUpdatePayment(params.row._id, "failed")}
+                className="rounded bg-red-600 px-2 py-1 text-xs font-semibold text-white hover:bg-red-700"
+                title="Mark payment as failed"
+              >
+                Fail
+              </button>
             )}
             <button
               onClick={() => handleDeletePayment(params.row._id)}
-              className="flex items-center space-x-1 px-2 py-1 bg-gray-600 text-white rounded text-xs hover:bg-gray-700 transition-colors duration-200"
-              title="Delete Payment"
+              className="rounded bg-gray-700 px-2 py-1 text-xs font-semibold text-white hover:bg-gray-800"
+              title="Delete payment record"
             >
-              <FaTimesCircle size={10} />
-              <span>Delete</span>
+              Delete
             </button>
           </div>
         );
@@ -281,175 +512,168 @@ const Payments = () => {
     },
   ];
 
-  useEffect(() => {
-    const getPayments = async () => {
-      try {
-        setLoading(true);
-        const res = await userRequest.get("/payments");
-        setPayments(res.data);
-      } catch (error) {
-        console.log("Fetch payments error:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    getPayments();
-  }, []);
-
-  // Filter payments based on search term
-  const filteredPayments = payments.filter(payment =>
-    payment.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    payment.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    payment.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    payment.phone?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    payment._id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    payment.reference?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (payment.orderId?._id && payment.orderId._id.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
-
-  // Calculate statistics
-  const totalPayments = payments.length;
-  const completedPayments = payments.filter(payment => 
-    payment.status === 'completed' || payment.payment_status === 'success'
-  ).length;
-  const pendingPayments = payments.filter(payment => 
-    payment.status === 'pending' || payment.status === 'initiated'
-  ).length;
-  const failedPayments = payments.filter(payment => 
-    payment.status === 'failed' || payment.payment_status === 'failed'
-  ).length;
-  const totalRevenue = payments
-    .filter(payment => payment.status === 'completed' || payment.payment_status === 'success')
-    .reduce((sum, payment) => sum + (payment.amount || 0), 0);
+  const statCards = [
+    {
+      label: "Total Revenue",
+      value: formatCurrency(stats.totalRevenue),
+      helper: `${stats.successfulCount} successful payments`,
+      icon: FaMoneyBillWave,
+      color: "bg-green-100 text-green-700",
+    },
+    {
+      label: "Failed Value",
+      value: formatCurrency(stats.failedValue),
+      helper: `${stats.failedCount} failed payments`,
+      icon: FaTimesCircle,
+      color: "bg-red-100 text-red-700",
+    },
+    {
+      label: "Pending Value",
+      value: formatCurrency(stats.pendingValue),
+      helper: `${stats.pendingCount} pending payments`,
+      icon: FaClock,
+      color: "bg-yellow-100 text-yellow-700",
+    },
+    {
+      label: "Pending COD",
+      value: stats.codPendingCount,
+      helper: "Cash collection still open",
+      icon: FaTruck,
+      color: "bg-blue-100 text-blue-700",
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Payment Management</h1>
-          <p className="text-gray-600">Manage and track payment transactions</p>
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Payment Management</h1>
+            <p className="mt-2 text-gray-600">
+              Track successful, pending, failed, Stripe, and COD payment records.
+            </p>
+          </div>
+
+          <button
+            onClick={() => fetchPayments({ silent: true })}
+            disabled={refreshing}
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-gray-900 px-4 py-2 font-semibold text-white hover:bg-gray-800 disabled:opacity-60"
+          >
+            <FaRedo className={refreshing ? "animate-spin" : ""} />
+            {refreshing ? "Refreshing..." : "Refresh"}
+          </button>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Total Payments</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">{totalPayments}</p>
-              </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <FaMoneyBillWave className="text-blue-600 text-xl" />
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Completed</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">{completedPayments}</p>
-              </div>
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <FaCheckCircle className="text-green-600 text-xl" />
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Pending</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">{pendingPayments}</p>
-              </div>
-              <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                <FaClock className="text-yellow-600 text-xl" />
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">KES {totalRevenue.toLocaleString()}</p>
-              </div>
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <span className="text-green-600 font-bold text-lg">KSh</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+          {statCards.map((card) => {
+            const Icon = card.icon;
 
-        {/* Main Content Card */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          {/* Toolbar */}
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-              <div className="relative flex-1 max-w-md">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaSearch className="text-gray-400" />
+            return (
+              <div key={card.label} className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">{card.label}</p>
+                    <p className="mt-2 text-2xl font-bold text-gray-900">{card.value}</p>
+                    <p className="mt-2 text-sm text-gray-500">{card.helper}</p>
+                  </div>
+                  <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${card.color}`}>
+                    <Icon className="text-xl" />
+                  </div>
                 </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+          <div className="border-b border-gray-200 p-6">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div className="relative max-w-xl flex-1">
+                <FaSearch className="pointer-events-none absolute left-3 top-3 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search payments by customer name, email, phone, or ID..."
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                  placeholder="Search by customer, order, payment, phone, method, transaction ID..."
+                  className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-3 outline-none transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              
-              <div className="flex space-x-3">
-                <button 
-                  onClick={() => setSearchTerm('')}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200 font-medium"
+
+              <div className="flex flex-wrap gap-3">
+                <div className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2">
+                  <FaFilter className="text-gray-400" />
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    className="bg-transparent text-sm font-medium text-gray-700 outline-none"
+                  >
+                    {statusOptions.map((status) => (
+                      <option key={status} value={status}>
+                        {status === "all" ? "All statuses" : status}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <select
+                  value={methodFilter}
+                  onChange={(e) => setMethodFilter(e.target.value)}
+                  className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 outline-none"
+                >
+                  {methods.map((method) => (
+                    <option key={method} value={method}>
+                      {method === "all" ? "All methods" : method}
+                    </option>
+                  ))}
+                </select>
+
+                <button
+                  onClick={() => {
+                    setSearchTerm("");
+                    setStatusFilter("all");
+                    setMethodFilter("all");
+                  }}
+                  className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
                 >
                   Clear
-                </button>
-                <button 
-                  onClick={() => window.location.reload()}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium flex items-center space-x-2"
-                >
-                  <FaSync size={14} />
-                  <span>Refresh</span>
                 </button>
               </div>
             </div>
           </div>
 
-          {/* DataGrid */}
           <div className="p-6">
             {loading ? (
-              <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+              <div className="flex h-64 items-center justify-center">
+                <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600" />
               </div>
             ) : (
               <DataGrid
                 getRowId={(row) => row._id}
                 rows={filteredPayments}
-                checkboxSelection
                 columns={columns}
                 paginationModel={paginationModel}
                 onPaginationModelChange={setPaginationModel}
                 pageSizeOptions={[10, 25, 50]}
-                disableSelectionOnClick
+                disableRowSelectionOnClick
                 autoHeight
+                getRowHeight={() => "auto"}
                 sx={{
-                  border: 'none',
-                  '& .MuiDataGrid-cell': {
-                    borderBottom: '1px solid #f3f4f6',
+                  border: "none",
+                  "& .MuiDataGrid-cell": {
+                    borderBottom: "1px solid #f3f4f6",
+                    py: 1.5,
+                    alignItems: "center",
                   },
-                  '& .MuiDataGrid-columnHeaders': {
-                    backgroundColor: '#f9fafb',
-                    borderBottom: '2px solid #e5e7eb',
+                  "& .MuiDataGrid-columnHeaders": {
+                    backgroundColor: "#f9fafb",
+                    borderBottom: "2px solid #e5e7eb",
                   },
-                  '& .MuiDataGrid-footerContainer': {
-                    backgroundColor: '#f9fafb',
-                    borderTop: '1px solid #e5e7eb',
+                  "& .MuiDataGrid-footerContainer": {
+                    backgroundColor: "#f9fafb",
+                    borderTop: "1px solid #e5e7eb",
                   },
-                  '& .MuiDataGrid-row:hover': {
-                    backgroundColor: '#f8fafc',
+                  "& .MuiDataGrid-row:hover": {
+                    backgroundColor: "#f8fafc",
                   },
                 }}
               />
@@ -457,9 +681,15 @@ const Payments = () => {
           </div>
         </div>
 
-        {/* Pagination Info */}
-        <div className="mt-4 text-sm text-gray-600">
-          Showing {Math.min(filteredPayments.length, paginationModel.pageSize)} of {filteredPayments.length} payments
+        <div className="mt-4 flex flex-col gap-2 text-sm text-gray-600 sm:flex-row sm:items-center sm:justify-between">
+          <span>
+            Showing {Math.min(filteredPayments.length, paginationModel.pageSize)} of{" "}
+            {filteredPayments.length} filtered payments
+          </span>
+          <span>
+            All payments: {stats.totalPayments} | Successful: {stats.successfulCount} |
+            Failed: {stats.failedCount}
+          </span>
         </div>
       </div>
     </div>

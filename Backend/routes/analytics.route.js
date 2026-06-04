@@ -1,5 +1,7 @@
 import express from "express";
 const router = express.Router();
+import protect from "../Middleware/auth.middleware.js";
+import adminAuth from "../Middleware/adminAuth.middleware.js";
 import {
   createAnalyticsRecord,
   getAllAnalytics,
@@ -10,13 +12,13 @@ import {
 // CREATE ANALYTICS RECORD
 router.post("/", createAnalyticsRecord);
 
-// GET ALL ANALYTICS RECORDS
-router.get("/", getAllAnalytics);
+// GET ALL ANALYTICS RECORDS - Admin only
+router.get("/", protect, adminAuth, getAllAnalytics);
 
-// GET ANALYTICS SUMMARY
-router.get("/summary", getAnalyticsSummary);
+// GET ANALYTICS SUMMARY - Admin only
+router.get("/summary", protect, adminAuth, getAnalyticsSummary);
 
-// GET USER ACTIVITY
-router.get("/user/:userId", getUserActivity);
+// GET USER ACTIVITY - Admin only
+router.get("/user/:userId", protect, adminAuth, getUserActivity);
 
 export default router;

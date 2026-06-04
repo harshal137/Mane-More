@@ -1,288 +1,375 @@
-import { FaCheckCircle, FaCheckDouble, FaClock, FaSearch, FaTruck, FaBoxOpen } from "react-icons/fa";
-import { DataGrid } from '@mui/x-data-grid';
-import { useState, useEffect } from "react";
+import { DataGrid } from "@mui/x-data-grid";
+import { Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import {
+  FaBoxOpen,
+  FaCheckDouble,
+  FaClock,
+  FaCreditCard,
+  FaMoneyBillWave,
+  FaRedo,
+  FaSearch,
+  FaTruck,
+} from "react-icons/fa";
 import { userRequest } from "../requestMethods";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [paymentFilter, setPaymentFilter] = useState("all");
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
   });
 
-  const handleUpdateOrder = async (id) => {
+  const fetchOrders = async ({ silent = false } = {}) => {
     try {
-      await userRequest.put(`/orders/${id}`, {
-        "status": 2
-      });
-      // Update local state instead of reloading the page
-      setOrders(orders.map(order => 
-        order._id === id ? { ...order, status: 2 } : order
-      ));
+      silent ? setRefreshing(true) : setLoading(true);
+      const res = await userRequest.get("/orders");
+      setOrders(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
-      console.log(error);
+      console.log("Fetch orders error:", error);
+      setOrders([]);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
     }
   };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const formatCurrency = (amount) =>
+    `₹ ${Number(amount || 0).toLocaleString("en-IN", {
+      maximumFractionDigits: 2,
+    })}`;
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "Not available";
+    return new Date(dateString).toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  const getOrderAmount = (order) =>
+    Number(order.totalAmount ?? order.total ?? order.amount ?? 0);
+
+  const getDeliveryStatus = (order) => String(order.delivery_status || "Placed");
+
+  const getDeliveryLabel = (status) =>
+    status.toLowerCase() === "placed" ? "Ordered" : status;
 
   const getStatusInfo = (status) => {
-    switch (status) {
-      case 0:
-        return { text: 'Pending', color: 'bg-yellow-100 text-yellow-800', icon: FaClock };
-      case 1:
-        return { text: 'Processing', color: 'bg-blue-100 text-blue-800', icon: FaTruck };
-      case 2:
-        return { text: 'Delivered', color: 'bg-green-100 text-green-800', icon: FaCheckDouble };
+    switch (String(status || "").toLowerCase()) {
+      case "placed":
+        return { text: "Ordered", color: "bg-yellow-100 text-yellow-800", icon: FaClock };
+      case "processing":
+        return { text: "Processing", color: "bg-blue-100 text-blue-800", icon: FaTruck };
+      case "shipped":
+        return { text: "Shipped", color: "bg-purple-100 text-purple-800", icon: FaBoxOpen };
+      case "delivered":
+        return { text: "Delivered", color: "bg-green-100 text-green-800", icon: FaCheckDouble };
+      case "cancelled":
+        return { text: "Cancelled", color: "bg-red-100 text-red-800", icon: FaClock };
       default:
-        return { text: 'Unknown', color: 'bg-gray-100 text-gray-800', icon: FaBoxOpen };
+        return { text: "Ordered", color: "bg-yellow-100 text-yellow-800", icon: FaClock };
     }
   };
 
+  const filteredOrders = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+
+    return orders.filter((order) => {
+      const delivery = getDeliveryStatus(order).toLowerCase();
+      const payment = String(order.status_of_transaction || "unpaid").toLowerCase();
+      const searchable = [
+        order._id,
+        order.name,
+        order.email,
+        order.phone,
+        order.mode_of_transaction,
+        order.transactionId,
+        order.transaction_id,
+        delivery,
+        payment,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      return (
+        (statusFilter === "all" || delivery === statusFilter) &&
+        (paymentFilter === "all" || payment === paymentFilter) &&
+        (!term || searchable.includes(term))
+      );
+    });
+  }, [orders, paymentFilter, searchTerm, statusFilter]);
+
+  const metrics = useMemo(() => {
+    const delivered = orders.filter(
+      (order) => getDeliveryStatus(order).toLowerCase() === "delivered"
+    );
+    const active = orders.filter((order) => {
+      const delivery = getDeliveryStatus(order).toLowerCase();
+      return delivery !== "delivered" && delivery !== "cancelled";
+    });
+    const paid = orders.filter(
+      (order) => String(order.status_of_transaction || "").toLowerCase() === "paid"
+    );
+    const unpaidCod = orders.filter(
+      (order) =>
+        String(order.mode_of_transaction || "").toLowerCase() === "cod" &&
+        String(order.status_of_transaction || "").toLowerCase() !== "paid"
+    );
+
+    return {
+      total: orders.length,
+      active: active.length,
+      delivered: delivered.length,
+      paid: paid.length,
+      unpaidCod: unpaidCod.length,
+      deliveredRevenue: delivered.reduce((sum, order) => sum + getOrderAmount(order), 0),
+      totalOrderValue: orders.reduce((sum, order) => sum + getOrderAmount(order), 0),
+    };
+  }, [orders]);
+
   const columns = [
-    { 
-      field: "_id", 
-      headerName: "Order ID", 
-      width: 120,
-      headerClassName: 'font-bold text-gray-700',
+    {
+      field: "_id",
+      headerName: "Order",
+      width: 130,
       renderCell: (params) => (
-        <span className="font-mono text-sm text-gray-600">
-          #{params.row._id.slice(-6)}
+        <span className="font-mono text-sm font-semibold text-gray-700">
+          #{params.row._id.slice(-8).toUpperCase()}
         </span>
-      )
-    },
-    { 
-      field: "name", 
-      headerName: "Customer Name", 
-      width: 180,
-      headerClassName: 'font-bold text-gray-700',
-      renderCell: (params) => (
-        <div className="font-medium text-gray-900">{params.row.name}</div>
-      )
-    },
-    { 
-      field: "email", 
-      headerName: "Email", 
-      width: 200,
-      headerClassName: 'font-bold text-gray-700'
-    },
-    { 
-      field: "total", 
-      headerName: "Total", 
-      width: 120,
-      headerClassName: 'font-bold text-gray-700',
-      renderCell: (params) => (
-        <span className="font-semibold text-gray-900">
-          KES{params.row.total?.toFixed(2) || '0.00'}
-        </span>
-      )
+      ),
     },
     {
-      field: "status",
-      headerName: "Status",
+      field: "customer",
+      headerName: "Customer",
+      width: 240,
+      renderCell: (params) => (
+        <div>
+          <div className="font-semibold text-gray-900">{params.row.name || "Customer"}</div>
+          <div className="text-xs text-gray-500">{params.row.email || "No email"}</div>
+          <div className="text-xs text-gray-400">{params.row.phone || "No phone"}</div>
+        </div>
+      ),
+    },
+    {
+      field: "total",
+      headerName: "Total",
+      width: 130,
+      renderCell: (params) => (
+        <span className="font-bold text-gray-900">
+          {formatCurrency(getOrderAmount(params.row))}
+        </span>
+      ),
+    },
+    {
+      field: "delivery_status",
+      headerName: "Delivery",
       width: 150,
-      headerClassName: 'font-bold text-gray-700',
       renderCell: (params) => {
-        const statusInfo = getStatusInfo(params.row.status);
-        const StatusIcon = statusInfo.icon;
+        const info = getStatusInfo(params.row.delivery_status);
+        const Icon = info.icon;
+
         return (
-          <div className={`flex items-center space-x-2 px-3 py-1 rounded-full ${statusInfo.color} text-xs font-medium`}>
-            <StatusIcon size={12} />
-            <span>{statusInfo.text}</span>
-          </div>
+          <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${info.color}`}>
+            <Icon size={12} />
+            {info.text}
+          </span>
         );
       },
+    },
+    {
+      field: "status_of_transaction",
+      headerName: "Payment",
+      width: 130,
+      renderCell: (params) => {
+        const paid = String(params.row.status_of_transaction || "").toLowerCase() === "paid";
+
+        return (
+          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${paid ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+            {paid ? "Paid" : "Unpaid"}
+          </span>
+        );
+      },
+    },
+    {
+      field: "mode_of_transaction",
+      headerName: "Method",
+      width: 120,
+      renderCell: (params) => (
+        <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
+          {params.row.mode_of_transaction || "-"}
+        </span>
+      ),
+    },
+    {
+      field: "createdAt",
+      headerName: "Placed At",
+      width: 180,
+      renderCell: (params) => (
+        <span className="text-sm text-gray-600">{formatDate(params.row.createdAt)}</span>
+      ),
     },
     {
       field: "actions",
-      headerName: "Actions",
-      width: 180,
-      headerClassName: 'font-bold text-gray-700',
-      renderCell: (params) => {
-        const canDeliver = params.row.status === 0 || params.row.status === 1;
-        return (
-          <div className="flex items-center space-x-2">
-            {canDeliver ? (
-              <button
-                onClick={() => handleUpdateOrder(params.row._id)}
-                className="flex items-center space-x-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 text-sm font-medium"
-              >
-                <FaCheckCircle size={14} />
-                <span>Mark Delivered</span>
-              </button>
-            ) : (
-              <span className="text-gray-400 text-sm font-medium">Completed</span>
-            )}
-          </div>
-        );
-      },
+      headerName: "Action",
+      width: 140,
+      sortable: false,
+      renderCell: (params) => (
+        <Link
+          to={`/order/${params.row._id}`}
+          className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800"
+        >
+          Details
+        </Link>
+      ),
     },
   ];
 
-  useEffect(() => {
-    const getOrders = async () => {
-      try {
-        setLoading(true);
-        const res = await userRequest.get("/orders");
-        setOrders(res.data);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    getOrders();
-  }, []);
-
-  // Filter orders based on search term
-  const filteredOrders = orders.filter(order =>
-    order.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order._id?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  // Calculate statistics
-  const totalOrders = orders.length;
-  const pendingOrders = orders.filter(order => order.status === 0).length;
-  const processingOrders = orders.filter(order => order.status === 1).length;
-  const deliveredOrders = orders.filter(order => order.status === 2).length;
-  const totalRevenue = orders.reduce((sum, order) => sum + (order.total || 0), 0);
-
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Order Management</h1>
-          <p className="text-gray-600">Manage and track customer orders</p>
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Order Management</h1>
+            <p className="mt-2 text-gray-600">
+              Track fulfillment, payment status, and order value from one place.
+            </p>
+          </div>
+          <button
+            onClick={() => fetchOrders({ silent: true })}
+            disabled={refreshing}
+            className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 font-semibold text-white hover:bg-gray-800 disabled:opacity-60"
+          >
+            <FaRedo className={refreshing ? "animate-spin" : ""} />
+            Refresh
+          </button>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Total Orders</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">{totalOrders}</p>
-              </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <FaBoxOpen className="text-blue-600 text-xl" />
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Pending</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">{pendingOrders}</p>
-              </div>
-              <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                <FaClock className="text-yellow-600 text-xl" />
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Processing</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">{processingOrders}</p>
-              </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <FaTruck className="text-blue-600 text-xl" />
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">KES{totalRevenue.toFixed(2)}</p>
-              </div>
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <span className="text-green-600 font-bold text-lg">$</span>
-              </div>
-            </div>
-          </div>
+        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-5">
+          <StatCard label="Total Orders" value={metrics.total} icon={<FaBoxOpen />} color="bg-blue-100 text-blue-700" />
+          <StatCard label="Active" value={metrics.active} icon={<FaTruck />} color="bg-yellow-100 text-yellow-700" />
+          <StatCard label="Delivered" value={metrics.delivered} icon={<FaCheckDouble />} color="bg-green-100 text-green-700" />
+          <StatCard label="Unpaid COD" value={metrics.unpaidCod} icon={<FaCreditCard />} color="bg-red-100 text-red-700" />
+          <StatCard label="Delivered Revenue" value={formatCurrency(metrics.deliveredRevenue)} icon={<FaMoneyBillWave />} color="bg-purple-100 text-purple-700" />
         </div>
 
-        {/* Main Content Card */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          {/* Toolbar */}
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-              <div className="relative flex-1 max-w-md">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaSearch className="text-gray-400" />
-                </div>
+        <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+          <div className="border-b border-gray-200 p-6">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div className="relative max-w-xl flex-1">
+                <FaSearch className="absolute left-3 top-3 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search orders by customer name, email, or order ID..."
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                  placeholder="Search customer, order ID, phone, method, status..."
+                  className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              
-              <div className="flex space-x-3">
-                <button className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200 font-medium">
-                  Filter
-                </button>
-                <button className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200 font-medium">
-                  Export
+
+              <div className="flex flex-wrap gap-3">
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 outline-none"
+                >
+                  <option value="all">All delivery</option>
+                  <option value="placed">Ordered</option>
+                  <option value="processing">Processing</option>
+                  <option value="shipped">Shipped</option>
+                  <option value="delivered">Delivered</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+                <select
+                  value={paymentFilter}
+                  onChange={(e) => setPaymentFilter(e.target.value)}
+                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 outline-none"
+                >
+                  <option value="all">All payment</option>
+                  <option value="paid">Paid</option>
+                  <option value="unpaid">Unpaid</option>
+                </select>
+                <button
+                  onClick={() => {
+                    setSearchTerm("");
+                    setStatusFilter("all");
+                    setPaymentFilter("all");
+                  }}
+                  className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                >
+                  Clear
                 </button>
               </div>
             </div>
           </div>
 
-          {/* DataGrid */}
           <div className="p-6">
             {loading ? (
-              <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+              <div className="flex h-64 items-center justify-center">
+                <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600" />
               </div>
             ) : (
               <DataGrid
                 getRowId={(row) => row._id}
                 rows={filteredOrders}
-                checkboxSelection
                 columns={columns}
                 paginationModel={paginationModel}
                 onPaginationModelChange={setPaginationModel}
-                pageSizeOptions={[30]}
-                disableSelectionOnClick
+                pageSizeOptions={[10, 25, 50]}
+                disableRowSelectionOnClick
                 autoHeight
-                sx={{
-                  border: 'none',
-                  '& .MuiDataGrid-cell': {
-                    borderBottom: '1px solid #f3f4f6',
-                  },
-                  '& .MuiDataGrid-columnHeaders': {
-                    backgroundColor: '#f9fafb',
-                    borderBottom: '2px solid #e5e7eb',
-                  },
-                  '& .MuiDataGrid-footerContainer': {
-                    backgroundColor: '#f9fafb',
-                    borderTop: '1px solid #e5e7eb',
-                  },
-                  '& .MuiDataGrid-row:hover': {
-                    backgroundColor: '#f8fafc',
-                  },
-                }}
+                rowHeight={68}
+                sx={gridSx}
               />
             )}
           </div>
         </div>
-
-        {/* Pagination Info */}
-        <div className="mt-4 text-sm text-gray-600">
-          Showing {Math.min(filteredOrders.length, 30)} of {filteredOrders.length} orders per page
-        </div>
       </div>
     </div>
   );
+};
+
+const StatCard = ({ label, value, icon, color }) => (
+  <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+    <div className="flex items-center justify-between gap-4">
+      <div>
+        <p className="text-sm font-medium text-gray-600">{label}</p>
+        <p className="mt-2 text-xl font-bold text-gray-900">{value}</p>
+      </div>
+      <div className={`flex h-11 w-11 items-center justify-center rounded-lg ${color}`}>
+        {icon}
+      </div>
+    </div>
+  </div>
+);
+
+const gridSx = {
+  border: "none",
+  "& .MuiDataGrid-cell": {
+    borderBottom: "1px solid #f3f4f6",
+    alignItems: "center",
+  },
+  "& .MuiDataGrid-columnHeaders": {
+    backgroundColor: "#f9fafb",
+    borderBottom: "2px solid #e5e7eb",
+  },
+  "& .MuiDataGrid-footerContainer": {
+    backgroundColor: "#f9fafb",
+    borderTop: "1px solid #e5e7eb",
+  },
 };
 
 export default Orders;

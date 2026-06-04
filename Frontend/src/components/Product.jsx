@@ -1,24 +1,87 @@
 import { showAverageRating } from "./Ratings";
+import { useDispatch, useSelector } from "react-redux";
+import { addToWishlist, removeFromWishlist } from "../redux/wishlistRedux";
+import { FaHeart } from "react-icons/fa";
 
 const Product = ({ product }) => {
+  const dispatch = useDispatch();
+  const wishlist = useSelector((state) => state.wishlist.products);
+
+  const isWishlisted = wishlist.some((item) => item._id === product._id);
+
+  const handleWishlist = (e) => {
+    e.preventDefault();
+
+    if (isWishlisted) {
+      dispatch(removeFromWishlist(product._id));
+    } else {
+      dispatch(addToWishlist(product));
+    }
+  };
+  const THEME = {
+    BG: "#F8F5F1",
+    CARD: "#FFFFFF",
+    PRIMARY: "#4A315F",
+    PRIMARY_DARK: "#3B284D",
+    GOLD: "#EFC65A",
+    HEADING: "#111827",
+    TEXT: "#5F5A6E",
+    MUTED: "#7A7488",
+    BORDER: "#E8E1DA",
+    SOFT_GREEN: "#E8F1D8",
+  };
+
   return (
-    <div className="group relative flex flex-col items-center justify-between bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 m-4 cursor-pointer border border-gray-100">
-      {/* Product Image with Hover Effect */}
-      <div className="relative h-80 w-full overflow-hidden">
+    <div
+      className="group relative flex flex-col overflow-hidden rounded-3xl transition-all duration-500 hover:-translate-y-2"
+      style={{
+        backgroundColor: THEME.CARD,
+        border: `1px solid ${THEME.BORDER}`,
+        boxShadow: "0 14px 35px rgba(74,49,95,0.10)",
+      }}
+    >
+      {/* Product Image */}
+      <div className="relative h-80 overflow-hidden">
         <img
           src={product.img[0]}
           alt={product.title}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
 
-        {/* Overlay on Hover */}
-        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+        {/* Soft Purple Overlay */}
+        <div
+          className="absolute inset-0 opacity-70"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(74,49,95,0.55), rgba(74,49,95,0.08), transparent)",
+          }}
+        />
 
-        {/* Quick View Button */}
-        <button className="absolute top-3 right-3 bg-white rounded-full p-2 shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        {/* Discount Badge */}
+        {product.discount && (
+          <div
+            className="absolute left-4 top-4 rounded-full px-3 py-1 text-xs font-bold shadow-lg"
+            style={{
+              backgroundColor: THEME.GOLD,
+              color: THEME.PRIMARY_DARK,
+            }}
+          >
+            -{product.discount}%
+          </div>
+        )}
+
+        {/* Quick View */}
+        <button
+          className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full opacity-0 backdrop-blur-md transition-all duration-300 group-hover:opacity-100"
+          style={{
+            backgroundColor: "rgba(255,255,255,0.88)",
+            border: `1px solid ${THEME.BORDER}`,
+          }}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 text-rose-600"
+            className="h-5 w-5"
+            style={{ color: THEME.PRIMARY }}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -38,51 +101,94 @@ const Product = ({ product }) => {
           </svg>
         </button>
 
-        {/* Discount Badge */}
-        {product.discount && (
-          <div className="absolute top-3 left-3 bg-rose-600 text-white text-xs font-bold px-2 py-1 rounded-full">
-            -{product.discount}%
-          </div>
-        )}
+        {/* Favorite Button */}
+        <button
+          type="button"
+          onClick={handleWishlist}
+          className="absolute right-4 top-16 flex h-10 w-10 items-center justify-center rounded-full opacity-0 backdrop-blur-md transition-all duration-300 group-hover:opacity-100"
+          style={{
+            backgroundColor: "rgba(255,255,255,0.88)",
+            border: `1px solid ${THEME.BORDER}`,
+          }}
+        >
+          <FaHeart
+            className="h-5 w-5"
+            style={{
+              color: isWishlisted ? "#DC2626" : THEME.PRIMARY,
+            }}
+          />
+        </button>
       </div>
 
-      {/* Product Details */}
-      <div className="w-full p-4 flex flex-col">
+      {/* Content */}
+      <div className="flex flex-grow flex-col p-5">
+        {/* Category Label */}
+        <div
+          className="mb-2 text-xs font-semibold uppercase tracking-[0.25em]"
+          style={{ color: THEME.PRIMARY }}
+        >
+          Premium Grooming
+        </div>
+
         {/* Product Title */}
-        <h2 className="font-medium text-gray-800 text-lg mb-2 line-clamp-2 h-14 overflow-hidden">
+        <h2
+          className="mb-3 min-h-[56px] text-lg font-semibold line-clamp-2"
+          style={{ color: THEME.HEADING }}
+        >
           {product.title}
         </h2>
 
         {/* Rating */}
         {product.ratingsCount ? (
-          <div className="flex items-center mb-3">
+          <div className="mb-4 flex items-center">
             {showAverageRating(product)}
-            <span className="text-xs text-gray-500 ml-1">
-              ({product.ratingsCount || ""})
+            <span className="ml-2 text-xs" style={{ color: THEME.MUTED }}>
+              ({product.ratingsCount})
             </span>
           </div>
         ) : (
-          ""
+          <div className="h-6"></div>
         )}
 
-        {/* Price */}
-        <div className="flex items-center justify-between mt-auto">
-          <div className="flex items-center">
-            <span className="text-rose-700 font-bold text-xl">
-              Ksh{product.originalPrice}
-            </span>
-            {product.originalPrice && product.originalPrice > product.price && (
-              <span className="text-gray-400 line-through text-sm ml-2">
-                Ksh{product.originalPrice}
-              </span>
+        {/* Divider */}
+        <div
+          className="mb-4 h-px"
+          style={{
+            background:
+              "linear-gradient(to right, transparent, rgba(74,49,95,0.22), transparent)",
+          }}
+        ></div>
+
+        {/* Price + Button */}
+        <div className="mt-auto flex items-center justify-between">
+          <div>
+            <div
+              className="text-2xl font-bold"
+              style={{ color: THEME.PRIMARY }}
+            >
+              ${product.originalPrice}
+            </div>
+
+            {product.originalPrice > product.price && (
+              <div
+                className="text-sm line-through"
+                style={{ color: THEME.MUTED }}
+              >
+                ${product.price}
+              </div>
             )}
           </div>
 
-          {/* Add to Cart Button */}
-          <button className="bg-rose-100 text-rose-700 p-2 rounded-full hover:bg-rose-600 hover:text-white transition-colors duration-300">
+          <button
+            className="flex h-12 w-12 items-center justify-center rounded-full transition-all duration-300 hover:scale-110"
+            style={{
+              backgroundColor: THEME.PRIMARY,
+              boxShadow: "0 10px 25px rgba(74,49,95,0.22)",
+            }}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
+              className="h-5 w-5 text-white"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -98,23 +204,13 @@ const Product = ({ product }) => {
         </div>
       </div>
 
-      {/* Favorite Button */}
-      <button className="absolute top-3 right-12 bg-white rounded-full p-2 shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5 text-gray-400 hover:text-rose-600"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-          />
-        </svg>
-      </button>
+      {/* Hover Border */}
+      <div
+        className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+        style={{
+          border: `1px solid rgba(74,49,95,0.28)`,
+        }}
+      ></div>
     </div>
   );
 };

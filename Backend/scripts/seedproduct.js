@@ -7,14 +7,17 @@ dotenv.config();
 
 const seedProducts = async () => {
   try {
-    await mongoose.connect(process.env.DB);
+    if (!process.env.MONGODB_URI) {
+      throw new Error("MONGODB_URI is not defined in environment variables");
+    }
 
+    await mongoose.connect(process.env.MONGODB_URI);
     await Product.insertMany(hairProducts);
 
     console.log("Hair products inserted successfully");
-    process.exit();
+    process.exit(0);
   } catch (error) {
-    console.log(error);
+    console.error(error.message || error);
     process.exit(1);
   }
 };

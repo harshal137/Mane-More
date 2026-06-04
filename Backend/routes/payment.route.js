@@ -1,30 +1,30 @@
 import express from "express";
 const router = express.Router();
+
+import protect from "../Middleware/auth.middleware.js";
+import adminAuth from "../Middleware/adminAuth.middleware.js";
+
 import {
-  createPayment,
   getAllPayments,
   deletePayment,
   getPaymentById,
+  getPaymentsByStatus,
   updatePayment,
-  getPaymentsByStatus
 } from "../controller/payment.controller.js";
 
-// CREATE PAYMENT ROUTE
-router.post("/", createPayment);
+// GET ALL PAYMENTS ROUTE - Admin only
+router.get("/", protect, adminAuth, getAllPayments);
 
-// GET ALL PAYMENTS ROUTE
-router.get("/", getAllPayments);
+// IMPORTANT: keep this before "/:id", otherwise "status" is treated as an id.
+router.get("/status/:status", protect, adminAuth, getPaymentsByStatus);
 
-// GET PAYMENT BY ID ROUTE
-router.get("/:id", getPaymentById);
+// GET PAYMENT BY ID - Admin only because it can contain sensitive details
+router.get("/:id", protect, adminAuth, getPaymentById);
 
-// UPDATE PAYMENT ROUTE
-router.put("/:id", updatePayment);
+// UPDATE PAYMENT ROUTE - Admin only
+router.put("/:id", protect, adminAuth, updatePayment);
 
-// DELETE PAYMENT ROUTE
-router.delete("/:id", deletePayment);
-
-// GET PAYMENTS BY STATUS ROUTE
-router.get("/status/:status", getPaymentsByStatus);
+// DELETE PAYMENT ROUTE - Admin only
+router.delete("/:id", protect, adminAuth, deletePayment);
 
 export default router;

@@ -3,85 +3,219 @@ import { useNavigate } from "react-router-dom";
 const Category = () => {
   const navigate = useNavigate();
 
-  const categories = [
-  
+  const THEME = {
+    BG: "#F8F5F1",
+    CARD: "#FFFFFF",
+    PRIMARY: "#4A315F",
+    PRIMARY_DARK: "#3B284D",
+    GOLD: "#EFC65A",
+    HEADING: "#111827",
+    TEXT: "#5F5A6E",
+    MUTED: "#7A7488",
+    BORDER: "#E8E1DA",
+    SOFT_GREEN: "#E8F1D8",
+  };
 
-    { 
-      id: 5, 
-      name: "Cleansers", 
-      bg: "bg-indigo-100", 
-      icon: "✨" 
+  const categories = [
+    {
+      id: 5,
+      name: "Hair Care",
+      icon: "💈",
+      image:
+        "https://images.unsplash.com/photo-1560264641-1b5191cc63e2?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     },
-    { 
-      id: 6, 
-      name: "Moisturizers", 
-      bg: "bg-teal-100", 
-      icon: "💫" 
+    {
+      id: 6,
+      name: "Beard & Shaving",
+      icon: "🧔",
+      image: "https://images.unsplash.com/photo-1517832606299-7ae9b720a186",
     },
-    { 
-      id: 7, 
-      name: "Masks", 
-      tag: "popular", 
-      tagColor: "bg-orange-400", 
-      bg: "bg-violet-100", 
-      icon: "🧖‍♀️" 
+    {
+      id: 7,
+      name: "Skincare",
+      tag: "POPULAR",
+      icon: "✨",
+      image: "https://images.unsplash.com/photo-1596755389378-c31d21fd1273",
     },
-    { 
-      id: 8, 
-      name: "Sunscreen", 
-      bg: "bg-yellow-100", 
-      icon: "☀️" 
-    }
+    {
+      id: 8,
+      name: "Fragrance",
+      icon: "🔥",
+      image: "https://images.unsplash.com/photo-1541643600914-78b084683601",
+    },
   ];
 
   const handleCategoryClick = (categoryName) => {
-    navigate(`/products/${categoryName.toLowerCase()}`);
+    navigate(`/products/${categoryName.toLowerCase().replace(/\s+/g, "")}`);
   };
 
-  const CategoryCard = ({ name, tag, tagColor, bg, icon }) => {
-    return (
-      <div
-        onClick={() => handleCategoryClick(name)}
-        className={`relative w-60 h-[50vh] rounded-xl shadow-md flex flex-col items-center justify-center ${bg} cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-2`}
-      >
-        {tag && (
-          <span
-            className={`absolute -top-3 left-3 px-3 py-1 text-sm text-white rounded-full ${tagColor}`}
-          >
-            {tag}
-          </span>
-        )}
-        <div className="text-8xl mb-6">{icon}</div>
-        <div className="text-lg font-semibold text-gray-800">{name}</div>
-      </div>
-    );
+  const handleDiscoverProducts = () => {
+    navigate("/products");
   };
 
   return (
-    <div className="px-4 py-16 bg-gradient-to-b from-white to-rose-50/30">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center bg-white/80 backdrop-blur-md text-gray-700 px-6 py-3 rounded-full text-sm font-medium mb-6 shadow-lg border border-gray-200">
-            <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" />
-            </svg>
-            ✨ Premium Skincare Collection
+    <div
+      className="relative min-h-screen overflow-hidden px-4 py-20"
+      style={{ backgroundColor: THEME.BG }}
+    >
+      {/* Soft Background Glow */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div
+          className="absolute left-10 top-20 h-72 w-72 rounded-full blur-3xl"
+          style={{ backgroundColor: "rgba(239,198,90,0.18)" }}
+        />
+        <div
+          className="absolute bottom-20 right-10 h-80 w-80 rounded-full blur-3xl"
+          style={{ backgroundColor: "rgba(74,49,95,0.10)" }}
+        />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-7xl">
+        {/* Header */}
+        <div className="mb-20 text-center">
+          <div
+            className="mb-6 inline-flex items-center rounded-full px-5 py-2 text-sm font-semibold"
+            style={{
+              backgroundColor: THEME.CARD,
+              color: THEME.PRIMARY,
+              border: `1px solid ${THEME.BORDER}`,
+              boxShadow: "0 10px 30px rgba(74,49,95,0.06)",
+            }}
+          >
+            ✂️ Premium Grooming Collection
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-800 mb-6">
+
+          <h1
+            className="mb-6 text-5xl font-bold md:text-6xl"
+            style={{ color: THEME.HEADING }}
+          >
             Shop By Category
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed bg-white/50 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/50">
-            Discover our carefully curated collection of beauty products designed to enhance your natural beauty
+
+          <p
+            className="mx-auto max-w-3xl text-xl leading-relaxed"
+            style={{ color: THEME.TEXT }}
+          >
+            Discover premium barber-grade products crafted for modern gentlemen.
+            From hair styling and beard care to skincare and fragrances,
+            everything you need for the perfect grooming routine.
           </p>
         </div>
-        
-        <div className="flex gap-8 justify-center flex-wrap">
+
+        {/* Categories */}
+        <div className="flex flex-wrap justify-center gap-10">
           {categories.map((cat) => (
-            <CategoryCard key={cat.id} {...cat} />
+            <div
+              key={cat.id}
+              onClick={() => handleCategoryClick(cat.name)}
+              className="group relative h-[420px] w-72 cursor-pointer overflow-hidden rounded-3xl transition-all duration-500 hover:-translate-y-3"
+              style={{
+                backgroundColor: THEME.CARD,
+                border: `1px solid ${THEME.BORDER}`,
+                boxShadow: "0 14px 35px rgba(74,49,95,0.10)",
+              }}
+            >
+              <img
+                src={cat.image}
+                alt={cat.name}
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(to top, rgba(74,49,95,0.88), rgba(74,49,95,0.35), rgba(255,255,255,0.05))",
+                }}
+              />
+
+              {cat.tag && (
+                <div className="absolute left-4 top-4 z-20">
+                  <span
+                    className="rounded-full px-3 py-1 text-xs font-bold tracking-wider"
+                    style={{
+                      backgroundColor: THEME.GOLD,
+                      color: THEME.PRIMARY_DARK,
+                    }}
+                  >
+                    {cat.tag}
+                  </span>
+                </div>
+              )}
+
+              <div
+                className="absolute inset-0 rounded-3xl transition-all duration-500 group-hover:opacity-100"
+                style={{
+                  border: `1px solid rgba(239,198,90,0.45)`,
+                }}
+              />
+
+              <div className="absolute bottom-0 left-0 right-0 z-10 p-8">
+                <div className="mb-4 text-5xl">{cat.icon}</div>
+
+                <h3 className="mb-2 text-2xl font-bold text-white">
+                  {cat.name}
+                </h3>
+
+                <div
+                  className="flex items-center font-semibold"
+                  style={{ color: THEME.GOLD }}
+                >
+                  Explore Collection
+                  <svg
+                    className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
-        
 
+        {/* Bottom Banner */}
+        <div className="mt-24 text-center">
+          <div
+            className="mx-auto max-w-4xl rounded-3xl p-10 backdrop-blur-xl"
+            style={{
+              backgroundColor: THEME.CARD,
+              border: `1px solid ${THEME.BORDER}`,
+              boxShadow: "0 16px 45px rgba(74,49,95,0.08)",
+            }}
+          >
+            <h2
+              className="mb-4 text-3xl font-bold"
+              style={{ color: THEME.HEADING }}
+            >
+              Professional Barber Products
+            </h2>
+
+            <p className="mb-8" style={{ color: THEME.MUTED }}>
+              Premium styling, grooming, beard care and fragrance products
+              trusted by professional barbers worldwide.
+            </p>
+
+            <button
+              className="rounded-xl px-8 py-4 font-semibold transition-all duration-300 hover:scale-105"
+              style={{
+                backgroundColor: THEME.PRIMARY,
+                color: "#FFFFFF",
+                boxShadow: "0 12px 25px rgba(74,49,95,0.22)",
+              }}
+              onClick={handleDiscoverProducts}
+            >
+              Explore All Products
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

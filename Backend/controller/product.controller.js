@@ -3,8 +3,7 @@ import asyncHandler from "express-async-handler";
 
 // CREATE PRODUCT
 const createProduct = asyncHandler(async (req, res) => {
-  const newProduct = await Product(req.body);
-  const product = newProduct.save();
+  const product = await Product.create(req.body);
 
   if (product) {
     res.status(201).json(product);
@@ -15,7 +14,6 @@ const createProduct = asyncHandler(async (req, res) => {
 });
 
 // UPDATE PRODUCT
-
 const updateProduct = asyncHandler(async (req, res) => {
   const updatedProduct = await Product.findByIdAndUpdate(
     req.params.id,
@@ -25,22 +23,22 @@ const updateProduct = asyncHandler(async (req, res) => {
     { new: true }
   );
 
-  if (!updateProduct) {
+  if (!updatedProduct) {
     res.status(400);
     throw new Error("Product has not been updated");
   } else {
-    res.status(201).json(updatedProduct);
+    res.status(200).json(updatedProduct);
   }
 });
 
-//DELETE PRODUCT
+// DELETE PRODUCT
 const deleteProduct = asyncHandler(async (req, res) => {
   const product = await Product.findByIdAndDelete(req.params.id);
   if (!product) {
     res.status(400);
-    throw new Error("product was not deleted");
+    throw new Error("Product was not deleted");
   } else {
-    res.status(201).json("Product deleted successfully");
+    res.status(200).json({ message: "Product deleted successfully" });
   }
 });
 
@@ -49,65 +47,107 @@ const getProduct = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
 
   if (!product) {
-    res.status(400);
+    res.status(404);
     throw new Error("Product not found");
-  } else {
-    res.status(200).json(product);
   }
+
+  res.status(200).json(product);
 });
+
 
 // GET ALL PRODUCTS
 const getALLproducts = asyncHandler(async (req, res) => {
   const qNew = req.query.new;
   const qCategory = req.query.category;
-  const qsearch = req.query.search;
+  const qSearch = req.query.search;
+  const qType = req.query.type;
+  const qBrand = req.query.brand;
+  const qSort = req.query.sort;
 
-  let products;
+  const page = parseInt(req.query.page, 10) || 1;
+  const limit = Math.min(parseInt(req.query.limit, 10) || 32, 100);
+  const skip = (page - 1) * limit;
+
+  const filter = {};
+
+  // CATEGORY FILTER
+  // DB categories: Hair Care, Beard & Shaving, Skin Care, Fragrance
+  if (qCategory) {
+    filter.categories = { $in: [qCategory] };
+  }
+
+  // TYPE FILTER
+  // Example: Hair Wax, Hair Gel, Beard Oil
+  if (qType) {
+    filter.type = qType;
+  }
+
+  // BRAND FILTER
+  // Example: Redone, Gummy, Astra
+  if (qBrand) {
+    filter.brand = qBrand;
+  }
+
+  // SEARCH FILTER
+  // Requires text index in MongoDB
+  if (qSearch) {
+    filter.$text = {
+      $search: qSearch,
+      $caseSensitive: false,
+      $diacriticSensitive: false,
+    };
+  }
+
+  // SORTING
+  let sort = { createdAt: -1 };
 
   if (qNew) {
-    products = await Product.find().sort({ createdAt: -1 });
-  } else if (qCategory) {
-    products = await Product.find({ categories: { $in: [qCategory] } });
-  } else if (qsearch) {
-    products = await Product.find({
-      $text: {
-        $search: qsearch,
-        $caseSensitive: false,
-        $diacriticSensitive: false,
-      },
-    });
-  } else {
-    products = await Product.find().sort({ createdAt: -1 });
-   
+    sort = { createdAt: -1 };
   }
-  res.status(200).json(products)
+
+  if (qSort === "newest") {
+    sort = { createdAt: -1 };
+  }
+
+  if (qSort === "asc") {
+    sort = { originalPrice: 1 };
+  }
+
+  if (qSort === "desc") {
+    sort = { originalPrice: -1 };
+  }
+
+  const products = await Product.find(filter)
+    .sort(sort)
+    .skip(skip)
+    .limit(limit);
+
+  res.status(200).json(products);
 });
 
 // RATING PRODUCT
-
 const ratingProduct = asyncHandler(async (req, res) => {
   const { star, name, comment, postedBy } = req.body;
 
-  console.log(star, name, comment, postedBy)
-  console.log(req.params.id)
-
-
-  if (star) {
-    await Product.findByIdAndUpdate(
-      req.params.id,
-
-      {
-        $push: { ratings: { star, name, comment, postedBy } },
-      },
-      {
-        new: true,
-      }
-    );
-    res.status(201).json("product was rated successfully");
-  } else {
+  if (!star) {
     res.status(400);
-    throw new Error("product was not rated successfully");
+    throw new Error("Product rating value is required");
   }
+
+  const updatedProduct = await Product.findByIdAndUpdate(
+    req.params.id,
+    {
+      $push: { ratings: { star, name, comment, postedBy } },
+    },
+    { new: true }
+  );
+
+  if (!updatedProduct) {
+    res.status(404);
+    throw new Error("Product not found");
+  }
+
+  res.status(201).json(updatedProduct);
 });
 
-export {ratingProduct, getALLproducts,getProduct, createProduct,updateProduct, deleteProduct}
+export { ratingProduct, getALLproducts, getProduct, createProduct, updateProduct, deleteProduct };

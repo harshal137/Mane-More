@@ -1,5 +1,8 @@
-import {createBrowserRouter, Outlet, RouterProvider} from 'react-router-dom';
+import {createBrowserRouter, Outlet, RouterProvider, Navigate} from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { ProtectedRoute } from './components/ProtectedRoute';
 import Menu from './components/Menu';
+import Login from './pages/Login';
 import Home from './pages/Home';
 import Users from './pages/Users';
 import Products from './pages/Products';
@@ -9,16 +12,10 @@ import NewProduct from './pages/NewProduct';
 import Product from './pages/Product';
 import Bundles from './pages/Bundle';
 import CreateBundle from './pages/NewBundle';
-import Login from './pages/Login';
 import Payments from './pages/Payments';
 import Analytics from './pages/Analytics';
-import ClinicAssessments from './pages/Clinic';
-
-// Protected Route Component
-const ProtectedRoute = ({ children }) => {
-  const user = localStorage.getItem("user");
-  return user ? children : <Login />;
-};
+import AdminSettings from './pages/AdminSettings';
+import OrderDetail from "./pages/OrderDetail";
 
 function App () {
   const Layout = () => {
@@ -36,13 +33,21 @@ function App () {
 
   const router = createBrowserRouter ([
     {
-      path: '/',
+      path: '/login',
       element: <Login />,
     },
     {
       path: '/',
-      element: <ProtectedRoute><Layout /></ProtectedRoute>,
+      element: (
+        <ProtectedRoute>
+          <Layout />
+        </ProtectedRoute>
+      ),
       children: [
+        {
+          index: true,
+          element: <Navigate to="/home" replace />,
+        },
         {
           path: '/home',
           element: <Home />,
@@ -79,9 +84,10 @@ function App () {
           path: '/tracking',
           element: <Analytics />,
         },
+        
         {
-          path: '/clinic',
-          element: <ClinicAssessments />,
+          path: '/settings',
+          element: <AdminSettings />,
         },
         {
           path: '/newproduct',
@@ -90,15 +96,19 @@ function App () {
         {
           path: '/product/:id',
           element: <Product />,
+        },
+        {
+          path: '/order/:id',
+          element: <OrderDetail />,
         }
       ],
     },
   ]);
 
   return (
-    <div>
+    <AuthProvider>
       <RouterProvider router={router} />
-    </div>
+    </AuthProvider>
   );
 }
 

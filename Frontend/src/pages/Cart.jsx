@@ -1,69 +1,95 @@
-import { FaMinus, FaPlus, FaTrashAlt, FaArrowLeft, FaShoppingBag, FaCreditCard, FaBox, FaInfoCircle, FaTimes, FaSpinner, FaStore, FaTruck } from 'react-icons/fa';
+import {
+  FaMinus,
+  FaPlus,
+  FaTrashAlt,
+  FaArrowLeft,
+  FaShoppingBag,
+  FaCreditCard,
+  FaBox,
+  FaInfoCircle,
+  FaTimes,
+  FaSpinner,
+  FaMapMarkerAlt,
+  FaUser,
+  FaPhone,
+  FaEnvelope,
+  FaCity,
+} from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { clearCart, removeProduct, updateQuantity } from '../redux/cartRedux';
-import { paymentRequest, userRequest } from "../requestMethods";
+import { clearCart, removeProduct, updateQuantity } from "../redux/cartRedux";
+import { stripeRequest, userRequest } from "../requestMethods";
 import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-import { Link, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { trackPageView, trackButtonClick, trackUserAction, trackPurchase } from '../utils/analytics';
+import "react-toastify/dist/ReactToastify.css";
+import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import {
+  trackPageView,
+  trackButtonClick,
+  trackUserAction,
+  trackPurchase,
+} from "../utils/analytics";
+
+const THEME = {
+  BG: "#F8F5F1",
+  CARD: "#FFFFFF",
+  PRIMARY: "#4A315F",
+  HEADING: "#111827",
+  TEXT: "#5F5A6E",
+  MUTED: "#7A7488",
+  BORDER: "#E8E1DA",
+  SOFT_GREEN: "#E8F1D8",
+};
 
 const Cart = () => {
   const cart = useSelector((state) => state.cart);
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
-  // State management
+
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [modalStep, setModalStep] = useState(1);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [showPaymentIframe, setShowPaymentIframe] = useState(false);
-  const [paymentUrl, setPaymentUrl] = useState('');
-  const [isIframeLoading, setIsIframeLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [currentOrderId, setCurrentOrderId] = useState(null);
-  const [phoneError, setPhoneError] = useState('');
-  
+  const [phoneError, setPhoneError] = useState("");
+
   const [orderDetails, setOrderDetails] = useState({
-    name: '',
-    phone: '',
-    email: '',
-    address: '',
+    name: "",
+    phone: "",
+    email: "",
+    address: "",
+    addressLine1: "",
+    addressLine2: "",
+    landmark: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    country: "India",
     payNow: false,
-    pickupOption: '',
-    locationType: ''
+    paymentMethod: "",
+    pickupOption: "delivery",
+    locationType: "",
   });
 
-  // Analytics: Track page view and cart state
   useEffect(() => {
-    trackPageView('cart_page');
-    trackButtonClick('cart_view', {
+    trackPageView("cart_page");
+    trackButtonClick("cart_view", {
       cart_items_count: cart.products?.length || 0,
       cart_total: cart.total || 0,
       cart_quantity: cart.quantity || 0,
-      user_logged_in: !!user.currentUser
+      user_logged_in: !!user.currentUser,
     });
   }, []);
 
-  // Analytics: Track cart updates
   useEffect(() => {
     if (cart.products?.length > 0) {
-      trackUserAction('cart_updated', 'cart_update', {
+      trackUserAction("cart_updated", "cart_update", {
         cart_items_count: cart.products.length,
         cart_total: cart.total,
         cart_quantity: cart.quantity,
-        products: cart.products.map(p => ({
-          product_id: p._id,
-          product_name: p.title,
-          quantity: p.quantity,
-          price: p.price
-        }))
       });
     }
   }, [cart.products, cart.total, cart.quantity]);
 
-  // Modal animation handling
   useEffect(() => {
     if (showOrderModal) {
       requestAnimationFrame(() => setIsModalVisible(true));
@@ -72,452 +98,383 @@ const Cart = () => {
     }
   }, [showOrderModal]);
 
-  // Payment status polling
+  // ADDED: show message when user returns from Stripe cancel/failure.
   useEffect(() => {
-    let intervalId;
-    
-    if (showPaymentIframe && currentOrderId) {
-      intervalId = setInterval(async () => {
-        try {
-          const response = await userRequest.get(`/pesapal/status?trackingId=${currentOrderId}&reference=${currentOrderId}`);
-          
-          if (response.data.status === 'COMPLETED') {
-            clearInterval(intervalId);
-            toast.success('🎉 Payment completed successfully!');
-            
-            // Analytics: Track successful payment
-            trackPurchase({
-              order_id: currentOrderId,
-              amount: cart.total + calculateShippingFee(),
-              payment_method: 'pesapal',
-              products_count: cart.products?.length || 0,
-              currency: 'KES'
-            });
-            
-            dispatch(clearCart());
-            setShowPaymentIframe(false);
-            navigate('/myorders');
-          }
-        } catch (error) {
-          console.error('Error checking payment status:', error);
-        }
-      }, 3000);
+    const params = new URLSearchParams(window.location.search);
+    const payment = params.get("payment");
+    const sessionId = params.get("session_id");
+
+    if (payment === "cancelled") {
+      if (sessionId) {
+        stripeRequest
+          .post(`/cancel-session/${sessionId}`)
+          .catch((error) => {
+            console.error("Could not mark cancelled Stripe payment:", error);
+          });
+      }
+
+      toast.error("Payment was cancelled. Your order was not placed.");
+      navigate("/cart", { replace: true });
     }
 
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-    };
-  }, [showPaymentIframe, currentOrderId, navigate, dispatch, cart.total, cart.products]);
-
-  // Helper functions
-  const validatePhoneNumber = (phone) => {
-    const cleanedPhone = phone.replace(/\D/g, '');
-    const kenyanRegex = /^(254|0)(7[0-9]|1[0-1])[0-9]{7}$/;
-    
-    if (!cleanedPhone) {
-      return { isValid: false, message: 'Phone number is required' };
+    if (payment === "failed") {
+      toast.error("Payment failed. Your order was not placed.");
+      navigate("/cart", { replace: true });
     }
-    
-    if (!kenyanRegex.test(cleanedPhone)) {
-      return { isValid: false, message: 'Please enter a valid Kenyan phone number' };
-    }
-    
-    let formattedPhone = cleanedPhone;
-    if (cleanedPhone.startsWith('0')) {
-      formattedPhone = '254' + cleanedPhone.substring(1);
-    }
-    
-    return { isValid: true, formatted: formattedPhone };
-  };
+  }, [navigate]);
 
   const calculateShippingFee = () => {
-    if (orderDetails.pickupOption === 'pickup') {
-      return 0;
-    } else if (orderDetails.locationType === 'nairobi') {
-      return 200;
-    } else if (orderDetails.locationType === 'outside') {
-      return 350;
+    switch (orderDetails.locationType) {
+      case "Within London":
+        return 2;
+      case "Outside London":
+        return 4;
+      default:
+        return 0;
     }
-    return 0;
   };
 
-  // Cart actions with analytics
+  const subtotal = cart.total || 0;
+  const shippingFee = calculateShippingFee();
+  const total = subtotal + shippingFee;
+
+  const validatePhoneNumber = (phone) => {
+    const cleanedPhone = phone.replace(/\D/g, "");
+
+    if (!cleanedPhone) {
+      return { isValid: false, message: "Phone number is required" };
+    }
+
+    if (cleanedPhone.length < 10) {
+      return { isValid: false, message: "Please enter a valid phone number" };
+    }
+
+    return { isValid: true, formatted: cleanedPhone };
+  };
+
+  const resetOrderDetails = () => {
+    setOrderDetails({
+      name: "",
+      phone: "",
+      email: "",
+      address: "",
+      addressLine1: "",
+      addressLine2: "",
+      landmark: "",
+      city: "",
+      state: "",
+      postalCode: "",
+      country: "India",
+      payNow: false,
+      paymentMethod: "",
+      pickupOption: "delivery",
+      locationType: "",
+    });
+  };
+
+  const buildAddressDetails = () => ({
+    addressLine1: orderDetails.addressLine1.trim(),
+    addressLine2: orderDetails.addressLine2.trim(),
+    landmark: orderDetails.landmark.trim(),
+    city: orderDetails.city.trim(),
+    state: orderDetails.state.trim(),
+    postalCode: orderDetails.postalCode.trim(),
+    country: orderDetails.country.trim() || "India",
+  });
+
+  const buildFullAddress = () => {
+    const details = buildAddressDetails();
+
+    return [
+      details.addressLine1,
+      details.addressLine2,
+      details.landmark ? `Landmark: ${details.landmark}` : "",
+      details.city,
+      details.state,
+      details.postalCode,
+      details.country,
+    ]
+      .filter(Boolean)
+      .join(", ");
+  };
+
   const handleRemoveProduct = (product) => {
     dispatch(removeProduct(product));
-    
-    trackButtonClick('remove_from_cart', {
-      product_id: product._id,
-      product_name: product.title,
-      product_price: product.price,
-      quantity: product.quantity,
-      remaining_items: (cart.products?.length || 0) - 1
-    });
-    
-    toast.success('Item removed from cart');
+    toast.success("Item removed from cart");
   };
 
   const handleClearCart = () => {
-    const previousItems = cart.products?.length || 0;
     dispatch(clearCart());
-    
-    trackButtonClick('clear_cart', {
-      previous_items_count: previousItems,
-      cart_total: cart.total || 0
-    });
-    
-    toast.info('Cart cleared');
+    toast.info("Cart cleared");
   };
 
   const handleQuantityChange = (product, change) => {
     const newQuantity = product.quantity + change;
-    
+
     if (newQuantity < 1) {
       handleRemoveProduct(product);
       return;
     }
-    
-    dispatch(updateQuantity({ 
-      _id: product._id, 
-      quantity: newQuantity 
-    }));
-    
-    trackButtonClick('update_cart_quantity', {
-      product_id: product._id,
-      product_name: product.title,
-      old_quantity: product.quantity,
-      new_quantity: newQuantity,
-      change_type: change > 0 ? 'increase' : 'decrease'
-    });
+
+    dispatch(
+      updateQuantity({
+        _id: product._id,
+        quantity: newQuantity,
+      })
+    );
   };
 
-  // Form handlers with analytics
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    
-    if (name === 'phone') {
-      const numbersOnly = value.replace(/\D/g, '');
+    const { name, value } = e.target;
+
+    if (name === "phone") {
+      const numbersOnly = value.replace(/\D/g, "");
       const validation = validatePhoneNumber(numbersOnly);
-      setPhoneError(validation.isValid ? '' : validation.message);
-      
-      setOrderDetails(prev => ({
+
+      setPhoneError(validation.isValid ? "" : validation.message);
+
+      setOrderDetails((prev) => ({
         ...prev,
-        [name]: numbersOnly
+        phone: numbersOnly,
       }));
+
       return;
     }
-    
-    setOrderDetails(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-  };
 
-  const handlePickupOptionChange = (option) => {
-    setOrderDetails(prev => ({
+    setOrderDetails((prev) => ({
       ...prev,
-      pickupOption: option,
-      ...(option === 'pickup' && { locationType: '' })
+      [name]: value,
     }));
-    
-    trackButtonClick('shipping_option_selected', {
-      option: option,
-      cart_total: cart.total || 0,
-      shipping_fee: calculateShippingFee()
-    });
   };
 
   const handleLocationTypeChange = (location) => {
-    setOrderDetails(prev => ({
+    setOrderDetails((prev) => ({
       ...prev,
-      locationType: location
+      locationType: location,
     }));
-    
-    trackButtonClick('delivery_location_selected', {
-      location: location,
-      shipping_fee: calculateShippingFee()
-    });
   };
 
-  // Checkout flow with analytics
   const handleProceedToCheckout = () => {
     if (!user.currentUser) {
-      trackButtonClick('checkout_attempt_without_login', {
-        cart_items_count: cart.products?.length || 0,
-        cart_total: cart.total || 0
-      });
       toast.error("Please login to place an order");
       return;
     }
-    
-    trackButtonClick('checkout_initiated', {
-      cart_items_count: cart.products?.length || 0,
-      cart_total: cart.total || 0,
-      cart_quantity: cart.quantity || 0
-    });
-    
+
     setModalStep(1);
     setShowOrderModal(true);
   };
 
   const handleCloseModal = () => {
     if (!isProcessing) {
-      trackButtonClick('checkout_modal_closed', {
-        modal_step: modalStep,
-        cart_items_count: cart.products?.length || 0
-      });
-      
       setIsModalVisible(false);
+
       setTimeout(() => {
         setShowOrderModal(false);
         setModalStep(1);
-        setOrderDetails({
-          name: '',
-          phone: '',
-          email: '',
-          address: '',
-          payNow: false,
-          pickupOption: '',
-          locationType: ''
-        });
-        setPhoneError('');
+        resetOrderDetails();
+        setPhoneError("");
       }, 300);
     }
   };
 
-  const handlePaymentChoice = (payNow) => {
-    setOrderDetails(prev => ({ ...prev, payNow }));
-    
-    trackButtonClick('payment_method_selected', {
-      method: payNow ? 'pay_now' : 'pay_later',
-      cart_total: cart.total || 0,
-      shipping_fee: calculateShippingFee(),
-      total_amount: cart.total + calculateShippingFee()
-    });
-    
+  const handlePaymentChoice = (payNow, paymentMethod) => {
+    setOrderDetails((prev) => ({
+      ...prev,
+      payNow,
+      paymentMethod,
+    }));
+
     setModalStep(2);
   };
 
-  // Payment handlers with analytics
-  const handleClosePaymentIframe = () => {
-    trackButtonClick('payment_iframe_closed', {
-      order_id: currentOrderId,
-      payment_status: 'cancelled_by_user'
-    });
-    
-    setShowPaymentIframe(false);
-    setPaymentUrl('');
-    setCurrentOrderId(null);
-    setIsIframeLoading(true);
-  };
-
-  const handleIframeLoad = () => {
-    setIsIframeLoading(false);
-    trackButtonClick('payment_iframe_loaded', {
-      order_id: currentOrderId
-    });
-  };
-
-  // Main order placement function
   const handlePlaceOrder = async () => {
-    // Validation
-    if (!orderDetails.pickupOption) {
-      toast.error('Please choose pickup or delivery');
-      return;
-    }
-
-    if (orderDetails.pickupOption === 'delivery' && !orderDetails.locationType) {
-      toast.error('Please specify your delivery location');
+    if (!orderDetails.locationType) {
+      toast.error("Please select your delivery area");
       return;
     }
 
     const phoneValidation = validatePhoneNumber(orderDetails.phone);
+
     if (!phoneValidation.isValid) {
       toast.error(phoneValidation.message);
       return;
     }
 
-    if (!orderDetails.name || !orderDetails.phone || !orderDetails.address) {
-      toast.error('Please fill in all required details (name, phone, address)');
+    const addressDetails = buildAddressDetails();
+    const fullAddress = buildFullAddress();
+
+    if (
+      !orderDetails.name.trim() ||
+      !orderDetails.phone ||
+      !addressDetails.addressLine1 ||
+      !addressDetails.addressLine2 ||
+      !addressDetails.city ||
+      !addressDetails.state ||
+      !addressDetails.postalCode ||
+      !fullAddress
+    ) {
+      toast.error("Please fill in all required details");
       return;
     }
 
     setIsProcessing(true);
 
     try {
-      const subtotal = cart.total;
-      const shippingFee = calculateShippingFee();
-      const totalInKES = subtotal + shippingFee;
-      const formattedPhone = validatePhoneNumber(orderDetails.phone).formatted;
-
-      // Create order data
-      const orderData = {
+      const formattedPhone = phoneValidation.formatted;
+      const commonPayload = {
         userId: user.currentUser._id,
+        cart,
         name: orderDetails.name,
-        phone: formattedPhone.toString(),
         email: orderDetails.email || user.currentUser.email,
-        address: orderDetails.address,
-        products: cart.products.map(product => ({
-          productId: product._id,
-          title: product.title,
-          quantity: product.quantity,
-          price: product.price,
-          img: product.img[0]
-        })),
-        total: totalInKES,
-        subtotal: subtotal,
-        shippingFee: shippingFee,
-        pickupOption: orderDetails.pickupOption,
+        phone: formattedPhone.toString(),
+        address: fullAddress,
+        addressDetails,
+        shippingFee,
         locationType: orderDetails.locationType,
-        status: orderDetails.payNow ? 0 : 1,
       };
 
-      console.log('📦 Creating order with data:', orderData);
-      const orderResponse = await userRequest.post("/orders", orderData);
-      console.log('✅ Order created successfully:', orderResponse.data);
-      
-      // Analytics: Track order creation
-      trackButtonClick('order_created', {
-        order_id: orderResponse.data._id,
-        payment_method: orderDetails.payNow ? 'online' : 'pay_later',
-        total_amount: totalInKES,
-        shipping_fee: shippingFee,
-        pickup_option: orderDetails.pickupOption,
-        location_type: orderDetails.locationType,
-        products_count: cart.products?.length || 0
-      });
-
       if (orderDetails.payNow) {
-        // Process online payment
-        const paymentData = {
-          email: orderDetails.email || user.currentUser.email,
-          reference: orderResponse.data._id,
-          phone: formattedPhone.toString(),
-          first_name: orderDetails.name.split(' ')[0],
-          last_name: orderDetails.name.split(' ').slice(1).join(' ') || 'Customer',
-          amount: totalInKES,
-          description: `Order for ${orderDetails.name} - ${cart.products.length} items`
-        };
+        // UPDATED: Pay Online only creates a Stripe Checkout Session.
+        // Order is NOT created here. Final paid order is created by Stripe webhook.
+        // Frontend total/amount is intentionally not sent because backend recalculates it from DB.
+        const stripeResponse = await stripeRequest.post(
+          "/create-checkout-session",
+          commonPayload
+        );
 
-        console.log('💳 Making payment request with data:', paymentData);
-        const paymentResponse = await paymentRequest.post("/payment", paymentData);
-        
-        if (paymentResponse.data) {
-          setCurrentOrderId(orderResponse.data._id);
-          setPaymentUrl(paymentResponse.data);
-          setShowPaymentIframe(true);
-          setIsIframeLoading(true);
-          
-          trackButtonClick('payment_initiated', {
-            order_id: orderResponse.data._id,
-            amount: totalInKES,
-            payment_gateway: 'pesapal'
-          });
-          
-          handleCloseModal();
-        } else {
-          throw new Error('No redirect URL received from payment gateway');
+        if (stripeResponse.data?.url) {
+          // IMPORTANT: do not clear cart here.
+          // Cart is cleared only after webhook creates the paid order and My Orders verifies it.
+          window.location.href = stripeResponse.data.url;
+          return;
         }
-      } else {
-        // Pay later flow
-        let successMessage = '🎉 Order placed successfully! ';
-        if (orderDetails.pickupOption === 'pickup') {
-          successMessage += 'We look forward to seeing you at our shop!';
-        } else {
-          successMessage += 'We will contact you for payment when your order is ready.';
-        }
-        
-        // Analytics: Track successful order placement
-        trackPurchase({
-          order_id: orderResponse.data._id,
-          amount: totalInKES,
-          payment_method: 'pay_later',
-          products_count: cart.products?.length || 0,
-          currency: 'KES',
-          pickup_option: orderDetails.pickupOption,
-          location_type: orderDetails.locationType
-        });
-        
-        toast.success(successMessage);
-        dispatch(clearCart());
-        handleCloseModal();
-        navigate('/myorders');
+
+        throw new Error("Stripe checkout URL not received");
       }
 
+      // ADDED: COD order flow.
+      // COD creates order immediately with payment_status pending and transaction mode COD.
+      const codResponse = await userRequest.post("/orders/cod", commonPayload);
+
+      if (codResponse.data?.order) {
+        dispatch(clearCart());
+        trackPurchase(codResponse.data.order._id, total, cart.products);
+        navigate("/myorders?order=cod-success");
+        return;
+      }
+
+      throw new Error("COD order was not created");
     } catch (error) {
-      console.error('❌ Order/Payment error:', error);
-      
-      // Analytics: Track order error
-      trackButtonClick('order_error', {
-        error_type: error.response?.status === 400 ? 'validation_error' : 'server_error',
-        error_message: error.message,
-        payment_method: orderDetails.payNow ? 'online' : 'pay_later',
-        cart_total: cart.total || 0
-      });
-      
-      if (error.response?.status === 400) {
-        toast.error('Failed to create order. Please try again.');
-      } else if (error.message.includes('redirect URL')) {
-        toast.error('Payment service temporarily unavailable. Your order has been placed - we will contact you for payment.');
-        dispatch(clearCart());
-        handleCloseModal();
-      } else {
-        toast.error('Something went wrong. Please try again or contact support.');
-      }
+      console.error("Order/payment error:", error);
+      toast.error(
+        error.response?.data?.message ||
+          "Order could not be processed. Please try again."
+      );
     } finally {
       setIsProcessing(false);
     }
   };
 
-  // Calculate totals
-  const subtotal = cart.total || 0;
-  const shippingFee = calculateShippingFee();
-  const total = subtotal + shippingFee;
+  const inputStyle = {
+    backgroundColor: THEME.BG,
+    border: `1px solid ${THEME.BORDER}`,
+    color: THEME.TEXT,
+  };
 
-  // Modal content renderer
+  const selectedCard = {
+    backgroundColor: THEME.SOFT_GREEN,
+    border: `2px solid ${THEME.PRIMARY}`,
+    color: THEME.PRIMARY,
+  };
+
+  const normalCard = {
+    backgroundColor: THEME.CARD,
+    border: `2px solid ${THEME.BORDER}`,
+    color: THEME.TEXT,
+  };
+
   const renderModalContent = () => {
     if (modalStep === 1) {
       return (
-        <div className="text-center">
-          <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <FaCreditCard className="w-8 h-8 text-rose-600" />
-          </div>
-          <h3 className="text-2xl font-bold text-gray-800 mb-4">Choose Payment Method</h3>
-          <p className="text-gray-600 mb-6">How would you like to complete your order?</p>
-
-          <div className="space-y-4">
-            <button
-              onClick={() => handlePaymentChoice(true)}
-              className="w-full bg-rose-600 hover:bg-rose-700 text-white py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-[1.02] shadow-lg flex items-center justify-center"
+        <div>
+          <div className="text-center">
+            <div
+              className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full"
+              style={{ backgroundColor: THEME.SOFT_GREEN }}
             >
-              <FaCreditCard className="mr-3" />
-              Pay Now - Secure Payment (KES {total.toLocaleString()})
+              <FaCreditCard className="h-7 w-7" style={{ color: THEME.PRIMARY }} />
+            </div>
+
+            <h3 className="mb-3 text-2xl font-bold" style={{ color: THEME.HEADING }}>
+              Choose Payment Method
+            </h3>
+
+            <p className="mb-6 text-sm" style={{ color: THEME.TEXT }}>
+              Select how you want to pay for this order.
+            </p>
+          </div>
+
+          <div className="grid gap-4">
+            <button
+              onClick={() => handlePaymentChoice(false, "Cash On Delivery")}
+              className="flex w-full items-center justify-between rounded-2xl px-5 py-4 font-semibold transition-all duration-300 hover:scale-[1.02]"
+              style={{
+                backgroundColor: THEME.CARD,
+                color: THEME.PRIMARY,
+                border: `1px solid ${THEME.BORDER}`,
+              }}
+            >
+              <span className="flex items-center">
+                <FaBox className="mr-3" />
+                Cash On Delivery
+              </span>
+              <span> ₹ {total.toLocaleString("en-IN")}</span>
             </button>
 
             <button
-              onClick={() => handlePaymentChoice(false)}
-              className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-[1.02] border-2 border-dashed border-gray-300 flex items-center justify-center"
+              onClick={() => handlePaymentChoice(true, "Stripe")}
+              className="flex w-full items-center justify-between rounded-2xl px-5 py-4 font-semibold transition-all duration-300 hover:scale-[1.02]"
+              style={{
+                backgroundColor: THEME.PRIMARY,
+                color: "#FFFFFF",
+                boxShadow: "0 12px 25px rgba(74,49,95,0.22)",
+              }}
             >
-              <FaBox className="mr-3" />
-              Pay Later - When Order is Ready (KES {total.toLocaleString()})
+              <span className="flex items-center">
+                <FaCreditCard className="mr-3" />
+                Pay Online
+              </span>
+              <span> ₹ {total.toLocaleString("en-IN")} </span>
             </button>
           </div>
 
-          <div className="mt-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+          <div
+            className="mt-6 rounded-2xl p-4 text-left"
+            style={{
+              backgroundColor: "rgba(239,198,90,0.20)",
+              border: `1px solid rgba(239,198,90,0.45)`,
+            }}
+          >
             <div className="flex items-start">
-              <FaInfoCircle className="w-5 h-5 text-yellow-600 mt-0.5 mr-3 flex-shrink-0" />
-              <div className="text-left">
-                <p className="text-sm text-yellow-800 font-semibold mb-1">Important Notice</p>
-                <p className="text-xs text-yellow-700">
-                  If you choose "Pay Later", our team will contact you for payment confirmation 
-                  before your order is dispatched.
-                </p>
-              </div>
+              <FaInfoCircle
+                className="mt-1 mr-3 flex-shrink-0"
+                style={{ color: THEME.PRIMARY }}
+              />
+              <p className="text-xs leading-relaxed" style={{ color: THEME.TEXT }}>
+                Cash On Delivery orders stay unpaid until delivered. Stripe orders
+                will be marked paid after payment confirmation.
+              </p>
             </div>
           </div>
 
           <button
             onClick={handleCloseModal}
-            className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded-lg font-semibold transition-colors duration-300 mt-4"
+            className="mt-5 w-full rounded-xl px-5 py-3 font-semibold transition-all duration-300"
+            style={{
+              backgroundColor: THEME.BG,
+              color: THEME.TEXT,
+              border: `1px solid ${THEME.BORDER}`,
+            }}
           >
             Cancel
           </button>
@@ -527,221 +484,376 @@ const Cart = () => {
 
     return (
       <>
-        <div className="flex items-center justify-between mb-6">
-          <button 
+        <div className="mb-6 flex items-center justify-between">
+          <button
             onClick={() => setModalStep(1)}
-            className="flex items-center text-gray-600 hover:text-gray-800 transition-colors duration-200"
+            className="flex items-center text-sm font-semibold"
+            style={{ color: THEME.PRIMARY }}
             disabled={isProcessing}
           >
             <FaArrowLeft className="mr-2" />
             Back
           </button>
-          <h3 className="text-2xl font-bold text-gray-800">Complete Your Order</h3>
-          <button 
+
+          <h3 className="text-xl font-bold" style={{ color: THEME.HEADING }}>
+            Checkout Details
+          </h3>
+
+          <button
             onClick={handleCloseModal}
-            className="text-gray-400 hover:text-gray-600 text-xl transition-transform duration-200 hover:scale-110"
+            className="transition-transform duration-200 hover:scale-110"
+            style={{ color: THEME.MUTED }}
             disabled={isProcessing}
           >
-            ×
+            <FaTimes />
           </button>
         </div>
 
-        <div className={`mb-6 p-3 rounded-lg ${
-          orderDetails.payNow ? 'bg-green-50 border border-green-200' : 'bg-blue-50 border border-blue-200'
-        }`}>
+        <div
+          className="mb-6 rounded-2xl p-4"
+          style={{
+            backgroundColor: orderDetails.payNow
+              ? THEME.SOFT_GREEN
+              : "rgba(239,198,90,0.18)",
+            border: `1px solid ${THEME.BORDER}`,
+          }}
+        >
           <div className="flex items-center">
-            {orderDetails.payNow ? (
-              <>
-                <FaCreditCard className="w-4 h-4 text-green-600 mr-2" />
-                <span className="text-sm font-semibold text-green-800">Paying Now</span>
-                <span className="text-sm text-green-700 ml-2">- Secure payment via Pesapal (KES {total.toLocaleString()})</span>
-              </>
-            ) : (
-              <>
-                <FaBox className="w-4 h-4 text-blue-600 mr-2" />
-                <span className="text-sm font-semibold text-blue-800">Paying Later</span>
-                <span className="text-sm text-blue-700 ml-2">- We'll contact you when order is ready (KES {total.toLocaleString()})</span>
-              </>
-            )}
+            {orderDetails.payNow ? <FaCreditCard /> : <FaBox />}
+
+            <span className="ml-2 font-semibold" style={{ color: THEME.PRIMARY }}>
+              {orderDetails.paymentMethod}
+            </span>
+
+            <span className="ml-auto font-bold" style={{ color: THEME.HEADING }}>
+              ₹ {total.toLocaleString("en-IN")}
+            </span>
           </div>
         </div>
 
-        <div className="space-y-4">
-          {/* Pickup/Delivery Option */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Would you like to pickup from our shop or need delivery? *
-            </label>
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={() => handlePickupOptionChange('pickup')}
-                className={`p-4 border-2 rounded-lg text-center transition-all duration-200 ${
-                  orderDetails.pickupOption === 'pickup'
-                    ? 'border-rose-500 bg-rose-50 text-rose-700'
-                    : 'border-gray-300 bg-white text-gray-700 hover:border-rose-300'
-                }`}
-              >
-                <FaStore className="w-6 h-6 mx-auto mb-2" />
-                <span className="font-medium">Pickup from Shop</span>
-                <p className="text-xs mt-1 text-green-600">Free - No shipping fee</p>
-              </button>
-              
-              <button
-                type="button"
-                onClick={() => handlePickupOptionChange('delivery')}
-                className={`p-4 border-2 rounded-lg text-center transition-all duration-200 ${
-                  orderDetails.pickupOption === 'delivery'
-                    ? 'border-rose-500 bg-rose-50 text-rose-700'
-                    : 'border-gray-300 bg-white text-gray-700 hover:border-rose-300'
-                }`}
-              >
-                <FaTruck className="w-6 h-6 mx-auto mb-2" />
-                <span className="font-medium">Home Delivery</span>
-                <p className="text-xs mt-1">Shipping fee applies</p>
-              </button>
-            </div>
-          </div>
+        <div className="mb-6">
+          <h4 className="mb-3 font-semibold" style={{ color: THEME.HEADING }}>
+            Delivery Area
+          </h4>
 
-          {/* Delivery Location Selection */}
-          {orderDetails.pickupOption === 'delivery' && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                Select your delivery area *
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => handleLocationTypeChange('nairobi')}
-                  className={`p-3 border-2 rounded-lg text-center transition-all duration-200 ${
-                    orderDetails.locationType === 'nairobi'
-                      ? 'border-rose-500 bg-rose-50 text-rose-700'
-                      : 'border-gray-300 bg-white text-gray-700 hover:border-rose-300'
-                  }`}
-                >
-                  <span className="font-medium">Within Nairobi</span>
-                  <p className="text-xs mt-1">KES 200</p>
-                </button>
-                
-                <button
-                  type="button"
-                  onClick={() => handleLocationTypeChange('outside')}
-                  className={`p-3 border-2 rounded-lg text-center transition-all duration-200 ${
-                    orderDetails.locationType === 'outside'
-                      ? 'border-rose-500 bg-rose-50 text-rose-700'
-                      : 'border-gray-300 bg-white text-gray-700 hover:border-rose-300'
-                  }`}
-                >
-                  <span className="font-medium">Outside Nairobi</span>
-                  <p className="text-xs mt-1">KES 350</p>
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Form fields */}
-          {[
-            { label: 'Full Name *', name: 'name', type: 'text', placeholder: 'Enter your full name', required: true },
-            { label: 'Phone Number *', name: 'phone', type: 'tel', placeholder: 'e.g., 254727632051', required: true },
-            { label: 'Email Address', name: 'email', type: 'email', placeholder: 'Enter your email (optional)', required: false },
-          ].map((field) => (
-            <div key={field.name}>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
-              <input
-                type={field.type}
-                name={field.name}
-                value={orderDetails[field.name]}
-                onChange={handleInputChange}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 ${
-                  field.name === 'phone' && phoneError ? 'border-red-300' : 'border-gray-300'
-                }`}
-                placeholder={field.placeholder}
-                required={field.required}
-                inputMode={field.name === 'phone' ? 'numeric' : 'text'}
-              />
-              {field.name === 'phone' && phoneError && (
-                <p className="text-red-500 text-xs mt-1">{phoneError}</p>
-              )}
-              {field.name === 'phone' && !phoneError && orderDetails.phone && (
-                <p className="text-green-500 text-xs mt-1">✓ Valid Kenyan number</p>
-              )}
-            </div>
-          ))}
-
-          {/* Address field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              {orderDetails.pickupOption === 'pickup' ? 'Your Address (for contact purposes)' : 'Delivery Address *'}
-            </label>
-            <textarea
-              name="address"
-              value={orderDetails.address}
-              onChange={handleInputChange}
-              rows={3}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200"
-              placeholder={orderDetails.pickupOption === 'pickup' ? 
-                "Your address (optional, for contact purposes)" : 
-                "e.g., 1st Avenue, Kinoo, Kiambu"
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <button
+              type="button"
+              onClick={() => handleLocationTypeChange("Within London")}
+              className="rounded-2xl p-4 text-center transition-all duration-300"
+              style={
+                orderDetails.locationType === "Within London"
+                  ? selectedCard
+                  : normalCard
               }
-              required={orderDetails.pickupOption === 'delivery'}
-            />
-          </div>
+            >
+              <span className="font-semibold">Within London</span>
+              <p className="mt-1 text-xs">₹2 Shipping</p>
+            </button>
 
-          {/* Order Summary */}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h4 className="font-semibold text-gray-800 mb-2">Order Summary</h4>
-            <div className="space-y-1 text-sm">
-              <div className="flex justify-between">
-                <span>Items ({cart.quantity})</span>
-                <span>KES {subtotal.toLocaleString()}</span>
+            <button
+              type="button"
+              onClick={() => handleLocationTypeChange("Outside London")}
+              className="rounded-2xl p-4 text-center transition-all duration-300"
+              style={
+                orderDetails.locationType === "Outside London"
+                  ? selectedCard
+                  : normalCard
+              }
+            >
+              <span className="font-semibold">Outside London</span>
+              <p className="mt-1 text-xs">₹4 Shipping</p>
+            </button>
+          </div>
+        </div>
+
+        <div
+          className="mb-6 rounded-3xl p-5"
+          style={{
+            backgroundColor: THEME.CARD,
+            border: `1px solid ${THEME.BORDER}`,
+          }}
+        >
+          <h4
+            className="mb-4 flex items-center font-semibold"
+            style={{ color: THEME.HEADING }}
+          >
+            <FaMapMarkerAlt className="mr-2" style={{ color: THEME.PRIMARY }} />
+            Address & Contact Details
+          </h4>
+
+          <div className="space-y-4">
+            <div>
+              <label className="mb-1 block text-sm font-semibold" style={{ color: THEME.TEXT }}>
+                Full Name *
+              </label>
+
+              <div className="relative">
+                <FaUser className="absolute left-4 top-3.5 text-sm" style={{ color: THEME.MUTED }} />
+
+                <input
+                  type="text"
+                  name="name"
+                  value={orderDetails.name}
+                  onChange={handleInputChange}
+                  className="w-full rounded-2xl py-3 pl-10 pr-4 outline-none"
+                  style={inputStyle}
+                  placeholder="Enter your full name"
+                />
               </div>
-              <div className="flex justify-between">
-                <span>
-                  {orderDetails.pickupOption === 'pickup' ? 'Pickup' : 'Shipping'}
-                  {orderDetails.pickupOption === 'delivery' && orderDetails.locationType && 
-                    ` (${orderDetails.locationType === 'nairobi' ? 'Nairobi' : 'Outside Nairobi'})`
-                  }
-                </span>
-                <span>{shippingFee === 0 ? 'FREE' : `KES ${shippingFee.toLocaleString()}`}</span>
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-semibold" style={{ color: THEME.TEXT }}>
+                Phone Number *
+              </label>
+
+              <div className="relative">
+                <FaPhone className="absolute left-4 top-3.5 text-sm" style={{ color: THEME.MUTED }} />
+
+                <input
+                  type="tel"
+                  name="phone"
+                  value={orderDetails.phone}
+                  onChange={handleInputChange}
+                  className="w-full rounded-2xl py-3 pl-10 pr-4 outline-none"
+                  style={{
+                    ...inputStyle,
+                    border: phoneError ? "1px solid #EF4444" : inputStyle.border,
+                  }}
+                  placeholder="Enter phone number"
+                  inputMode="numeric"
+                />
               </div>
-              <div className="flex justify-between font-semibold border-t pt-2">
-                <span>Total</span>
-                <span className="text-rose-700">KES {total.toLocaleString()}</span>
+
+              {phoneError && <p className="mt-1 text-xs text-red-500">{phoneError}</p>}
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-semibold" style={{ color: THEME.TEXT }}>
+                Email Address
+              </label>
+
+              <div className="relative">
+                <FaEnvelope className="absolute left-4 top-3.5 text-sm" style={{ color: THEME.MUTED }} />
+
+                <input
+                  type="email"
+                  name="email"
+                  value={orderDetails.email}
+                  onChange={handleInputChange}
+                  className="w-full rounded-2xl py-3 pl-10 pr-4 outline-none"
+                  style={inputStyle}
+                  placeholder="Enter your email"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-semibold" style={{ color: THEME.TEXT }}>
+                House / Building / Flat *
+              </label>
+
+              <input
+                type="text"
+                name="addressLine1"
+                value={orderDetails.addressLine1}
+                onChange={handleInputChange}
+                className="w-full rounded-2xl px-4 py-3 outline-none"
+                style={inputStyle}
+                placeholder="Flat no, building, house name"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-semibold" style={{ color: THEME.TEXT }}>
+                Street / Area / Society *
+              </label>
+
+              <input
+                type="text"
+                name="addressLine2"
+                value={orderDetails.addressLine2}
+                onChange={handleInputChange}
+                className="w-full rounded-2xl px-4 py-3 outline-none"
+                style={inputStyle}
+                placeholder="Street, area, society or locality"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-semibold" style={{ color: THEME.TEXT }}>
+                Landmark
+              </label>
+
+              <input
+                type="text"
+                name="landmark"
+                value={orderDetails.landmark}
+                onChange={handleInputChange}
+                className="w-full rounded-2xl px-4 py-3 outline-none"
+                style={inputStyle}
+                placeholder="Nearby landmark"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-sm font-semibold" style={{ color: THEME.TEXT }}>
+                  City *
+                </label>
+
+                <div className="relative">
+                  <FaCity className="absolute left-4 top-3.5 text-sm" style={{ color: THEME.MUTED }} />
+
+                  <input
+                    type="text"
+                    name="city"
+                    value={orderDetails.city}
+                    onChange={handleInputChange}
+                    className="w-full rounded-2xl py-3 pl-10 pr-4 outline-none"
+                    style={inputStyle}
+                    placeholder="City"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-semibold" style={{ color: THEME.TEXT }}>
+                  State *
+                </label>
+
+                <input
+                  type="text"
+                  name="state"
+                  value={orderDetails.state}
+                  onChange={handleInputChange}
+                  className="w-full rounded-2xl px-4 py-3 outline-none"
+                  style={inputStyle}
+                  placeholder="State"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-semibold" style={{ color: THEME.TEXT }}>
+                  PIN Code *
+                </label>
+
+                <input
+                  type="text"
+                  name="postalCode"
+                  value={orderDetails.postalCode}
+                  onChange={handleInputChange}
+                  className="w-full rounded-2xl px-4 py-3 outline-none"
+                  style={inputStyle}
+                  placeholder="PIN code"
+                  inputMode="numeric"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-semibold" style={{ color: THEME.TEXT }}>
+                  Country *
+                </label>
+
+                <input
+                  type="text"
+                  name="country"
+                  value={orderDetails.country}
+                  onChange={handleInputChange}
+                  className="w-full rounded-2xl px-4 py-3 outline-none"
+                  style={inputStyle}
+                  placeholder="Country"
+                />
               </div>
             </div>
           </div>
         </div>
 
-        {/* Action Buttons */}
+        <div
+          className="rounded-3xl p-5"
+          style={{
+            backgroundColor: THEME.BG,
+            border: `1px solid ${THEME.BORDER}`,
+          }}
+        >
+          <h4 className="mb-4 font-semibold" style={{ color: THEME.HEADING }}>
+            Order Summary
+          </h4>
+
+          <div className="space-y-3 text-sm">
+            <div className="flex justify-between" style={{ color: THEME.TEXT }}>
+              <span>Items ({cart.quantity})</span>
+              <span> ₹{subtotal.toLocaleString("en-IN")}</span>
+            </div>
+
+            <div className="flex justify-between" style={{ color: THEME.TEXT }}>
+              <span>Shipping</span>
+              <span>
+                {shippingFee === 0
+                  ? "Select area"
+                  : `₹ ${shippingFee.toLocaleString("en-IN")}`}
+              </span>
+            </div>
+
+            <div
+              className="flex justify-between border-t pt-3 text-lg font-bold"
+              style={{
+                borderColor: THEME.BORDER,
+                color: THEME.HEADING,
+              }}
+            >
+              <span>Total</span>
+              <span style={{ color: THEME.PRIMARY }}>
+                ₹ {total.toLocaleString("en-IN")}
+              </span>
+            </div>
+          </div>
+        </div>
+
         <div className="mt-6 space-y-3">
           <button
             onClick={handlePlaceOrder}
-            disabled={isProcessing || phoneError || !orderDetails.pickupOption || 
-                     (orderDetails.pickupOption === 'delivery' && !orderDetails.locationType)}
-            className="w-full bg-rose-600 hover:bg-rose-700 disabled:bg-rose-400 text-white py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center transform hover:scale-[1.02] disabled:scale-100"
+            disabled={
+              isProcessing ||
+              phoneError ||
+              !orderDetails.locationType ||
+              !orderDetails.paymentMethod
+            }
+            className="flex w-full items-center justify-center rounded-2xl px-5 py-4 font-semibold transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-60"
+            style={{
+              backgroundColor: THEME.PRIMARY,
+              color: "#FFFFFF",
+              boxShadow: "0 12px 25px rgba(74,49,95,0.20)",
+            }}
           >
             {isProcessing ? (
               <>
-                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                <FaSpinner className="mr-2 animate-spin" />
                 Processing...
               </>
             ) : orderDetails.payNow ? (
               <>
                 <FaCreditCard className="mr-2" />
-                Pay Now - KES {total.toLocaleString()}
+                Pay Online, ₹ {total.toLocaleString("en-IN")}
               </>
             ) : (
               <>
                 <FaBox className="mr-2" />
-                Place Order (Pay Later)
+                Place COD Order
               </>
             )}
           </button>
-          
+
           <button
             onClick={handleCloseModal}
             disabled={isProcessing}
-            className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-[1.02] disabled:scale-100"
+            className="w-full rounded-2xl px-5 py-3 font-semibold transition-all duration-300"
+            style={{
+              backgroundColor: THEME.BG,
+              color: THEME.TEXT,
+              border: `1px solid ${THEME.BORDER}`,
+            }}
           >
             Cancel
           </button>
@@ -751,130 +863,122 @@ const Cart = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-rose-50 to-white pt-24 pb-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto">
-        <ToastContainer position="top-right" autoClose={3000} theme="light" />
+    <div
+      className="min-h-screen px-4 pb-10 pt-24 sm:px-6 lg:px-8"
+      style={{ backgroundColor: THEME.BG }}
+    >
+      <ToastContainer position="top-right" autoClose={3000} theme="light" />
 
-        {/* Payment Iframe Modal */}
-        {showPaymentIframe && (
-          <div className="fixed inset-0 flex items-center justify-center z-50 p-4 bg-black bg-opacity-50">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl h-[80vh] flex flex-col">
-              <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                <h3 className="text-xl font-bold text-gray-800">Complete Your Payment</h3>
-                <button 
-                  onClick={handleClosePaymentIframe}
-                  className="text-gray-400 hover:text-gray-600 text-xl transition-transform duration-200 hover:scale-110"
-                >
-                  <FaTimes />
-                </button>
-              </div>
-              <div className="flex-1 p-4 relative">
-                {isIframeLoading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg">
-                    <div className="text-center">
-                      <FaSpinner className="animate-spin text-rose-600 text-4xl mb-4 mx-auto" />
-                      <p className="text-gray-600">Loading payment gateway...</p>
-                    </div>
-                  </div>
-                )}
-                <iframe
-                  src={paymentUrl}
-                  className="w-full h-full rounded-lg border border-gray-200"
-                  title="Pesapal Payment"
-                  sandbox="allow-scripts allow-forms allow-same-origin allow-popups"
-                  onLoad={handleIframeLoad}
-                  style={{ display: isIframeLoading ? 'none' : 'block' }}
-                />
-              </div>
-              <div className="p-4 bg-gray-50 border-t border-gray-200">
-                <p className="text-sm text-gray-600 text-center">
-                  🔒 Secure payment processed by Pesapal. Do not close this window until payment is complete.
-                </p>
-              </div>
-            </div>
+      {showOrderModal && (
+        <div
+          className={`fixed inset-0 z-40 flex items-center justify-center p-4 transition-all duration-300 ${isModalVisible ? "opacity-100" : "opacity-0"
+            }`}
+        >
+          <div
+            className={`absolute inset-0 bg-black transition-opacity duration-300 ${isModalVisible ? "opacity-50" : "opacity-0"
+              }`}
+            onClick={handleCloseModal}
+          />
+
+          <div
+            className={`relative max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl transition-all duration-300 ${isModalVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"
+              } ${modalStep === 1 ? "w-full max-w-md" : "w-full max-w-2xl"}`}
+            style={{
+              backgroundColor: THEME.CARD,
+              border: `1px solid ${THEME.BORDER}`,
+            }}
+          >
+            <div className="p-6">{renderModalContent()}</div>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Order Modal */}
-        {showOrderModal && (
-          <div className={`
-            fixed inset-0 flex items-center justify-center z-40 p-4
-            transition-all duration-300 ease-out
-            ${isModalVisible ? 'opacity-100' : 'opacity-0'}
-          `}>
-            <div 
-              className={`
-                absolute inset-0 bg-black transition-opacity duration-300
-                ${isModalVisible ? 'opacity-50' : 'opacity-0'}
-              `}
-              onClick={handleCloseModal}
-            />
-            
-            <div className={`
-              relative bg-white rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto
-              transform transition-all duration-300 ease-out
-              ${isModalVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}
-              ${modalStep === 1 ? 'max-w-sm w-full' : 'max-w-md w-full'}
-            `}>
-              <div className="p-6">
-                <div key={modalStep} className={`
-                  transform transition-all duration-500 ease-out
-                  ${isModalVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}
-                `}>
-                  {renderModalContent()}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Main Cart Content */}
-        <div className="flex items-center mb-8">
-          <Link 
-            to="/" 
-            onClick={() => trackButtonClick('continue_shopping_from_cart', {
-              cart_items_count: cart.products?.length || 0
-            })}
-            className="flex items-center text-rose-600 hover:text-rose-700 transition-colors duration-300 mr-4"
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-8 flex flex-wrap items-center gap-4">
+          <Link
+            to="/"
+            className="flex items-center font-semibold transition-colors"
+            style={{ color: THEME.PRIMARY }}
           >
             <FaArrowLeft className="mr-2" />
             Continue Shopping
           </Link>
-          <h1 className="text-3xl font-serif font-bold text-gray-800">Your Shopping Bag</h1>
+
+          <h1 className="text-3xl font-bold" style={{ color: THEME.HEADING }}>
+            Your Shopping Bag
+          </h1>
+
           {cart.products?.length > 0 && (
-            <span className="ml-auto bg-rose-100 text-rose-700 px-3 py-1 rounded-full text-sm font-medium">
-              {cart.quantity} {cart.quantity === 1 ? 'Item' : 'Items'}
+            <span
+              className="ml-auto rounded-full px-4 py-2 text-sm font-semibold"
+              style={{
+                backgroundColor: THEME.SOFT_GREEN,
+                color: THEME.PRIMARY,
+              }}
+            >
+              {cart.quantity} {cart.quantity === 1 ? "Item" : "Items"}
             </span>
           )}
         </div>
 
         {cart.products?.length === 0 ? (
-          // Empty Cart State
-          <div className="bg-white rounded-2xl shadow-lg p-12 text-center max-w-2xl mx-auto">
-            <div className="w-24 h-24 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <FaShoppingBag className="w-12 h-12 text-rose-400" />
+          <div
+            className="mx-auto max-w-2xl rounded-3xl p-12 text-center"
+            style={{
+              backgroundColor: THEME.CARD,
+              border: `1px solid ${THEME.BORDER}`,
+              boxShadow: "0 16px 45px rgba(74,49,95,0.08)",
+            }}
+          >
+            <div
+              className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full"
+              style={{ backgroundColor: THEME.SOFT_GREEN }}
+            >
+              <FaShoppingBag className="h-12 w-12" style={{ color: THEME.PRIMARY }} />
             </div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Your bag is empty</h2>
-            <p className="text-gray-600 mb-8 max-w-md mx-auto">
-              Looks like you haven't added any beautiful products to your bag yet. Start exploring our collection!
+
+            <h2 className="mb-4 text-2xl font-bold" style={{ color: THEME.HEADING }}>
+              Your bag is empty
+            </h2>
+
+            <p className="mx-auto mb-8 max-w-md" style={{ color: THEME.TEXT }}>
+              Looks like you have not added any products to your bag yet. Start
+              exploring our collection.
             </p>
-            <Link 
-              to="/products" 
-              onClick={() => trackButtonClick('browse_products_from_empty_cart')}
-              className="bg-rose-600 hover:bg-rose-700 text-white px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg inline-block"
+
+            <Link
+              to="/products"
+              className="inline-block rounded-full px-8 py-3 font-semibold transition-all duration-300 hover:scale-105"
+              style={{
+                backgroundColor: THEME.PRIMARY,
+                color: "#FFFFFF",
+              }}
             >
               Discover Products
             </Link>
           </div>
         ) : (
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Cart Items */}
-            <div className="flex-1 bg-white rounded-2xl shadow-lg p-6">
-              <div className="flex items-center justify-between mb-6 pb-4 border-b border-rose-100">
-                <h3 className="text-xl font-semibold text-gray-800">Your Items</h3>
-                <button 
+          <div className="flex flex-col gap-8 lg:flex-row">
+            <div
+              className="flex-1 rounded-3xl p-6"
+              style={{
+                backgroundColor: THEME.CARD,
+                border: `1px solid ${THEME.BORDER}`,
+                boxShadow: "0 16px 45px rgba(74,49,95,0.08)",
+              }}
+            >
+              <div
+                className="mb-6 flex items-center justify-between border-b pb-4"
+                style={{ borderColor: THEME.BORDER }}
+              >
+                <h3 className="text-xl font-semibold" style={{ color: THEME.HEADING }}>
+                  Your Items
+                </h3>
+
+                <button
                   onClick={handleClearCart}
-                  className="flex items-center text-rose-500 hover:text-rose-700 transition-colors duration-300 text-sm"
+                  className="flex items-center text-sm font-semibold"
+                  style={{ color: THEME.PRIMARY }}
                 >
                   <FaTrashAlt className="mr-2" />
                   Clear Bag
@@ -883,51 +987,77 @@ const Cart = () => {
 
               <div className="space-y-6">
                 {cart.products?.map((product, index) => (
-                  <div className="flex flex-col sm:flex-row items-start gap-6 pb-6 border-b border-rose-50 last:border-0" key={index}>
+                  <div
+                    key={index}
+                    className="flex flex-col gap-6 border-b pb-6 last:border-0 sm:flex-row"
+                    style={{ borderColor: THEME.BORDER }}
+                  >
                     <img
-                      src={product.img[0]}
+                      src={Array.isArray(product.img) ? product.img[0] : product.img}
                       alt={product.title}
-                      className="w-full sm:w-28 h-28 object-cover rounded-xl shadow-sm"
+                      className="h-28 w-full rounded-2xl object-cover shadow-sm sm:w-28"
                     />
 
                     <div className="flex-1">
-                      <div className="flex justify-between">
-                        <h3 className="text-lg font-semibold text-gray-800 mb-1">
+                      <div className="flex justify-between gap-4">
+                        <h3
+                          className="mb-1 text-lg font-semibold"
+                          style={{ color: THEME.HEADING }}
+                        >
                           {product.title}
                         </h3>
-                        <button 
+
+                        <button
                           onClick={() => handleRemoveProduct(product)}
-                          className="p-2 text-gray-400 hover:text-rose-600 transition-colors duration-300"
-                          aria-label="Remove item"
+                          className="p-2"
+                          style={{ color: THEME.MUTED }}
                         >
                           <FaTrashAlt />
                         </button>
                       </div>
-                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+
+                      <p className="mb-4 line-clamp-2 text-sm" style={{ color: THEME.TEXT }}>
                         {product.desc}
                       </p>
-                      
+
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center bg-rose-50 rounded-full p-1">
-                          <button 
+                        <div
+                          className="flex items-center rounded-full p-1"
+                          style={{ backgroundColor: THEME.BG }}
+                        >
+                          <button
                             onClick={() => handleQuantityChange(product, -1)}
-                            className="w-8 h-8 flex items-center justify-center text-rose-600 hover:bg-rose-100 rounded-full transition-colors duration-300"
+                            className="flex h-8 w-8 items-center justify-center rounded-full"
+                            style={{ color: THEME.PRIMARY }}
                           >
                             <FaMinus className="text-xs" />
                           </button>
-                          <span className="mx-3 font-medium w-6 text-center">{product.quantity}</span>
-                          <button 
+
+                          <span
+                            className="mx-3 w-6 text-center font-semibold"
+                            style={{ color: THEME.HEADING }}
+                          >
+                            {product.quantity}
+                          </span>
+
+                          <button
                             onClick={() => handleQuantityChange(product, 1)}
-                            className="w-8 h-8 flex items-center justify-center text-rose-600 hover:bg-rose-100 rounded-full transition-colors duration-300"
+                            className="flex h-8 w-8 items-center justify-center rounded-full"
+                            style={{ color: THEME.PRIMARY }}
                           >
                             <FaPlus className="text-xs" />
                           </button>
                         </div>
-                        
+
                         <div className="text-right">
-                          <p className="text-lg font-bold text-rose-700">KES {(product.price * product.quantity).toLocaleString()}</p>
+                          <p className="text-lg font-bold" style={{ color: THEME.PRIMARY }}>
+                            ₹ {((product.price * product.quantity).toLocaleString("en-IN"))}
+                          </p>
+
                           {product.quantity > 1 && (
-                            <p className="text-xs text-gray-500">KES {product.price.toLocaleString()} each</p>
+                            <p className="text-xs" style={{ color: THEME.MUTED }}>
+                              ₹ {product.price.toLocaleString("en-IN")} each
+                            </p>
                           )}
                         </div>
                       </div>
@@ -937,73 +1067,76 @@ const Cart = () => {
               </div>
             </div>
 
-            {/* Order Summary */}
             <div className="w-full lg:w-96">
-              <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-28">
-                <h2 className="text-xl font-semibold text-gray-800 mb-6 pb-4 border-b border-rose-100">Order Summary</h2>
+              <div
+                className="sticky top-28 rounded-3xl p-6"
+                style={{
+                  backgroundColor: THEME.CARD,
+                  border: `1px solid ${THEME.BORDER}`,
+                  boxShadow: "0 16px 45px rgba(74,49,95,0.08)",
+                }}
+              >
+                <h2
+                  className="mb-6 border-b pb-4 text-xl font-semibold"
+                  style={{
+                    color: THEME.HEADING,
+                    borderColor: THEME.BORDER,
+                  }}
+                >
+                  Order Summary
+                </h2>
 
-                <div className="space-y-4 mb-6">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Subtotal ({cart.quantity} items)</span>
-                    <span className="font-medium">KES {subtotal.toLocaleString()}</span>
+                <div className="mb-6 space-y-4">
+                  <div className="flex justify-between" style={{ color: THEME.TEXT }}>
+                    <span>Subtotal ({cart.quantity} items)</span>
+                    <span className="font-semibold"> ₹ {subtotal.toLocaleString("en-IN")}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Shipping</span>
-                    <span className="font-medium">
-                      {subtotal > 0 ? 'Select option' : 'KES 0'}
-                    </span>
+
+                  <div className="flex justify-between" style={{ color: THEME.TEXT }}>
+                    <span>Shipping</span>
+                    <span className="font-semibold">Select at checkout</span>
                   </div>
-                  <div className="text-sm text-rose-600 bg-rose-50 p-3 rounded-lg">
-                    <span className="font-medium">💡 Shipping Options:</span>
-                    <ul className="mt-1 text-xs space-y-1">
-                      <li>• Pickup from shop: <strong>FREE</strong></li>
-                      <li>• Delivery within Nairobi: <strong>KES 200</strong></li>
-                      <li>• Delivery outside Nairobi: <strong>KES 350</strong></li>
+
+                  <div
+                    className="rounded-2xl p-4 text-sm"
+                    style={{
+                      backgroundColor: THEME.SOFT_GREEN,
+                      color: THEME.PRIMARY,
+                    }}
+                  >
+                    <strong>Shipping Options</strong>
+                    <ul className="mt-2 space-y-1 text-xs">
+                      <li>Delivery within London: ₹ 2</li>
+                      <li>Delivery outside London: ₹ 4</li>
                     </ul>
-                  </div>
-                  <div className="flex justify-between pt-4 border-t border-rose-100">
-                    <span className="text-lg font-semibold">Total</span>
-                    <span className="text-lg font-semibold text-rose-700">
-                      {subtotal > 0 ? 'Select shipping' : 'KES 0'}
-                    </span>
                   </div>
                 </div>
 
-                <button 
+                <button
                   onClick={handleProceedToCheckout}
-                  className="w-full bg-rose-600 hover:bg-rose-700 text-white py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-[1.02] shadow-lg mb-4 flex items-center justify-center"
+                  className="mb-4 flex w-full items-center justify-center rounded-full px-6 py-4 font-semibold transition-all duration-300 hover:scale-[1.02]"
+                  style={{
+                    backgroundColor: THEME.PRIMARY,
+                    color: "#FFFFFF",
+                    boxShadow: "0 12px 25px rgba(74,49,95,0.22)",
+                  }}
                 >
                   <FaBox className="mr-2" />
                   Proceed to Checkout
                 </button>
-                
+
                 {!user.currentUser && (
-                  <p className="text-sm text-center text-gray-500 mt-4">
-                    <Link to="/login" className="text-rose-600 hover:underline font-medium">Sign in</Link> to place your order
+                  <p className="mt-4 text-center text-sm" style={{ color: THEME.MUTED }}>
+                    <Link
+                      to="/login"
+                      className="font-semibold"
+                      style={{ color: THEME.PRIMARY }}
+                    >
+                      Sign in
+                    </Link>{" "}
+                    to place your order
                   </p>
                 )}
-
-                <div className="mt-6 pt-6 border-t border-rose-100">
-                  <h3 className="text-sm font-semibold text-gray-800 mb-3">We Accept</h3>
-                  <div className="flex space-x-3">
-                    {['VISA', 'MC', 'AMEX', 'PP'].map((method) => (
-                      <div key={method} className="bg-gray-100 p-2 rounded-lg flex items-center justify-center w-14 h-9">
-                        <span className="text-xs font-semibold text-gray-600">{method}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Shipping Info */}
-              <div className="bg-blue-50 rounded-2xl p-4 mt-4">
-                <p className="text-sm text-blue-700 flex items-start">
-                  <FaInfoCircle className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>
-                    <strong>Free pickup</strong> available at our Nairobi CBD shop. 
-                    Delivery options available for Nairobi (KES 200) and outside Nairobi (KES 350).
-                  </span>
-                </p>
               </div>
             </div>
           </div>

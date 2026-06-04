@@ -11,15 +11,43 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProductList from "./pages/ProductList";
 import Order from "./pages/Order";
-import { useSelector } from "react-redux";
-import Timetable from "./pages/Timetable";
+import { useDispatch, useSelector } from "react-redux";
 import ScrollToTop from "./components/ScrollToTop";
-import Packages from "./pages/Package";
-import BundleDetail from "./pages/PackageDetailedPage";
-import SkinClinic from "./pages/Clinic";
+import Wishlist from "./pages/Wishlist";
+import Error from "./pages/Error";
+import { useEffect } from "react";
+import { userRequest } from "./requestMethods";
+import { logOut } from "./redux/userRedux";
 
 function App() {
   const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const validateUserSession = async () => {
+      if (!user?.currentUser) return;
+
+      try {
+        await userRequest.get("/auth/me");
+      } catch (error) {
+        if (cancelled || error.response?.status !== 401) return;
+
+        dispatch(logOut());
+        localStorage.removeItem("currentUser");
+        localStorage.removeItem("token");
+      }
+    };
+
+    validateUserSession();
+    const interval = setInterval(validateUserSession, 30000);
+
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [dispatch, user?.currentUser]);
   
   const Layout = () => {
     return (
@@ -40,6 +68,10 @@ function App() {
       element: <Layout />,
       children: [
         {
+          path: "*",
+          element: <Error />,
+        },
+        {
           path: "/",
           element: <Home />,
         },
@@ -56,16 +88,8 @@ function App() {
           element: <Register />,
         },
         {
-          path: "/packages",
-          element: <Packages />,
-        },
-        {
-          path: "/skincare-timetable",
-          element: <Timetable />,
-        },
-        {
-          path: "/skin-clinic",
-          element: <SkinClinic />,
+          path: "/wishlist",
+          element: <Wishlist />,
         },
         {
           path: "/myaccount",
@@ -75,10 +99,7 @@ function App() {
           path: "/product/:productId",
           element: <Product />,
         },
-        {
-          path: "/package/:packageId",
-          element: <BundleDetail />,
-        },
+        
         {
           path: "/products/:searchterm",
           element: <ProductList />,

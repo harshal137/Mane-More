@@ -1,81 +1,107 @@
 import mongoose from "mongoose";
 
+const ProductSnapshotSchema = new mongoose.Schema(
+  {
+    productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+    title: { type: String, required: true },
+    quantity: { type: Number, required: true },
+    price: { type: Number, required: true },
+    img: { type: String, default: "" },
+    desc: { type: String, default: "" },
+  },
+  { _id: false }
+);
+
 const PaymentSchema = mongoose.Schema(
   {
-    // Request data
-    email: {
-      type: String,
-      required: true
-    },
-    reference: {
-      type: String,
-      required: true
-    },
-    phone: {
-      type: String,
-      required: true
-    },
-    first_name: {
-      type: String,
-      required: true
-    },
-    last_name: {
-      type: String,
-      required: true
-    },
-    amount: {
-      type: Number,
-      required: true
-    },
-    description: {
-      type: String,
-      required: true
-    },
-    
-    // Order reference
-    orderId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Order',
-      required: true
-    },
-    
-    // Payment provider data
-    payment_provider: {
-      type: String,
-      default: "pesapal"
-    },
-    order_id: String, // OrderMerchantReference
-    payment_reference: String, // OrderTrackingId from Pesapal
-    redirect_url: String,
-    error_response: mongoose.Schema.Types.Mixed,
-    error_status: Number,
-    
-    // Payment status
-    status: {
-      type: String,
-      enum: ['initiated', 'completed', 'failed', 'cancelled', 'pending'],
-      default: 'initiated'
-    },
+    // ADDED/UPDATED: linked user and final order reference
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    orderId: { type: mongoose.Schema.Types.ObjectId, ref: "Order", default: null },
+
+    // ADDED/UPDATED: cart snapshot at payment attempt time
+    products: { type: [ProductSnapshotSchema], required: true },
+    amount: { type: Number, required: true }, // subtotal before shipping
+    shippingFee: { type: Number, default: 0 },
+    totalAmount: { type: Number, required: true },
+    currency: { type: String, default: "inr" },
+
+    // ADDED/UPDATED: normalized payment states
     payment_status: {
       type: String,
-      enum: ['pending', 'success', 'failed', 'cancelled'],
-      default: 'pending'
+      enum: ["pending", "success", "failed", "cancelled", "incomplete"],
+      default: "pending",
     },
-    
-    // Additional status details from payment provider
-    status_details: mongoose.Schema.Types.Mixed,
-    
+    status: {
+      type: String,
+      enum: ["initiated", "completed", "failed", "cancelled", "pending", "incomplete"],
+      default: "initiated",
+    },
+    status_of_transaction: {
+      type: String,
+      enum: ["paid", "unpaid"],
+      default: "unpaid",
+    },
+    mode_of_transaction: {
+      type: String,
+      enum: ["Stripe", "Card", "Online", "COD"],
+      default: "Stripe",
+    },
+
+    // ADDED/UPDATED: transaction identifiers
+    transactionId: { type: String, default: "" },
+    stripeSessionId: { type: String, default: undefined },
+    stripePaymentIntentId: { type: String, default: "" },
+
+    // Backward-compatible aliases for your existing UI/admin code
+    transaction_id: { type: String, default: "" },
+    stripe_session_id: { type: String, default: undefined },
+    stripe_payment_intent_id: { type: String, default: "" },
+
+    // ADDED/UPDATED: customer and shipping details
+    customer: {
+      name: { type: String, required: true },
+      email: { type: String, required: true },
+      phone: { type: String, required: true },
+    },
+    shippingAddress: {
+      fullAddress: { type: String, required: true },
+      addressLine1: { type: String, default: "" },
+      addressLine2: { type: String, default: "" },
+      landmark: { type: String, default: "" },
+      city: { type: String, default: "" },
+      state: { type: String, default: "" },
+      postalCode: { type: String, default: "" },
+      country: { type: String, default: "India" },
+      locationType: { type: String, default: "" },
+    },
+
+    failureReason: { type: String, default: "" },
+    failure_reason: { type: String, default: "" },
+    stripeEventType: { type: String, default: "" },
+    rawStatusDetails: { type: mongoose.Schema.Types.Mixed, default: {} },
   },
+  { timestamps: true }
+);
+
+PaymentSchema.index(
+  { stripeSessionId: 1 },
   {
-    timestamps: true,
+    unique: true,
+    partialFilterExpression: {
+      stripeSessionId: { $exists: true, $type: "string" },
+    },
   }
 );
 
-// Update the updated_at field before saving
-PaymentSchema.pre('save', function(next) {
-  this.updatedAt = Date.now();
-  next();
-});
+PaymentSchema.index(
+  { stripe_session_id: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      stripe_session_id: { $exists: true, $type: "string" },
+    },
+  }
+);
 
 const Payment = mongoose.model("Payment", PaymentSchema);
 export default Payment;

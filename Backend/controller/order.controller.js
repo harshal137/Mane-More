@@ -1,70 +1,348 @@
 import Order from "../models/order.model.js";
+import Payment from "../models/payment.model.js";
+import Product from "../models/product.model.js";
+import User from "../models/user.model.js";
 import asyncHandler from "express-async-handler";
 
-// CREATE ORDER
+const normalizeProductId = (item) => item.productId || item._id;
+
+const normalizeAddressDetails = (addressDetails = {}) => ({
+  addressLine1: String(addressDetails.addressLine1 || "").trim(),
+  addressLine2: String(addressDetails.addressLine2 || "").trim(),
+  landmark: String(addressDetails.landmark || "").trim(),
+  city: String(addressDetails.city || "").trim(),
+  state: String(addressDetails.state || "").trim(),
+  postalCode: String(addressDetails.postalCode || "").trim(),
+  country: String(addressDetails.country || "India").trim(),
+});
+
+const buildAddressFromDetails = (addressDetails) =>
+  [
+    addressDetails.addressLine1,
+    addressDetails.addressLine2,
+    addressDetails.landmark ? `Landmark: ${addressDetails.landmark}` : "",
+    addressDetails.city,
+    addressDetails.state,
+    addressDetails.postalCode,
+    addressDetails.country,
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+const resolveCheckoutUserId = async (req, checkoutEmail) => {
+  const authenticatedUserId = req.user?._id?.toString();
+  const requestedUserId = req.body.userId?.toString();
+
+  if (!authenticatedUserId) {
+    const error = new Error("User is not authenticated");
+    error.statusCode = 401;
+    throw error;
+  }
+
+  if (!requestedUserId || requestedUserId === authenticatedUserId) {
+    return req.user._id;
+  }
+
+  const isAdmin =
+    req.user?.role === "admin" ||
+    req.user?.isAdmin === true ||
+    req.user?.admin === true;
+
+  if (!isAdmin) {
+    const error = new Error("Authenticated user does not match checkout user");
+    error.statusCode = 403;
+    throw error;
+  }
+
+  const checkoutUser = await User.findById(requestedUserId).select("email role");
+
+  if (!checkoutUser) {
+    const error = new Error("Checkout user was not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  if (checkoutEmail && checkoutUser.email !== checkoutEmail) {
+    const error = new Error("Checkout email does not match checkout user");
+    error.statusCode = 403;
+    throw error;
+  }
+
+  console.warn("Admin cookie detected during customer checkout; using request userId", {
+    adminUserId: authenticatedUserId,
+    checkoutUserId: requestedUserId,
+  });
+
+  return checkoutUser._id;
+};
+
+const buildOrderSnapshotFromCart = async (cartProducts = []) => {
+  if (!Array.isArray(cartProducts) || cartProducts.length === 0) {
+    const error = new Error("Cart is empty");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const ids = cartProducts.map((item) => normalizeProductId(item)).filter(Boolean);
+  const dbProducts = await Product.find({ _id: { $in: ids } });
+
+  const productMap = new Map(dbProducts.map((product) => [product._id.toString(), product]));
+
+  let amount = 0;
+  let totalQuantity = 0;
+
+  const products = cartProducts.map((item) => {
+    const productId = normalizeProductId(item);
+    const dbProduct = productMap.get(productId?.toString());
+
+    if (!dbProduct) {
+      const error = new Error(`Product not found: ${productId}`);
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const quantity = Math.max(Number(item.quantity || 1), 1);
+    const price = Number(dbProduct.price || dbProduct.discountedPrice || dbProduct.originalPrice || 0);
+
+    amount += price * quantity;
+    totalQuantity += quantity;
+
+    return {
+      productId: dbProduct._id,
+      title: dbProduct.title,
+      quantity,
+      price,
+      img: Array.isArray(dbProduct.img) ? dbProduct.img[0] : dbProduct.img || "",
+      desc: dbProduct.desc || "",
+    };
+  });
+
+  return { products, amount, totalQuantity };
+};
+
+// Do not use this for Stripe Pay Now.
+// Stripe orders are created only inside webhook after successful payment.
 const createOrder = asyncHandler(async (req, res) => {
-  const newOrder = Order(req.body);
+  const newOrder = new Order(req.body);
   const savedOrder = await newOrder.save();
+
   if (!savedOrder) {
     res.status(400);
     throw new Error("Order was not created");
-  } else {
-    res.status(201).json(savedOrder);
   }
+
+  res.status(201).json(savedOrder);
 });
 
-// UPDATE ORDER
+// ADDED: COD order creation.
+// COD is allowed to create the order immediately because payment is collected later.
+const createCODOrder = asyncHandler(async (req, res) => {
+  const {
+    cart,
+    name,
+    email,
+    phone,
+    address,
+    addressDetails,
+    shippingFee = 0,
+    locationType = "",
+  } = req.body;
+  const userId = await resolveCheckoutUserId(req, email);
+  const normalizedAddressDetails = normalizeAddressDetails(addressDetails);
+  const fullAddress = String(address || buildAddressFromDetails(normalizedAddressDetails)).trim();
+
+  if (!userId) {
+    res.status(401);
+    throw new Error("User is not authenticated");
+  }
+
+  if (!name || !email || !phone || !fullAddress) {
+    res.status(400);
+    throw new Error("Name, email, phone, and address are required");
+  }
+
+  const { products, amount, totalQuantity } = await buildOrderSnapshotFromCart(cart?.products);
+  const safeShippingFee = Number(shippingFee || 0);
+  const totalAmount = amount + safeShippingFee;
+  const codReferenceId = `COD-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+
+  const payment = await Payment.create({
+    userId,
+    products,
+    amount,
+    shippingFee: safeShippingFee,
+    totalAmount,
+    payment_status: "pending",
+    status: "pending",
+    status_of_transaction: "unpaid",
+    mode_of_transaction: "COD",
+    transactionId: codReferenceId,
+    transaction_id: codReferenceId,
+    customer: { name, email, phone },
+    shippingAddress: {
+      fullAddress,
+      ...normalizedAddressDetails,
+      locationType,
+    },
+  });
+
+  const order = await Order.create({
+    name,
+    userId,
+    products,
+    amount,
+    subtotal: amount,
+    shippingFee: safeShippingFee,
+    totalAmount,
+    total: totalAmount,
+    totalQuantity,
+    address: fullAddress,
+    addressDetails: normalizedAddressDetails,
+    phone,
+    email,
+    paymentId: payment._id,
+    payment_status: "pending",
+    status_of_transaction: "unpaid",
+    mode_of_transaction: "COD",
+    transactionId: codReferenceId,
+    transaction_id: codReferenceId,
+    order_status: "Placed",
+    delivery_status: "Placed",
+    locationType,
+  });
+
+  payment.orderId = order._id;
+  await payment.save();
+
+  res.status(201).json({ message: "COD order placed successfully", order });
+});
+
 const updateOrder = asyncHandler(async (req, res) => {
-  
+  const order = await Order.findById(req.params.id);
+
+  if (!order) {
+    res.status(404);
+    throw new Error("Order not found");
+  }
+
+  const nextDeliveryStatus = req.body.delivery_status || order.delivery_status;
+  const isDelivered = nextDeliveryStatus?.toLowerCase() === "delivered";
+  const isCOD = order.mode_of_transaction === "COD";
+
+  if (isDelivered && isCOD) {
+    req.body.status_of_transaction = "paid";
+    req.body.payment_status = "success";
+  }
+
+  if (!isDelivered && isCOD) {
+    req.body.status_of_transaction = "unpaid";
+    req.body.payment_status = "pending";
+  }
+
   const updatedOrder = await Order.findByIdAndUpdate(
     req.params.id,
-    { $set: req.body},
+    { $set: req.body },
     { new: true }
-  );
+  ).populate("paymentId");
 
-  if (!updatedOrder) {
-    res.status(400);
-    throw new Error("Order was not updated");
-  } else {
-    res.status(201).json(updatedOrder);
+  if (isDelivered && isCOD && updatedOrder.paymentId) {
+    await Payment.findByIdAndUpdate(updatedOrder.paymentId._id || updatedOrder.paymentId, {
+      $set: {
+        status_of_transaction: "paid",
+        payment_status: "success",
+        status: "completed",
+      },
+    });
   }
+
+  if (!isDelivered && isCOD && updatedOrder.paymentId) {
+    await Payment.findByIdAndUpdate(updatedOrder.paymentId._id || updatedOrder.paymentId, {
+      $set: {
+        status_of_transaction: "unpaid",
+        payment_status: "pending",
+        status: "pending",
+      },
+    });
+  }
+
+  res.status(200).json(updatedOrder);
 });
 
-// DELETE ORDER
 const deleteOrder = asyncHandler(async (req, res) => {
   const order = await Order.findByIdAndDelete(req.params.id);
+
   if (!order) {
-    res.status(400);
-    throw new Error("order was not deleted successfully");
-  } else {
-    res.status(200).json(order);
-  }
-});
-
-// GET USER ORDER
-const getUserOrder = asyncHandler(async (req, res) => {
-  const orders = await Order.find({ userId: req.params.id }).exec();
-
-  // Execute the query
-  if (!orders || orders.length === 0) {
     res.status(404);
-    throw new Error("No orders were found for this user.");
-  } else {
-    res.status(200).json(orders.reverse()); // Reverse the resulting array
+    throw new Error("Order was not deleted successfully");
   }
+
+  res.status(200).json(order);
 });
 
+const getUserOrder = asyncHandler(async (req, res) => {
+  const requestedUserId = req.params.id;
+  const loggedInUserId = req.user?._id?.toString();
+  const isAdmin =
+    req.user?.role === "admin" ||
+    req.user?.isAdmin === true ||
+    req.user?.admin === true;
 
-// GET ALL ORDERS
+  if (!loggedInUserId) {
+    res.status(401);
+    throw new Error("User is not authenticated");
+  }
+
+  if (!isAdmin && requestedUserId !== loggedInUserId) {
+    console.warn("Blocked order lookup for different user", {
+      requestedUserId,
+      loggedInUserId,
+    });
+    res.status(403);
+    throw new Error("You can only view your own orders");
+  }
+
+  const userId = isAdmin ? requestedUserId : loggedInUserId;
+
+
+  const orders = await Order.find({
+    userId,
+    payment_status: { $nin: ["failed", "cancelled", "incomplete"] },
+    $or: [
+      { mode_of_transaction: "COD" },
+      { status_of_transaction: "paid" },
+      { payment_status: "success" },
+    ],
+  }).sort({ createdAt: -1 });
+
+
+  res.set("Cache-Control", "no-store");
+  res.status(200).json(orders);
+});
+
 const getAllOrders = asyncHandler(async (req, res) => {
-  const orders = await Order.find();
 
-  if (!orders) {
-    res.status(400);
-    throw new Error("No order was found or something went wrong");
-  } else {
-    res.status(200).json(orders);
-  }
+  const orders = await Order.find().populate("paymentId").sort({ createdAt: -1 });
+
+  res.status(200).json(orders);
 });
 
-export { getAllOrders, getUserOrder, deleteOrder, createOrder, updateOrder };
+const getOrderById = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id).populate("paymentId");
+
+  if (!order) {
+    res.status(404);
+    throw new Error("Order not found");
+  }
+
+  res.status(200).json(order);
+});
+
+export {
+  getAllOrders,
+  getUserOrder,
+  deleteOrder,
+  createOrder,
+  createCODOrder,
+  updateOrder,
+  getOrderById,
+};

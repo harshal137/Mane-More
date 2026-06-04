@@ -1,17 +1,40 @@
 import express from "express";
 const router = express.Router();
-import {getAllOrders, getUserOrder, deleteOrder, createOrder, updateOrder} from "../controller/order.controller.js";
+
+import {
+  getAllOrders,
+  getUserOrder,
+  deleteOrder,
+  createOrder,
+  createCODOrder,
+  updateOrder,
+  getOrderById,
+} from "../controller/order.controller.js";
+
 import protect from "../Middleware/auth.middleware.js";
+import adminAuth from "../Middleware/adminAuth.middleware.js";
+
+// CREATE COD ORDER ROUTE - logged in user
+router.post("/cod", protect, createCODOrder);
 
 // CREATE ORDER ROUTE
-router.post("/", createOrder);
-// UPDATE ORDER ROUTE
-router.put("/:id", updateOrder);
-// GET ALL ORDERS ROUTE
-router.get("/",getAllOrders);
-// DELETE ORDER ROUTE
-router.delete("/:id", deleteOrder);
+// Keep this only if old admin/manual flow needs it.
+// Do not call this from Stripe Pay Now frontend.
+router.post("/", protect, createOrder);
+
+// GET SINGLE ORDER BY ID - Admin only
+router.get("/findorder/:id", protect, adminAuth, getOrderById);
+
 // GET USER'S ORDER ROUTE
-router.get("/find/:id", getUserOrder)
+router.get("/find/:id",protect, getUserOrder);
+
+// GET ALL ORDERS ROUTE - Admin only
+router.get("/", protect, adminAuth, getAllOrders);
+
+// UPDATE ORDER ROUTE - Admin only
+router.put("/:id", protect, adminAuth, updateOrder);
+
+// DELETE ORDER ROUTE - Admin only
+router.delete("/:id", protect, adminAuth, deleteOrder);
 
 export default router;

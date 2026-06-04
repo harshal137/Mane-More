@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash, FaEnvelope, FaLock, FaShieldAlt, FaUserShield } from 'react-icons/fa';
 import { loginAPI } from "../apiCalls";
+import { useAuth } from "../hooks/useAuth";
+import { userRequest } from "../requestMethods";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -10,31 +12,21 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [error, setError] = useState("");
+  const [showForgotModal, setShowForgotModal] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [resetToken, setResetToken] = useState("");
+  const [resetPassword, setResetPassword] = useState("");
+  const [confirmResetPassword, setConfirmResetPassword] = useState("");
+  const [resetLoading, setResetLoading] = useState(false);
   const navigate = useNavigate();
+  const { isAuthenticated, login } = useAuth();
 
   // Check if user is already logged in and is admin
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      try {
-        const userData = JSON.parse(storedUser);
-        // Only allow access if user role is admin
-        if (userData.role === 'admin') {
-          navigate("/home");
-        } else {
-          // Clear non-admin user data
-          localStorage.removeItem("user");
-          localStorage.removeItem("access_token");
-          localStorage.removeItem("refresh_token");
-        }
-      } catch (error) {
-        // Clear invalid user data
-        localStorage.removeItem("user");
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
-      }
+    if (isAuthenticated) {
+      navigate("/home");
     }
-  }, [navigate]);
+  }, [isAuthenticated, navigate]);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -86,15 +78,13 @@ const Login = () => {
       return;
     }
 
-    // Save user to localStorage (only if admin)
-    localStorage.setItem("user", JSON.stringify(userData));
-    
-    // Save tokens if they exist
-    if (userData.access_token) {
-      localStorage.setItem("access_token", userData.access_token);
-    }
-    if (userData.refresh_token) {
-      localStorage.setItem("refresh_token", userData.refresh_token);
+    // Use auth context to login
+    try {
+      login(userData);
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+      return;
     }
     
     setIsTransitioning(true);
@@ -143,8 +133,145 @@ const Login = () => {
     return emailRegex.test(email);
   };
 
+  const resetForgotForm = () => {
+    setForgotEmail("");
+    setResetToken("");
+    setResetPassword("");
+    setConfirmResetPassword("");
+  };
+
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+
+    if (!forgotEmail || !validateEmail(forgotEmail)) {
+      setError("Please enter a valid admin email address");
+      return;
+    }
+
+    try {
+      setResetLoading(true);
+      const res = await userRequest.post("/auth/admin/forgot-password", {
+        email: forgotEmail,
+      });
+
+      if (res.data?.resetToken) {
+        setResetToken(res.data.resetToken);
+        setError("");
+      } else {
+        setError(res.data?.message || "Password reset instructions generated.");
+      }
+    } catch (error) {
+      setError(error.response?.data?.message || "Could not start password reset");
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+
+    if (resetPassword.length < 6) {
+      setError("Password should be at least 6 characters long");
+      return;
+    }
+
+    if (resetPassword !== confirmResetPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    try {
+      setResetLoading(true);
+      await userRequest.post("/auth/admin/reset-password", {
+        token: resetToken,
+        password: resetPassword,
+      });
+
+      alert("Password reset successfully. Please login with your new password.");
+      setError("");
+      setShowForgotModal(false);
+      resetForgotForm();
+    } catch (error) {
+      setError(error.response?.data?.message || "Could not reset password");
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
   return (
     <div className={`min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4 transition-all duration-700 ease-in-out ${isTransitioning ? 'opacity-0 transform scale-105' : 'opacity-100'}`}>
+      {showForgotModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+          <div className="w-full max-w-md rounded-3xl border border-slate-700 bg-slate-800 p-6 shadow-2xl">
+            <h2 className="text-xl font-bold text-white">Reset Admin Password</h2>
+            <p className="mt-2 text-sm text-slate-300">
+              Enter the admin email to generate a secure reset token.
+            </p>
+
+            {resetToken && (
+              <p className="mt-3 rounded-xl bg-blue-500/10 p-3 text-xs text-blue-200">
+                Reset token generated. Enter a new password below.
+              </p>
+            )}
+
+            <form
+              className="mt-5 space-y-4"
+              onSubmit={resetToken ? handleResetPassword : handleForgotPassword}
+            >
+              <input
+                type="email"
+                value={forgotEmail}
+                onChange={(e) => setForgotEmail(e.target.value)}
+                disabled={Boolean(resetToken)}
+                className="w-full rounded-xl border border-slate-600 bg-slate-700/70 px-4 py-3 text-white outline-none"
+                placeholder="admin@email.com"
+              />
+
+              {resetToken && (
+                <>
+                  <input
+                    type="password"
+                    value={resetPassword}
+                    onChange={(e) => setResetPassword(e.target.value)}
+                    className="w-full rounded-xl border border-slate-600 bg-slate-700/70 px-4 py-3 text-white outline-none"
+                    placeholder="New password"
+                  />
+                  <input
+                    type="password"
+                    value={confirmResetPassword}
+                    onChange={(e) => setConfirmResetPassword(e.target.value)}
+                    className="w-full rounded-xl border border-slate-600 bg-slate-700/70 px-4 py-3 text-white outline-none"
+                    placeholder="Confirm new password"
+                  />
+                </>
+              )}
+
+              <button
+                type="submit"
+                disabled={resetLoading}
+                className="w-full rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white disabled:opacity-60"
+              >
+                {resetLoading
+                  ? "Please wait..."
+                  : resetToken
+                  ? "Reset Password"
+                  : "Generate Reset Token"}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setShowForgotModal(false);
+                  resetForgotForm();
+                }}
+                className="w-full rounded-xl border border-slate-600 px-5 py-3 font-semibold text-slate-200"
+              >
+                Cancel
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
       <div className="max-w-md w-full">
         {/* Login Card */}
         <div className="bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-700/50 overflow-hidden transition-all duration-500 ease-in-out hover:shadow-3xl">
@@ -240,7 +367,14 @@ const Login = () => {
                 </div>
 
                 <div className="text-sm">
-                  <button type="button" className="font-medium text-blue-400 hover:text-blue-300 transition-colors duration-300">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setForgotEmail(email);
+                      setShowForgotModal(true);
+                    }}
+                    className="font-medium text-blue-400 hover:text-blue-300 transition-colors duration-300"
+                  >
                     Forgot password?
                   </button>
                 </div>

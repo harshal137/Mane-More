@@ -1,42 +1,106 @@
 import mongoose from "mongoose";
+
+const OrderProductSchema = new mongoose.Schema(
+  {
+    productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+    title: { type: String, required: true },
+    quantity: { type: Number, required: true },
+    price: { type: Number, required: true },
+    img: { type: String, default: "" },
+    desc: { type: String, default: "" },
+  },
+  { _id: false }
+);
+
 const OrderSchema = mongoose.Schema(
   {
-    name: {
-      type: String,
-      require: true,
-    },
-    userId: {
-      type: String,
-      require: true,
-    },
-    products: {
-      type: Array,
-      require: true,
-    },
-    total: {
-      type: Number,
-      require: true,
-    },
+    // Existing fields kept, but structure made safer for Stripe + COD
+    name: { type: String, required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    products: { type: [OrderProductSchema], required: true },
 
-    address: {
-      type: String,
-    },
+    amount: { type: Number, required: true }, // subtotal
+    shippingFee: { type: Number, default: 0 },
+    totalAmount: { type: Number, required: true },
 
-    phone: {
-      type: String,
-    },
+    // Backward-compatible fields used by your current Order.jsx
+    subtotal: { type: Number, default: 0 },
+    total: { type: Number, required: true },
+    totalQuantity: { type: Number, default: 0 },
 
-    email: {
-      type: String,
+    address: { type: String, required: true },
+    addressDetails: {
+      addressLine1: { type: String, default: "" },
+      addressLine2: { type: String, default: "" },
+      landmark: { type: String, default: "" },
+      city: { type: String, default: "" },
+      state: { type: String, default: "" },
+      postalCode: { type: String, default: "" },
+      country: { type: String, default: "India" },
     },
+    phone: { type: String, required: true },
+    email: { type: String, required: true },
+    locationType: { type: String, default: "" },
 
-    status: {
-      type: Number,
-      default: 0,
+    paymentId: { type: mongoose.Schema.Types.ObjectId, ref: "Payment", required: true },
+
+    payment_status: {
+      type: String,
+      enum: ["pending", "success", "failed", "cancelled", "incomplete"],
+      default: "pending",
+    },
+    status_of_transaction: {
+      type: String,
+      enum: ["paid", "unpaid"],
+      default: "unpaid",
+    },
+    mode_of_transaction: {
+      type: String,
+      enum: ["Stripe", "Card", "Online", "COD"],
+      default: "COD",
+    },
+    transactionId: { type: String, default: "" },
+    transaction_id: { type: String, default: "" },
+
+    stripeSessionId: { type: String, default: undefined },
+    stripePaymentIntentId: { type: String, default: "" },
+    stripe_session_id: {
+      type: String,
+      default: undefined,
+    },
+    stripe_payment_intent_id: { type: String, default: "" },
+
+    order_status: {
+      type: String,
+      enum: ["Placed", "Processing", "Shipped", "Delivered", "Cancelled"],
+      default: "Placed",
+    },
+    delivery_status: {
+      type: String,
+      enum: ["Placed", "Processing", "Shipped", "Delivered", "Cancelled"],
+      default: "Placed",
     },
   },
+  { timestamps: true }
+);
+
+OrderSchema.index(
+  { stripeSessionId: 1 },
   {
-    timestamps: true,
+    unique: true,
+    partialFilterExpression: {
+      stripeSessionId: { $exists: true, $type: "string" },
+    },
+  }
+);
+
+OrderSchema.index(
+  { stripe_session_id: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      stripe_session_id: { $exists: true, $type: "string" },
+    },
   }
 );
 

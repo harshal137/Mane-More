@@ -1,327 +1,626 @@
-import { FaCheckCircle, FaShoppingBag, FaTruck, FaCreditCard, FaStar, FaChevronDown, FaChevronUp } from 'react-icons/fa';
-import StarRatings from 'react-star-ratings';
-import { useEffect, useState } from "react";
-import { userRequest } from "../requestMethods";
+import {
+  FaShoppingBag,
+  FaTruck,
+  FaCreditCard,
+  FaChevronDown,
+  FaChevronUp,
+  FaBoxOpen,
+  FaMapMarkerAlt,
+  FaPhone,
+  FaEnvelope,
+  FaClipboardList,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaClock,
+} from "react-icons/fa";
+import { useCallback, useEffect, useState } from "react";
+import { userRequest, stripeRequest } from "../requestMethods";
 import { useSelector } from "react-redux";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { clearCart } from "../redux/cartRedux";
+import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+const THEME = {
+  BG: "#F8F5F1",
+  CARD: "#FFFFFF",
+  PRIMARY: "#4A315F",
+  GOLD: "#EFC65A",
+  HEADING: "#111827",
+  TEXT: "#5F5A6E",
+  MUTED: "#7A7488",
+  BORDER: "#E8E1DA",
+  SOFT_GREEN: "#E8F1D8",
+};
 
 const Order = () => {
   const user = useSelector((state) => state.user);
   const [orders, setOrders] = useState([]);
-  const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState("");
-  const [activeOrder, setActiveOrder] = useState(null);
-  const [activeProduct, setActiveProduct] = useState(null);
   const [expandedOrders, setExpandedOrders] = useState({});
-  const [expandedItems, setExpandedItems] = useState({});
 
-  useEffect(() => {
-    const getUserOrder = async () => {
+  const dispatch = useDispatch();
+const navigate = useNavigate();
+  const fetchUserOrders = useCallback(async () => {
+    try {
+      if (!user.currentUser?._id) return;
+
+      const res = await userRequest.get(`/orders/find/${user.currentUser._id}`);
+      setOrders(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }, [user.currentUser?._id]);
+
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+  const paymentStatus = params.get("payment");
+  const sessionId = params.get("session_id");
+  const orderStatus = params.get("order");
+
+  if (orderStatus === "cod-success") {
+    toast.success("COD order placed successfully. Your order is now visible.");
+    fetchUserOrders();
+    navigate("/myorders", { replace: true });
+    return;
+  }
+
+  if (paymentStatus === "success" && sessionId) {
+    let tries = 0;
+
+    const verifyStripeOrder = async () => {
       try {
-        const res = await userRequest.get(
-          `/orders/find/${user.currentUser._id}`
-        );
-        setOrders(res.data);
+        tries += 1;
+
+        // ADDED: verify that webhook has created the order before clearing cart.
+        const res = await stripeRequest.get(`/session-status/${sessionId}`);
+
+        if (res.data?.orderCreated && res.data?.payment_status === "success") {
+          dispatch(clearCart());
+          await fetchUserOrders();
+          toast.success("Payment successful. Your order has been placed.");
+          navigate("/myorders", { replace: true });
+          return;
+        }
+
+        if (tries < 6) {
+          setTimeout(verifyStripeOrder, 1500);
+          return;
+        }
+
+        toast.info("Payment received. Your order will appear after confirmation.");
+        await fetchUserOrders();
+        navigate("/myorders", { replace: true });
       } catch (error) {
         console.log(error);
+        toast.error("Could not verify payment status. Please refresh My Orders.");
+        navigate("/myorders", { replace: true });
       }
     };
 
+    verifyStripeOrder();
+  }
+}, [dispatch, fetchUserOrders, navigate]);
+
+  useEffect(() => {
     if (user.currentUser) {
-      getUserOrder();
+      fetchUserOrders();
     }
-  }, [user]);
-
-  const handleRating = async (productId) => {
-    if (!rating) {
-      alert("Please select a rating");
-      return;
-    }
-
-    const singleRating = {
-      star: rating,
-      name: user.currentUser.name,
-      postedBy: user.currentUser.name,
-      comment: comment,
-    };
-    
-    try {
-      await userRequest.put(`/products/rating/${productId}`, singleRating);
-      setComment("");
-      setRating(0);
-      setActiveProduct(null);
-      alert("Thank you for your review!");
-    } catch (error) {
-      console.log(error);
-      alert("Error submitting review. Please try again.");
-    }
-  }
-
-  const calculateOrderTotal = (order) => {
-    return order.products.reduce((total, product) => {
-      return total + (product.price * product.quantity);
-    }, 0);
-  }
-
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  }
+  }, [fetchUserOrders, user.currentUser]);
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-KE', {
-      style: 'currency',
-      currency: 'KES',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  }
+    return `₹ ${Number(amount || 0).toLocaleString("en-IN")}`;
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString(undefined, {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
+  const getPaymentStatus = (order) => {
+    if (order.status_of_transaction) return order.status_of_transaction;
+    if (order.status === 0) return "Unpaid";
+    if (order.status === 1) return "Paid";
+    return "Pending";
+  };
+
+  const getPaymentStyle = (status) => {
+    const value = status.toLowerCase();
+
+    if (value.includes("paid") || value.includes("completed") || value.includes("success")) {
+      return {
+        bg: "#DCFCE7",
+        color: "#16A34A",
+        icon: <FaCheckCircle />,
+      };
+    }
+
+    if (value.includes("unpaid") || value.includes("failed") || value.includes("cancel")) {
+      return {
+        bg: "#FEE2E2",
+        color: "#DC2626",
+        icon: <FaTimesCircle />,
+      };
+    }
+
+    return {
+      bg: "#FEF3C7",
+      color: "#D97706",
+      icon: <FaClock />,
+    };
+  };
+
+  const getDeliveryStatus = (order) => {
+    return order.delivery_status || "Placed";
+  };
+
+  const getDeliveryLabel = (status) => {
+    if (!status || status.toLowerCase() === "placed") return "Ordered";
+    return status;
+  };
+
+  const getDeliveryStep = (status) => {
+    const value = status.toLowerCase();
+
+    if (value.includes("delivered")) return 4;
+    if (value.includes("shipped") || value.includes("dispatch")) return 3;
+    if (value.includes("processing")) return 2;
+    return 1;
+  };
+
+  const getImageSrc = (product) => {
+    if (Array.isArray(product.img)) return product.img[0];
+    return product.img;
+  };
 
   const toggleOrderExpansion = (orderId) => {
-    setExpandedOrders(prev => ({
+    setExpandedOrders((prev) => ({
       ...prev,
-      [orderId]: !prev[orderId]
+      [orderId]: !prev[orderId],
     }));
-  }
-
-  const toggleItemsExpansion = (orderId) => {
-    setExpandedItems(prev => ({
-      ...prev,
-      [orderId]: !prev[orderId]
-    }));
-  }
-
-  const getVisibleProducts = (order, orderId) => {
-    const isExpanded = expandedItems[orderId];
-    return isExpanded ? order.products : order.products.slice(0, 2);
-  }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-rose-50 to-white pt-24 pb-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-10">
-          <div className="w-20 h-20 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <FaCheckCircle className="text-rose-600 text-4xl" />
-          </div>
-          <h1 className="text-3xl font-serif font-bold text-gray-800 mb-2">Your Order History</h1>
-          <p className="text-gray-600">Thank you for shopping with us! Here are your recent orders.</p>
+    <div
+      className="min-h-screen px-4 pb-12 pt-24 sm:px-6 lg:px-8"
+      style={{ backgroundColor: THEME.BG }}
+    >
+      <ToastContainer position="top-right" autoClose={3000} theme="light" />
+      <div className="mx-auto max-w-6xl">
+        {/* Header */}
+        <div className="mb-8">
+          <h1
+            className="text-3xl font-bold md:text-4xl"
+            style={{ color: THEME.HEADING }}
+          >
+            My Orders
+          </h1>
+
+          <p className="mt-2" style={{ color: THEME.TEXT }}>
+            Track, review, and manage your recent purchases.
+          </p>
         </div>
 
         {orders.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
-            <div className="w-24 h-24 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <FaShoppingBag className="w-12 h-12 text-rose-400" />
+          <div
+            className="mx-auto max-w-2xl rounded-3xl p-12 text-center"
+            style={{
+              backgroundColor: THEME.CARD,
+              border: `1px solid ${THEME.BORDER}`,
+              boxShadow: "0 16px 45px rgba(74,49,95,0.08)",
+            }}
+          >
+            <div
+              className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full"
+              style={{ backgroundColor: THEME.SOFT_GREEN }}
+            >
+              <FaShoppingBag
+                className="h-12 w-12"
+                style={{ color: THEME.PRIMARY }}
+              />
             </div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">No orders yet</h2>
-            <p className="text-gray-600 mb-8">You haven't placed any orders yet. Start shopping to see your order history here.</p>
-            <Link 
-              to="/products" 
-              className="bg-rose-600 hover:bg-rose-700 text-white px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg inline-block"
+
+            <h2
+              className="mb-3 text-2xl font-bold"
+              style={{ color: THEME.HEADING }}
+            >
+              No orders yet
+            </h2>
+
+            <p className="mb-8" style={{ color: THEME.TEXT }}>
+              You have not placed any orders yet. Start shopping to see your
+              order history here.
+            </p>
+
+            <Link
+              to="/products"
+              className="inline-block rounded-full px-8 py-3 font-semibold transition-all duration-300 hover:scale-105"
+              style={{
+                backgroundColor: THEME.PRIMARY,
+                color: "#FFFFFF",
+              }}
             >
               Start Shopping
             </Link>
           </div>
         ) : (
           <div className="space-y-6">
-            {orders.map((order) => (
-              <div key={order._id} className="bg-white rounded-2xl shadow-lg overflow-hidden">
-                {/* Order Header - Always Visible */}
-                <div className="bg-rose-50 p-6 border-b border-rose-100">
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div className="flex-1">
-                      <h2 className="text-xl font-semibold text-gray-800">Order #{order._id.slice(-8).toUpperCase()}</h2>
-                      <p className="text-gray-600 text-sm mt-1">Placed on {formatDate(order.createdAt)}</p>
-                      <p className="text-gray-600 text-sm">
-                        {order.products.length} item{order.products.length !== 1 ? 's' : ''} • Total: {formatCurrency(calculateOrderTotal(order) + 500)}
+            {orders.map((order) => {
+              const paymentStatus = getPaymentStatus(order);
+              const paymentStyle = getPaymentStyle(paymentStatus);
+              const deliveryStatus = getDeliveryStatus(order);
+              const deliveryLabel = getDeliveryLabel(deliveryStatus);
+              const deliveryStep = getDeliveryStep(deliveryStatus);
+              const isExpanded = expandedOrders[order._id];
+
+              return (
+                <div
+                  key={order._id}
+                  className="overflow-hidden rounded-3xl"
+                  style={{
+                    backgroundColor: THEME.CARD,
+                    border: `1px solid ${THEME.BORDER}`,
+                    boxShadow: "0 16px 45px rgba(74,49,95,0.08)",
+                  }}
+                >
+                  {/* Amazon/Myntra style order top bar */}
+                  <div
+                    className="grid grid-cols-1 gap-4 border-b p-5 md:grid-cols-4"
+                    style={{
+                      backgroundColor: "#FAFAFA",
+                      borderColor: THEME.BORDER,
+                    }}
+                  >
+                    <div>
+                      <p className="text-xs font-semibold uppercase" style={{ color: THEME.MUTED }}>
+                        Order Placed
+                      </p>
+                      <p className="mt-1 font-semibold" style={{ color: THEME.HEADING }}>
+                        {formatDate(order.createdAt)}
                       </p>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <span className="bg-rose-100 text-rose-700 px-3 py-1 rounded-full text-sm font-medium">
-                        {order.status || "Completed"}
-                      </span>
-                      <button
-                        onClick={() => toggleOrderExpansion(order._id)}
-                        className="text-rose-600 hover:text-rose-700 transition-colors duration-300"
-                      >
-                        {expandedOrders[order._id] ? <FaChevronUp /> : <FaChevronDown />}
-                      </button>
+
+                    <div>
+                      <p className="text-xs font-semibold uppercase" style={{ color: THEME.MUTED }}>
+                        Total
+                      </p>
+                      <p className="mt-1 font-semibold" style={{ color: THEME.PRIMARY }}>
+                        {formatCurrency(order.totalAmount || order.total)}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-xs font-semibold uppercase" style={{ color: THEME.MUTED }}>
+                        Ship To
+                      </p>
+                      <p className="mt-1 font-semibold" style={{ color: THEME.HEADING }}>
+                        {order.name || user.currentUser?.name || "Customer"}
+                      </p>
+                    </div>
+
+                    <div className="md:text-right">
+                      <p className="text-xs font-semibold uppercase" style={{ color: THEME.MUTED }}>
+                        Order ID
+                      </p>
+                      <p className="mt-1 font-semibold" style={{ color: THEME.HEADING }}>
+                        #{order._id.slice(-8).toUpperCase()}
+                      </p>
                     </div>
                   </div>
-                </div>
 
-                {/* Collapsible Order Details */}
-                {expandedOrders[order._id] && (
-                  <>
-                    {/* Order Items */}
-                    <div className="p-6">
-                      <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                        <FaShoppingBag className="text-rose-600 mr-2" />
-                        Items Ordered ({order.products.length})
-                      </h3>
-                      
-                      <div className="space-y-6">
-                        {getVisibleProducts(order, order._id).map((product, productIndex) => (
-                          <div key={productIndex} className="border-b border-gray-100 pb-6 last:border-0">
-                            <div className="flex flex-col sm:flex-row items-start gap-4">
-                              <img
-                                src={product.img}
-                                alt={product.title}
-                                className="w-20 h-20 rounded-lg object-cover shadow-sm"
-                              />
-                              
-                              <div className="flex-1">
-                                <h4 className="text-lg font-medium text-gray-800">{product.title}</h4>
-                                <p className="text-gray-600">Quantity: {product.quantity}</p>
-                                <p className="text-lg font-bold text-rose-700 mt-1">
-                                  {formatCurrency(product.price * product.quantity)}
-                                </p>
-                                
-                                {/* Rating Section */}
-                                <div className="mt-4">
-                                  <button
-                                    onClick={() => {
-                                      setActiveProduct(activeProduct === product._id ? null : product._id);
-                                      setActiveOrder(order._id);
-                                    }}
-                                    className="text-rose-600 hover:text-rose-700 text-sm font-medium flex items-center"
-                                  >
-                                    <FaStar className="mr-1" />
-                                    {activeProduct === product._id ? "Cancel Review" : "Rate this Product"}
-                                  </button>
-                                  
-                                  {activeProduct === product._id && (
-                                    <div className="mt-3 p-4 bg-rose-50 rounded-lg">
-                                      <h5 className="font-medium text-gray-800 mb-2">How would you rate this product?</h5>
-                                      <StarRatings
-                                        numberOfStars={5}
-                                        starDimension="25px"
-                                        rating={rating}
-                                        isSelectable={true}
-                                        starRatedColor="#fbbf24"
-                                        changeRating={(newRating) => setRating(newRating)}
-                                      />
-                                      <textarea
-                                        placeholder="Share your experience with this product (optional)"
-                                        className="w-full mt-3 p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-300 resize-none"
-                                        rows="3"
-                                        value={comment}
-                                        onChange={(e) => setComment(e.target.value)}
-                                      />
-                                      <div className="flex gap-2 mt-3">
-                                        <button
-                                          onClick={() => handleRating(product._id)}
-                                          className="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-300"
-                                        >
-                                          Submit Review
-                                        </button>
-                                        <button
-                                          onClick={() => {
-                                            setActiveProduct(null);
-                                            setComment("");
-                                            setRating(0);
-                                          }}
-                                          className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-300"
-                                        >
-                                          Cancel
-                                        </button>
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
+                  {/* Main order content */}
+                  <div className="p-5 md:p-6">
+                    <div className="mb-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                      <div>
+                        <h2
+                          className="text-xl font-bold"
+                          style={{ color: THEME.HEADING }}
+                        >
+                          {deliveryLabel}
+                        </h2>
+
+                        <p className="mt-1 text-sm" style={{ color: THEME.TEXT }}>
+                          {order.products?.length || 0} item
+                          {order.products?.length !== 1 ? "s" : ""} in this order
+                        </p>
+                      </div>
+
+                      <div className="flex flex-wrap gap-3">
+                        <span
+                          className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold"
+                          style={{
+                            backgroundColor: paymentStyle.bg,
+                            color: paymentStyle.color,
+                          }}
+                        >
+                          {paymentStyle.icon}
+                          {paymentStatus}
+                        </span>
+
+                        <span
+                          className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold"
+                          style={{
+                            backgroundColor: THEME.SOFT_GREEN,
+                            color: THEME.PRIMARY,
+                          }}
+                        >
+                          <FaTruck />
+                          {deliveryLabel}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Delivery progress */}
+                    <div className="mb-6">
+                      <div className="grid grid-cols-4 gap-2 text-center text-xs font-semibold">
+                        {["Ordered", "Processing", "Shipped", "Delivered"].map(
+                          (step, index) => {
+                            const active = index + 1 <= deliveryStep;
+
+                            return (
+                              <div key={step}>
+                                <div
+                                  className="mb-2 h-2 rounded-full"
+                                  style={{
+                                    backgroundColor: active
+                                      ? THEME.PRIMARY
+                                      : THEME.BORDER,
+                                  }}
+                                />
+                                <span
+                                  style={{
+                                    color: active ? THEME.PRIMARY : THEME.MUTED,
+                                  }}
+                                >
+                                  {step}
+                                </span>
                               </div>
-                            </div>
-                          </div>
-                        ))}
-
-                        {/* Show More/Less Items Toggle */}
-                        {order.products.length > 2 && (
-                          <div className="text-center pt-4">
-                            <button
-                              onClick={() => toggleItemsExpansion(order._id)}
-                              className="text-rose-600 hover:text-rose-700 font-medium flex items-center justify-center gap-2 mx-auto"
-                            >
-                              {expandedItems[order._id] ? (
-                                <>
-                                  <FaChevronUp /> Show Less
-                                </>
-                              ) : (
-                                <>
-                                  <FaChevronDown /> Show All {order.products.length} Items
-                                </>
-                              )}
-                            </button>
-                          </div>
+                            );
+                          }
                         )}
                       </div>
                     </div>
 
-                    {/* Order Summary */}
-                    <div className="bg-gray-50 p-6 border-t border-gray-100">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                            <FaTruck className="text-rose-600 mr-2" />
-                            Shipping Information
-                          </h3>
-                          <p className="text-gray-600">{user.currentUser?.email}</p>
-                          <p className="text-gray-600">{user.currentUser?.name}</p>
-                          {order.address && (
-                            <div className="mt-2 text-sm text-gray-600">
-                              <p>{order.address.street}</p>
-                              <p>{order.address.city}, {order.address.postalCode}</p>
-                              <p>{order.address.country}</p>
+                    {/* Product preview */}
+                    <div className="space-y-4">
+                      {(isExpanded ? order.products : order.products?.slice(0, 2))?.map(
+                        (product, index) => (
+                          <div
+                            key={index}
+                            className="flex flex-col gap-4 rounded-2xl p-4 sm:flex-row"
+                            style={{
+                              backgroundColor: THEME.BG,
+                              border: `1px solid ${THEME.BORDER}`,
+                            }}
+                          >
+                            <img
+                              src={getImageSrc(product)}
+                              alt={product.title}
+                              className="h-28 w-full rounded-xl object-cover sm:w-28"
+                            />
+
+                            <div className="flex-1">
+                              <h3
+                                className="font-bold"
+                                style={{ color: THEME.HEADING }}
+                              >
+                                {product.title}
+                              </h3>
+
+                              <p className="mt-1 text-sm" style={{ color: THEME.TEXT }}>
+                                Quantity: {product.quantity}
+                              </p>
+
+                              <p className="mt-1 text-sm" style={{ color: THEME.TEXT }}>
+                                Price: {formatCurrency(product.price)}
+                              </p>
+
+                              <p
+                                className="mt-2 text-lg font-bold"
+                                style={{ color: THEME.PRIMARY }}
+                              >
+                                {formatCurrency(product.price * product.quantity)}
+                              </p>
                             </div>
-                          )}
-                        </div>
-                        
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                            <FaCreditCard className="text-rose-600 mr-2" />
-                            Payment Method
-                          </h3>
-                          <p className="text-gray-600 capitalize">{order.paymentMethod || 'Credit Card'}</p>
-                          <p className="text-gray-600 text-sm mt-1">
-                            Status: <span className="font-medium capitalize text-rose-600">{order.paymentStatus || 'Paid'}</span>
+
+                            <div className="flex flex-col gap-2 sm:w-40">
+                              <Link
+                                to={`/product/${product.productId || product._id}`}
+                                className="rounded-xl px-4 py-2 text-center text-sm font-semibold"
+                                style={{
+                                  backgroundColor: THEME.PRIMARY,
+                                  color: "#FFFFFF",
+                                }}
+                              >
+                                View Product
+                              </Link>
+
+                              <Link
+                                to="/products"
+                                className="rounded-xl px-4 py-2 text-center text-sm font-semibold"
+                                style={{
+                                  backgroundColor: THEME.CARD,
+                                  color: THEME.PRIMARY,
+                                  border: `1px solid ${THEME.BORDER}`,
+                                }}
+                              >
+                                Buy Again
+                              </Link>
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
+
+                    {order.products?.length > 2 && (
+                      <button
+                        onClick={() => toggleOrderExpansion(order._id)}
+                        className="mt-4 flex items-center gap-2 text-sm font-semibold"
+                        style={{ color: THEME.PRIMARY }}
+                      >
+                        {isExpanded ? (
+                          <>
+                            <FaChevronUp /> Show Less Items
+                          </>
+                        ) : (
+                          <>
+                            <FaChevronDown /> Show All {order.products.length} Items
+                          </>
+                        )}
+                      </button>
+                    )}
+
+                    {/* See All / See Less Button */}
+                    <button
+                      onClick={() => toggleOrderExpansion(order._id)}
+                      className="mt-5 inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition-all duration-300"
+                      style={{
+                        backgroundColor: THEME.CARD,
+                        color: THEME.PRIMARY,
+                        border: `1px solid ${THEME.BORDER}`,
+                      }}
+                    >
+                      {isExpanded ? (
+                        <>
+                          <FaChevronUp />
+                          See Less Details
+                        </>
+                      ) : (
+                        <>
+                          <FaChevronDown />
+                          See All Details
+                        </>
+                      )}
+                    </button>
+
+                    {/* Details panel */}
+                    {isExpanded && (
+                    <div
+                      className="mt-6 grid grid-cols-1 gap-5 border-t pt-6 md:grid-cols-3"
+                      style={{ borderColor: THEME.BORDER }}
+                    >
+                      <div>
+                        <h4
+                          className="mb-3 flex items-center gap-2 font-bold"
+                          style={{ color: THEME.HEADING }}
+                        >
+                          <FaMapMarkerAlt style={{ color: THEME.PRIMARY }} />
+                          Delivery Address
+                        </h4>
+
+                        <p className="text-sm" style={{ color: THEME.TEXT }}>
+                          {order.name}
+                        </p>
+
+                        <p className="mt-1 text-sm" style={{ color: THEME.TEXT }}>
+                          {order.address || "Address not available"}
+                        </p>
+
+                        {order.phone && (
+                          <p className="mt-2 flex items-center gap-2 text-sm" style={{ color: THEME.TEXT }}>
+                            <FaPhone style={{ color: THEME.PRIMARY }} />
+                            {order.phone}
                           </p>
-                        </div>
-                        
-                        <div className="bg-white p-4 rounded-lg shadow-sm">
-                          <h3 className="text-lg font-semibold text-gray-800 mb-3">Order Summary</h3>
-                          <div className="flex justify-between mb-2">
-                            <span className="text-gray-600">Subtotal:</span>
-                            <span className="font-medium">{formatCurrency(calculateOrderTotal(order))}</span>
+                        )}
+
+                        {order.email && (
+                          <p className="mt-2 flex items-center gap-2 text-sm" style={{ color: THEME.TEXT }}>
+                            <FaEnvelope style={{ color: THEME.PRIMARY }} />
+                            {order.email}
+                          </p>
+                        )}
+                      </div>
+
+                      <div>
+                        <h4
+                          className="mb-3 flex items-center gap-2 font-bold"
+                          style={{ color: THEME.HEADING }}
+                        >
+                          <FaCreditCard style={{ color: THEME.PRIMARY }} />
+                          Payment Details
+                        </h4>
+
+                        <p className="mt-2 text-sm" style={{ color: THEME.TEXT }}>
+                          Payment Status:{" "}
+                          <span
+                            className="font-semibold"
+                            style={{ color: paymentStyle.color }}
+                          >
+                            {paymentStatus}
+                          </span>
+                        </p>
+
+                        <p className="text-sm" style={{ color: THEME.TEXT }}>
+                          Mode of Transaction:{" "}
+                          <span className="font-semibold">
+                            {order.mode_of_transaction || "Not available"}
+                          </span>
+                        </p>
+
+                        <p className="mt-2 text-sm" style={{ color: THEME.TEXT }}>
+                          Transaction ID:{" "}
+                          <span className="font-semibold">
+                            {order.transaction_id || "Not available"}
+                          </span>
+                        </p>
+                      </div>
+
+                      <div
+                        className="rounded-2xl p-4"
+                        style={{
+                          backgroundColor: THEME.BG,
+                          border: `1px solid ${THEME.BORDER}`,
+                        }}
+                      >
+                        <h4
+                          className="mb-3 flex items-center gap-2 font-bold"
+                          style={{ color: THEME.HEADING }}
+                        >
+                          <FaClipboardList style={{ color: THEME.PRIMARY }} />
+                          Order Summary
+                        </h4>
+
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between" style={{ color: THEME.TEXT }}>
+                            <span>Items</span>
+                            <span>{order.products?.length || 0}</span>
                           </div>
-                          <div className="flex justify-between mb-2">
-                            <span className="text-gray-600">Shipping:</span>
-                            <span className="font-medium">{formatCurrency(500)}</span>
-                          </div>
-                          {order.discount > 0 && (
-                            <div className="flex justify-between mb-2 text-green-600">
-                              <span>Discount:</span>
-                              <span className="font-medium">-{formatCurrency(order.discount)}</span>
-                            </div>
-                          )}
-                          <div className="flex justify-between mb-2 pt-2 border-t border-gray-100">
-                            <span className="text-lg font-semibold">Total:</span>
-                            <span className="text-lg font-semibold text-rose-700">
-                              {formatCurrency((calculateOrderTotal(order) + 500 - (order.discount || 0)))}
+
+                          <div className="flex justify-between" style={{ color: THEME.TEXT }}>
+                            <span>Total</span>
+                            <span className="font-bold" style={{ color: THEME.PRIMARY }}>
+                              {formatCurrency(order.totalAmount || order.total)}
                             </span>
+                          </div>
+
+                          <div className="flex justify-between" style={{ color: THEME.TEXT }}>
+                            <span>Delivery</span>
+                            <span>{deliveryLabel}</span>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </>
-                )}
-              </div>
-            ))}
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
 
         {orders.length > 0 && (
-          <div className="text-center mt-10">
-            <Link 
-              to="/products" 
-              className="bg-rose-600 hover:bg-rose-700 text-white px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg inline-block"
+          <div className="mt-10 text-center">
+            <Link
+              to="/products"
+              className="inline-block rounded-full px-8 py-3 font-semibold transition-all duration-300 hover:scale-105"
+              style={{
+                backgroundColor: THEME.PRIMARY,
+                color: "#FFFFFF",
+              }}
             >
               Continue Shopping
             </Link>

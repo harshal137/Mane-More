@@ -6,6 +6,8 @@ import {
   updateProduct,
   deleteProduct,
 } from "../controller/product.controller.js";
+import protect from "../Middleware/auth.middleware.js";
+import adminAuth from "../Middleware/adminAuth.middleware.js";
 import express from "express";
 const router = express.Router();
 
@@ -15,12 +17,12 @@ router.put("/rating/:id", ratingProduct);
 router.get("/", getALLproducts);
 // GET ONE PRODUCT
 router.get("/find/:id", getProduct);
-//CREATE PRODUCT
-router.post("/", createProduct);
-// UPDATE PRODUCT
-router.put("/:id", updateProduct);
+//CREATE PRODUCT - Admin only
+router.post("/", protect, adminAuth, createProduct);
+// UPDATE PRODUCT - Admin only
+router.put("/:id", protect, adminAuth, updateProduct);
 
-//DELETE PRODUCT
-router.delete("/:id", deleteProduct);
+//DELETE PRODUCT - Admin only
+router.delete("/:id", protect, adminAuth, deleteProduct);
 
 export default router;

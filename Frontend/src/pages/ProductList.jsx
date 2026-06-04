@@ -1,86 +1,330 @@
-import { useLocation } from 'react-router-dom';
-import Products from '../components/Products';
-import { useState } from 'react';
+import { useParams } from "react-router-dom";
+import Products from "../components/Products";
+import { useEffect, useState } from "react";
+
+const THEME = {
+  BG: "#F8F5F1",
+  CARD: "#FFFFFF",
+  PRIMARY: "#4A315F",
+  PRIMARY_DARK: "#3B284D",
+  GOLD: "#EFC65A",
+  HEADING: "#111827",
+  TEXT: "#5F5A6E",
+  MUTED: "#7A7488",
+  BORDER: "#E8E1DA",
+  SOFT_GREEN: "#E8F1D8",
+};
+
+const typeOptionsByCategory = {
+  haircare: [
+    "Hair Wax",
+    "Hair Gel",
+    "Hair Spray",
+    "Hair Powder",
+    "Hair Mousse",
+    "Pomade",
+    "Hair Cream",
+    "Hair Tonic",
+    "Shampoo",
+    "Sea Salt Spray",
+    "Foam",
+    "Styling Cream",
+    "Hair Clay",
+    "Hair Paste",
+    "Hair Oil",
+  ],
+  beardshaving: [
+    "Beard Oil",
+    "Beard Shampoo",
+    "Beard Conditioner",
+    "Beard Wax",
+    "Shaving Gel",
+    "Shaving Cream",
+    "Razor Blades",
+    "Aftershave",
+    "Bump Repair Spray",
+  ],
+  skincare: ["Face Scrub", "Face Tonic", "Clay Mask", "Coffee Scrub"],
+  fragrance: ["Cologne", "Aftershave Cologne", "Cream Cologne"],
+};
+
+const normalizeCategoryKey = (value) =>
+  value
+    .toString()
+    .toLowerCase()
+    .replace(/&/g, " ")
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/(^_|_$)/g, "");
+
+const defaultTypeOptions = [
+  "Hair Wax",
+  "Hair Gel",
+  "Hair Spray",
+  "Hair Powder",
+  "Hair Mousse",
+  "Pomade",
+  "Hair Cream",
+  "Hair Tonic",
+  "Shampoo",
+  "Sea Salt Spray",
+  "Foam",
+  "Styling Cream",
+  "Hair Clay",
+  "Hair Paste",
+  "Hair Oil",
+  "Beard Oil",
+  "Beard Shampoo",
+  "Beard Conditioner",
+  "Beard Wax",
+  "Shaving Gel",
+  "Shaving Cream",
+  "Razor Blades",
+  "Aftershave",
+  "Bump Repair Spray",
+  "Cologne",
+  "Aftershave Cologne",
+  "Cream Cologne",
+  "Face Scrub",
+  "Face Tonic",
+  "Clay Mask",
+  "Coffee Scrub",
+];
+
+const brandOptions = [
+  "Redone",
+  "Gummy",
+  "Astra",
+  "Derby",
+  "Dorco",
+  "Permasharp",
+];
+
+// Convert navbar URL category into exact DB category value
+const categoryMap = {
+  haircare: "HairCare",
+  beardshaving: "Beard & Shaving",
+  skincare: "SkinCare",
+  fragrance: "Fragrance",
+};
 
 const ProductList = () => {
-
-  const location =useLocation();
-  const query = location.pathname.split("/")[2];
+  const { searchterm } = useParams();
   const [filters, setFilters] = useState({});
-  const {sort, setSort} = useState("newest")
+  const [sort, setSort] = useState("newest");
 
-  const handleFilters = (e) =>{
-    const value = e.target.value;
+  const dbCategory = searchterm ? categoryMap[searchterm.toLowerCase()] : "";
+
+  const selectedCategory = searchterm ? normalizeCategoryKey(searchterm) : "";
+  const selectedTypeOptions = searchterm
+    ? typeOptionsByCategory[selectedCategory] || []
+    : defaultTypeOptions;
+
+  useEffect(() => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      type: "",
+    }));
+  }, [selectedCategory]);
+
+  const handleFilters = (e) => {
+    const { name, value } = e.target;
+
     setFilters({
       ...filters,
-      [e.target.name]: value,
-    })
-  }
+      [name]: value,
+    });
+  };
+
+  const clearFilters = () => {
+    setFilters({});
+    setSort("newest");
+  };
+
+  const formatTitle = (value) => {
+    if (!value) return "All Products";
+
+    return value
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div
+      className="min-h-screen px-4 py-10 sm:px-6 lg:px-8"
+      style={{ backgroundColor: THEME.BG }}
+    >
+      <div className="mx-auto max-w-7xl">
+        {/* Page Header */}
 
-      <div className="flex justify-between m-4">
 
-        {/* LEFT */}
-        <div className="flex flex-col sm:flex-row sm:items-center">
-          <span className="text-lg font-semibold mr-4">Filter Products</span>
-          <select name="concern" id="" className="p-2 mb-4 sm:mb-0 sm:mr-4" onChange={handleFilters}>
-            <option>Dry Skin</option>
-            <option>Pigmentation</option>
-            <option>Oil Control</option>
-            <option>Anti Acne</option>
-            <option>Sunburn</option>
-            <option>Skin Brightening</option>
-            <option>Tan Removal</option>
-            <option>Night Routine</option>
-            <option>UV Protection</option>
-            <option>Damaged Hair</option>
-            <option>Frizzy Hair</option>
-            <option>Stretch Marks</option>
-            <option>Color Protection</option>
-            <option>Dry Hair</option>
-            <option>Soothing</option>
-            <option>Dandruff</option>
-            <option>Greying</option>
-            <option>Hairfall</option>
-            <option>Hair Color</option>
-            <option>Well Being</option>
-            <option>Acne</option>
-            <option>Hair Growth</option>
-          </select>
+        {/* Filter + Sort Panel */}
+        <div
+          className="mb-10 rounded-[2rem] p-5 md:p-6"
+          style={{
+            backgroundColor: THEME.CARD,
+            border: `1px solid ${THEME.BORDER}`,
+            boxShadow: "0 16px 45px rgba(74,49,95,0.08)",
+          }}
+        >
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            {/* Filters */}
+            <div className="grid flex-1 grid-cols-1 gap-4 md:grid-cols-2">
+              <div>
+                <label
+                  className="mb-2 block text-sm font-semibold"
+                  style={{ color: THEME.HEADING }}
+                >
+                  Product Type
+                </label>
 
-          <select name="brand" id="" className="p-2 mb-4 sm:mb-0 sm:mr-4" onChange={handleFilters}>
-            <option>Garnier</option>
-            <option>Kylie</option>
-            <option>Kiss Beauty</option>
-            <option>Dr Rashel</option>
-            <option>Luron</option>
-            <option>Nivea</option>
-            <option>Heaven Dove</option>
-            <option>Disaar</option>
-            <option>Johnsons Baby</option>
-            <option>Rexona</option>
-            <option>Kylie</option>
+                <select
+                  name="type"
+                  value={filters.type || ""}
+                  onChange={handleFilters}
+                  className="w-full rounded-2xl px-4 py-3 outline-none transition-all"
+                  style={{
+                    backgroundColor: "#F8F5F1",
+                    color: THEME.TEXT,
+                    border: `1px solid ${THEME.BORDER}`,
+                  }}
+                >
+                  <option value="">All Types</option>
 
-          </select>
+                  {selectedTypeOptions.length > 0 ? (
+                    selectedTypeOptions.map((typeOption) => (
+                      <option key={typeOption} value={typeOption}>
+                        {typeOption}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="" disabled>
+                      No types available
+                    </option>
+                  )}
+                </select>
+              </div>
 
+              <div>
+                <label
+                  className="mb-2 block text-sm font-semibold"
+                  style={{ color: THEME.HEADING }}
+                >
+                  Brand
+                </label>
+
+                <select
+                  name="brand"
+                  value={filters.brand || ""}
+                  onChange={handleFilters}
+                  className="w-full rounded-2xl px-4 py-3 outline-none transition-all"
+                  style={{
+                    backgroundColor: "#F8F5F1",
+                    color: THEME.TEXT,
+                    border: `1px solid ${THEME.BORDER}`,
+                  }}
+                >
+                  <option value="">All Brands</option>
+
+                  {brandOptions.map((brand) => (
+                    <option key={brand} value={brand}>
+                      {brand}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Sort */}
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-[1fr_auto] lg:w-[420px]">
+              <div>
+                <label
+                  className="mb-2 block text-sm font-semibold"
+                  style={{ color: THEME.HEADING }}
+                >
+                  Sort Products
+                </label>
+
+                <select
+                  name="price"
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value)}
+                  className="w-full rounded-2xl px-4 py-3 outline-none transition-all"
+                  style={{
+                    backgroundColor: "#F8F5F1",
+                    color: THEME.TEXT,
+                    border: `1px solid ${THEME.BORDER}`,
+                  }}
+                >
+                  <option value="newest">Newest</option>
+                  <option value="asc">Price: Low to High</option>
+                  <option value="desc">Price: High to Low</option>
+                </select>
+              </div>
+
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="h-12 self-end rounded-xl px-6 text-sm font-medium transition-all duration-300 hover:opacity-90"
+                style={{
+                  backgroundColor: THEME.PRIMARY,
+                  color: "#FFFFFF",
+                }}
+              >
+                Clear Filters
+              </button>
+            </div>
+          </div>
+
+          {/* Active Filters */}
+          <div className="mt-5 flex flex-wrap gap-3">
+            {filters.type && (
+              <span
+                className="rounded-full px-4 py-2 text-sm font-medium"
+                style={{
+                  backgroundColor: THEME.SOFT_GREEN,
+                  color: THEME.PRIMARY,
+                }}
+              >
+                Type: {filters.type}
+              </span>
+            )}
+
+            {filters.brand && (
+              <span
+                className="rounded-full px-4 py-2 text-sm font-medium"
+                style={{
+                  backgroundColor: THEME.SOFT_GREEN,
+                  color: THEME.PRIMARY,
+                }}
+              >
+                Brand: {filters.brand}
+              </span>
+            )}
+
+            <span
+              className="rounded-full px-4 py-2 text-sm font-medium"
+              style={{
+                backgroundColor: "rgba(239,198,90,0.22)",
+                color: THEME.PRIMARY_DARK,
+              }}
+            >
+              Sort:{" "}
+              {sort === "newest"
+                ? "Newest"
+                : sort === "asc"
+                  ? "Low to High"
+                  : "High to Low"}
+            </span>
+          </div>
         </div>
-
-        {/* RIGHT */}
-        <div className="flex flex-col sm:flex-row sm:items-center">
-          <span className="text-lg font-semibold mr-4">Sort Products</span>
-          <select name="price" id="" onChange={(e) => setSort(e.target.value)}>
-            <option value="newest">Newest</option>
-            <option value="asc">Price (asc)</option>
-            <option value="desc">Price (desc)</option>
-          </select>
-
-        </div>
-
       </div>
 
-      <Products query={query} filters={filters} sort={sort}/>
-
+      <Products
+        category={dbCategory}
+        filters={filters}
+        sort={sort}
+        query={searchterm}
+      />
     </div>
   );
 };

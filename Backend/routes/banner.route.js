@@ -1,5 +1,7 @@
 import express from "express";
 const router = express.Router();
+import protect from "../Middleware/auth.middleware.js";
+import adminAuth from "../Middleware/adminAuth.middleware.js";
 import {
   createBanner,
   getAllBanners,
@@ -7,15 +9,14 @@ import {
   deleteBanner,
 } from "../controller/banner.controller.js";
 
-// CREATE BANNER ROUTE
-router.post("/", createBanner);
+// CREATE BANNER ROUTE - Admin only
+router.post("/", protect, adminAuth, createBanner);
 
-// GET ALL BANNERS ROUTE
-router.get("/", getAllBanners);
+// GET ALL BANNERS ROUTE - Admin only
+router.get("/", protect, adminAuth, getAllBanners);
 
-// DELETE BANNER ROUTE
-
-router.delete("/:id", deleteBanner);
+// DELETE BANNER ROUTE - Admin only
+router.delete("/:id", protect, adminAuth, deleteBanner);
 
 // GET RANDOM BANNER ROUTE
 router.get("/random", getRandomBanner);
