@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import asyncHandler from "express-async-handler";
 import generateToken from "../util/generateToken.js";
 import crypto from "crypto";
+import { sendInngestEventSafely } from "../utils/sendInngestEventSafely.js";
 
 const publicUser = (user) => ({
   _id: user._id,
@@ -35,6 +36,15 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (user) {
+    await sendInngestEventSafely({
+      name: "user.registered",
+      data: {
+        email: user.email,
+        name: user.name,
+      },
+    });
+    console.log("user.registered email event sent");
+
     generateToken(res, user._id, "jwt");
     res.status(201).json(publicUser(user));
   } else {
@@ -85,8 +95,11 @@ const loginAdmin = asyncHandler(async (req, res) => {
   }
 });
 
-const createResetToken = () => {
-  const resetToken = crypto.randomBytes(32).toString("hex");
+const createResetToken = (scope = "user") => {
+  const resetToken =
+    scope === "user"
+      ? String(Math.floor(100000 + Math.random() * 900000))
+      : crypto.randomBytes(32).toString("hex");
   const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
 
   return { resetToken, hashedToken };
@@ -119,7 +132,7 @@ const requestPasswordReset = (scope) =>
       });
     }
 
-    const { resetToken, hashedToken } = createResetToken();
+    const { resetToken, hashedToken } = createResetToken(scope);
 
     user.resetPasswordToken = hashedToken;
     user.resetPasswordExpires = new Date(Date.now() + 15 * 60 * 1000);
@@ -129,17 +142,64 @@ const requestPasswordReset = (scope) =>
 
     console.log(`${scope} password reset link: ${resetUrl}`);
 
+    if (scope === "user") {
+      await sendInngestEventSafely({
+        name: "user.password.reset",
+        data: {
+          email: user.email,
+          name: user.name,
+          resetCode: resetToken,
+          resetUrl,
+        },
+      });
+      console.log("user.password.reset email event sent");
+    }
+
     const response = {
-      message: "Password reset token generated. Use it within 15 minutes.",
+      message:
+        scope === "user"
+          ? "Password reset code sent. Use it within 15 minutes."
+          : "Password reset token generated. Use it within 15 minutes.",
     };
 
-    if (process.env.NODE_ENV !== "production") {
+    if (process.env.NODE_ENV !== "production" && scope === "admin") {
       response.resetToken = resetToken;
       response.resetUrl = resetUrl;
     }
 
     return res.status(200).json(response);
   });
+
+const verifyResetCode = asyncHandler(async (req, res) => {
+  const { email, code } = req.body;
+  const normalizedEmail = String(email || "").trim().toLowerCase();
+  const normalizedCode = String(code || "").trim();
+
+  if (!normalizedEmail || !normalizedCode) {
+    res.status(400);
+    throw new Error("Email and verification code are required");
+  }
+
+  if (!/^\d{6}$/.test(normalizedCode)) {
+    res.status(400);
+    throw new Error("Verification code must be 6 digits");
+  }
+
+  const hashedToken = crypto.createHash("sha256").update(normalizedCode).digest("hex");
+  const user = await User.findOne({
+    email: normalizedEmail,
+    role: "user",
+    resetPasswordToken: hashedToken,
+    resetPasswordExpires: { $gt: new Date() },
+  });
+
+  if (!user) {
+    res.status(400);
+    throw new Error("Verification code is invalid or expired");
+  }
+
+  return res.status(200).json({ success: true, message: "Verification code confirmed" });
+});
 
 const resetPassword = (scope) =>
   asyncHandler(async (req, res) => {
@@ -251,4 +311,5 @@ export {
   registerUser,
   resetAdminPassword,
   resetUserPassword,
+  verifyResetCode,
 };

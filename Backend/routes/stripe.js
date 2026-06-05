@@ -6,6 +6,7 @@ import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
 import User from "../models/user.model.js";
 import protect from "../Middleware/auth.middleware.js";
+import { sendInngestEventSafely } from "../utils/sendInngestEventSafely.js";
 
 dotenv.config();
 
@@ -302,6 +303,21 @@ const createPaidStripeOrder = async ({ session, eventType }) => {
 
   payment.orderId = order._id;
   await payment.save();
+
+  await sendInngestEventSafely({
+    name: "order.placed",
+    data: {
+      email: order.email,
+      name: order.name,
+      orderId: order._id.toString(),
+      products: order.products,
+      totalAmount: order.totalAmount,
+      paymentMode: order.mode_of_transaction,
+      paymentStatus: order.payment_status,
+      address: order.address,
+    },
+  });
+  console.log("order.placed email event sent");
 
   return order;
 };

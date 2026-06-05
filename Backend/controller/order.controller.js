@@ -3,8 +3,47 @@ import Payment from "../models/payment.model.js";
 import Product from "../models/product.model.js";
 import User from "../models/user.model.js";
 import asyncHandler from "express-async-handler";
+import { sendInngestEventSafely } from "../utils/sendInngestEventSafely.js";
 
 const normalizeProductId = (item) => item.productId || item._id;
+const normalizeStatus = (status = "") => String(status || "").trim().toLowerCase();
+const shippingEmailStatuses = new Set(["shipped", "out for delivery", "arriving today"]);
+
+const decrementProductStockForDeliveredOrder = async (products = []) => {
+  const quantityByProductId = new Map();
+
+  products.forEach((product) => {
+    const productId = normalizeProductId(product)?.toString();
+    const quantity = Math.max(Number(product.quantity || 0), 0);
+
+    if (!productId || quantity <= 0) return;
+
+    quantityByProductId.set(
+      productId,
+      (quantityByProductId.get(productId) || 0) + quantity
+    );
+  });
+
+  if (quantityByProductId.size === 0) {
+    return;
+  }
+
+  await Product.bulkWrite(
+    Array.from(quantityByProductId.entries()).map(([productId, quantity]) => ({
+      updateOne: {
+        filter: { _id: productId },
+        update: { $inc: { stock: -quantity } },
+      },
+    }))
+  );
+
+  console.log("Product stock decremented for delivered order", {
+    products: Array.from(quantityByProductId.entries()).map(([productId, quantity]) => ({
+      productId,
+      quantity,
+    })),
+  });
+};
 
 const normalizeAddressDetails = (addressDetails = {}) => ({
   addressLine1: String(addressDetails.addressLine1 || "").trim(),
@@ -214,6 +253,21 @@ const createCODOrder = asyncHandler(async (req, res) => {
   payment.orderId = order._id;
   await payment.save();
 
+  await sendInngestEventSafely({
+    name: "order.placed",
+    data: {
+      email: order.email,
+      name: order.name,
+      orderId: order._id.toString(),
+      products: order.products,
+      totalAmount: order.totalAmount,
+      paymentMode: order.mode_of_transaction,
+      paymentStatus: order.payment_status,
+      address: order.address,
+    },
+  });
+  console.log("order.placed email event sent");
+
   res.status(201).json({ message: "COD order placed successfully", order });
 });
 
@@ -228,6 +282,8 @@ const updateOrder = asyncHandler(async (req, res) => {
   const nextDeliveryStatus = req.body.delivery_status || order.delivery_status;
   const isDelivered = nextDeliveryStatus?.toLowerCase() === "delivered";
   const isCOD = order.mode_of_transaction === "COD";
+  const oldDeliveryStatus = normalizeStatus(order.delivery_status);
+  const oldOrderStatus = normalizeStatus(order.order_status);
 
   if (isDelivered && isCOD) {
     req.body.status_of_transaction = "paid";
@@ -244,6 +300,16 @@ const updateOrder = asyncHandler(async (req, res) => {
     { $set: req.body },
     { new: true }
   ).populate("paymentId");
+  const newDeliveryStatus = normalizeStatus(updatedOrder.delivery_status);
+  const newOrderStatus = normalizeStatus(updatedOrder.order_status);
+  const oldWasShipping =
+    shippingEmailStatuses.has(oldDeliveryStatus) || shippingEmailStatuses.has(oldOrderStatus);
+  const newIsShipping =
+    shippingEmailStatuses.has(newDeliveryStatus) || shippingEmailStatuses.has(newOrderStatus);
+  const shouldSendShippedEmail = !oldWasShipping && newIsShipping;
+  const oldWasDelivered = oldDeliveryStatus === "delivered" || oldOrderStatus === "delivered";
+  const newIsDelivered = newDeliveryStatus === "delivered" || newOrderStatus === "delivered";
+  const shouldHandleDeliveredTransition = !oldWasDelivered && newIsDelivered;
 
   if (isDelivered && isCOD && updatedOrder.paymentId) {
     await Payment.findByIdAndUpdate(updatedOrder.paymentId._id || updatedOrder.paymentId, {
@@ -263,6 +329,37 @@ const updateOrder = asyncHandler(async (req, res) => {
         status: "pending",
       },
     });
+  }
+
+  if (shouldSendShippedEmail) {
+    await sendInngestEventSafely({
+      name: "order.shipped",
+      data: {
+        email: updatedOrder.email,
+        name: updatedOrder.name,
+        orderId: updatedOrder._id.toString(),
+        products: updatedOrder.products,
+        deliveryStatus: updatedOrder.delivery_status || updatedOrder.order_status,
+        address: updatedOrder.address,
+      },
+    });
+    console.log("order.shipped email event sent");
+  }
+
+  if (shouldHandleDeliveredTransition) {
+    await decrementProductStockForDeliveredOrder(updatedOrder.products);
+
+    await sendInngestEventSafely({
+      name: "order.delivered",
+      data: {
+        email: updatedOrder.email,
+        name: updatedOrder.name,
+        orderId: updatedOrder._id.toString(),
+        products: updatedOrder.products,
+        totalAmount: updatedOrder.totalAmount,
+      },
+    });
+    console.log("order.delivered email event sent");
   }
 
   res.status(200).json(updatedOrder);
