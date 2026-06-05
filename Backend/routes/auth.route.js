@@ -11,6 +11,7 @@ import {
   registerUser,
   resetAdminPassword,
   resetUserPassword,
+  verifyResetCode,
 } from "../controller/auth.controller.js";
 import protect from "../Middleware/auth.middleware.js";
 import adminAuth from "../Middleware/adminAuth.middleware.js";
@@ -27,6 +28,9 @@ router.post("/forgot-password", forgotPassword);
 
 // USER RESET PASSWORD
 router.post("/reset-password", resetUserPassword);
+
+// USER VERIFY PASSWORD RESET CODE
+router.post("/verify-reset-code", verifyResetCode);
 
 // LOGIN ADMIN ROUTER
 router.post("/admin/login", loginAdmin);

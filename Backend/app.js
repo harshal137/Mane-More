@@ -14,6 +14,9 @@ import analyticsRoute from "./routes/analytics.route.js";
 import bundleRoute from "./routes/bundle.routes.js";
 import paymentRoute from "./routes/payment.route.js"; // Add this line
 import uploadRoute from "./routes/upload.route.js"; // Add this line
+import { serve } from "inngest/express";
+import { inngest } from "./inngest/client.js";
+import { functions } from "./inngest/index.js";
 
 
 
@@ -50,6 +53,45 @@ app.use("/api/v1/stripe", stripeRoute);
 
 // json body
 app.use(express.json());
+
+// Register the Inngest endpoint so the CLI/dashboard can discover this app.
+app.use(
+  "/api/inngest",
+  serve({
+    client: inngest,
+    functions,
+  })
+);
+console.log("Inngest endpoint registered");
+
+// Temporary test route to publish a Brevo email event into Inngest.
+app.post("/api/test-brevo-email", async (req, res, next) => {
+  try {
+    if (!req.body.email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    await inngest.send({
+      name: "test/brevo.email",
+      data: {
+        email: req.body.email,
+        name: req.body.name || "Test User",
+        message: req.body.message || "Brevo + Inngest test email",
+      },
+    });
+
+    console.log("Brevo email event sent");
+    res.status(200).json({
+      success: true,
+      message: "Brevo email event sent",
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 // Serve static files from the data folder (e.g. product images)
 app.use("/data", express.static(path.join(__dirname, "data")));

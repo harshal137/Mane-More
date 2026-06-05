@@ -37,7 +37,8 @@ const Login = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
-  const [resetToken, setResetToken] = useState("");
+  const [resetCode, setResetCode] = useState("");
+  const [resetStep, setResetStep] = useState("email");
   const [resetPassword, setResetPassword] = useState("");
   const [confirmResetPassword, setConfirmResetPassword] = useState("");
   const [resetLoading, setResetLoading] = useState(false);
@@ -134,7 +135,8 @@ const Login = () => {
 
   const resetForgotForm = () => {
     setForgotEmail("");
-    setResetToken("");
+    setResetCode("");
+    setResetStep("email");
     setResetPassword("");
     setConfirmResetPassword("");
   };
@@ -153,16 +155,34 @@ const Login = () => {
         email: forgotEmail,
       });
 
-      if (res.data?.resetToken) {
-        setResetToken(res.data.resetToken);
-        toast.success("Reset token generated. Enter your new password.");
-      } else {
-        toast.success(res.data?.message || "Password reset email sent.");
-        setShowForgotModal(false);
-        resetForgotForm();
-      }
+      setResetStep("code");
+      toast.success(res.data?.message || "Password reset code sent.");
     } catch (error) {
       toast.error(error.response?.data?.message || "Could not start password reset");
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
+  const handleVerifyResetCode = async (e) => {
+    e.preventDefault();
+
+    if (!resetCode || !/^\d{6}$/.test(resetCode)) {
+      toast.error("Enter the 6-digit verification code");
+      return;
+    }
+
+    try {
+      setResetLoading(true);
+      await userRequest.post("/auth/verify-reset-code", {
+        email: forgotEmail,
+        code: resetCode,
+      });
+
+      setResetStep("password");
+      toast.success("Code verified. Enter your new password.");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Could not verify reset code");
     } finally {
       setResetLoading(false);
     }
@@ -171,8 +191,8 @@ const Login = () => {
   const handleResetPassword = async (e) => {
     e.preventDefault();
 
-    if (!resetToken) {
-      toast.error("Reset token is missing");
+    if (!resetCode) {
+      toast.error("Verification code is missing");
       return;
     }
 
@@ -189,7 +209,7 @@ const Login = () => {
     try {
       setResetLoading(true);
       await userRequest.post("/auth/reset-password", {
-        token: resetToken,
+        token: resetCode,
         password: resetPassword,
       });
 
@@ -228,10 +248,21 @@ const Login = () => {
                 Reset Password
               </h2>
               <p className="mt-2 text-sm" style={{ color: THEME.TEXT }}>
-                Enter your customer account email to generate a reset token.
+                {resetStep === "email" && "Enter your customer account email to receive a 6-digit verification code."}
+                {resetStep === "code" && "Enter the 6-digit code sent to your email."}
+                {resetStep === "password" && "Create a new password for your account."}
               </p>
 
-              <form className="mt-5 space-y-4" onSubmit={resetToken ? handleResetPassword : handleForgotPassword}>
+              <form
+                className="mt-5 space-y-4"
+                onSubmit={
+                  resetStep === "email"
+                    ? handleForgotPassword
+                    : resetStep === "code"
+                    ? handleVerifyResetCode
+                    : handleResetPassword
+                }
+              >
                 <input
                   type="email"
                   value={forgotEmail}
@@ -239,10 +270,24 @@ const Login = () => {
                   className="w-full rounded-2xl px-4 py-3 outline-none"
                   style={inputStyle}
                   placeholder="your@email.com"
-                  disabled={Boolean(resetToken)}
+                  disabled={resetStep !== "email"}
                 />
 
-                {resetToken && (
+                {resetStep !== "email" && (
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={6}
+                    value={resetCode}
+                    onChange={(e) => setResetCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                    className="w-full rounded-2xl px-4 py-3 text-center text-lg font-semibold tracking-[0.35em] outline-none"
+                    style={inputStyle}
+                    placeholder="000000"
+                    disabled={resetStep === "password"}
+                  />
+                )}
+
+                {resetStep === "password" && (
                   <>
                     <input
                       type="password"
@@ -271,9 +316,11 @@ const Login = () => {
                 >
                   {resetLoading
                     ? "Please wait..."
-                    : resetToken
+                    : resetStep === "password"
                     ? "Reset Password"
-                    : "Generate Reset Token"}
+                    : resetStep === "code"
+                    ? "Verify Code"
+                    : "Send Verification Code"}
                 </button>
 
                 <button
