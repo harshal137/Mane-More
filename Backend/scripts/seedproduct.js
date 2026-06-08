@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import Product from "../models/product.model.js";
-import hairProducts from "../data/hairproduct.js";
+import hairProducts from "../data/hairproduct_mongoose.js";
 
 dotenv.config();
 

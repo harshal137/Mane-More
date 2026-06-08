@@ -1,4 +1,4 @@
-const products = [
+const hairProducts = [
   {
     "title": "Bump Repair Spray",
     desc: `
@@ -535,7 +535,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     ],
     "video": "",
     "categories": [
-      "Hair Care"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 5.74,
@@ -579,7 +579,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     ],
     "video": "",
     "categories": [
-      "Hair Care"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 7.76,
@@ -621,7 +621,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     ],
     "video": "",
     "categories": [
-      "Hair Care"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 5.74,
@@ -673,7 +673,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     ],
     "video": "",
     "categories": [
-      "Hair Care"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 2.29,
@@ -713,7 +713,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     ],
     "video": "",
     "categories": [
-      "Hair Care"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 3.89,
@@ -1264,7 +1264,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     ],
     "video": "",
     "categories": [
-      "Hair Care"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 3.89,
@@ -1308,7 +1308,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     ],
     "video": "",
     "categories": [
-      "Hair Care"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 2.29,
@@ -1350,7 +1350,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     ],
     "video": "",
     "categories": [
-      "Hair Care"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 3.1,
@@ -1393,7 +1393,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     ],
     "video": "",
     "categories": [
-      "Hair Care"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 2.16,
@@ -1448,7 +1448,7 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Hair Care"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 2.07,
@@ -1503,7 +1503,7 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Hair Care"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 2.07,
@@ -1558,7 +1558,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     ],
     "video": "",
     "categories": [
-      "Hair Care"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 2.07,
@@ -1602,7 +1602,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     ],
     "video": "",
     "categories": [
-      "Hair Care"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 6.89,
@@ -1657,7 +1657,7 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Hair Care"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 2.99,
@@ -1712,7 +1712,7 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Hair Care"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 2.99,
@@ -1767,7 +1767,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     ],
     "video": "",
     "categories": [
-      "Hair Care"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 2.99,
@@ -1822,7 +1822,7 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Hair Care"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 3.44,
@@ -1877,7 +1877,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     ],
     "video": "",
     "categories": [
-      "Hair Care"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 3.44,
@@ -1932,7 +1932,7 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Hair Care"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 3.44,
@@ -1968,13 +1968,13 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
   },
   {
     "title": "Hair Gel Tube",
-    "desc": "Professional hair gel product: Hair Gel Tube. High quality and reliable performance.",
+    "desc": "Gummy Plus Hair Gel Tube, 5 Fluid Ounce (Pack of 1) - Maximum Hold & Extreme Look",
     "img": [
       ""
     ],
     "video": "",
     "categories": [
-      "Hair Care"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 2.88,
@@ -2008,23 +2008,20 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
   },
   {
     "title": "GUMMY POWDER HAIR WAX MATTE EFFECT",
-    "desc": "Professional hair wax product: GUMMY POWDER HAIR WAX MATTE EFFECT. High quality and reliable performance.",
+    "desc": `Gummy Powder Hair Wax Matte Effect 20g is the ultimate styling solution for anyone looking to add texture, volume, and natural hold to their hair. Available now at CssSalonSupplies.com, this lightweight, innovative powder wax provides a matte finish while offering 3 different effects in one product: volume, texture, and natural hold. Ideal for creating tousled, voluminous hairstyles with a non-greasy finish, it’s perfect for fine or thinning hair. The unique formula is designed to absorb excess oil and provide a long-lasting hold without weighing down the hair. Whether you want to add volume at the roots, create a textured look, or achieve a natural hold, Gummy Powder Hair Wax Matte Effect has got you covered. It’s easy to apply and works well on all hair types, making it a versatile addition to your styling routine. Experience the benefits of this professional-grade product and elevate your hairstyling game with Gummy Powder Hair Wax Matte Effect.`,
     "img": [
       ""
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 2.01,
     "discountedPrice": 1.75,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax"
     ],
     "size": [
       "20g"
@@ -2053,23 +2050,27 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
   },
   {
     "title": "GUMMY POWDER HAIR WAX VOLUME EFFECT",
-    "desc": "Professional hair wax product: GUMMY POWDER HAIR WAX VOLUME EFFECT. High quality and reliable performance.",
+    "desc": `Direct matte effect: absorbs excess oil and gives the hair a fresh, dry, and matte look.
+More volume and texture: provides visibly fuller hair and natural styling volume, ideal for fine hair.
+
+Extra strong hold: keeps your hairstyle reliably in place, even in high humidity or during long days.
+
+Easy to use: sprinkle a small amount of powder onto dry or slightly damp hair, massage in with your fingers, and style as desired.
+
+Suitable for all hair types: for men and women, ideal for thin, fine, or oily hair. Experience the benefits of this professional-grade product and elevate your hairstyling game with Gummy Powder Hair Wax Volume Effect.`,
     "img": [
       ""
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 2.01,
     "discountedPrice": 1.75,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax"
     ],
     "size": [
       "20g"
@@ -2098,21 +2099,20 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
   },
   {
     "title": "Magic Styling Powder",
-    "desc": "Professional hair powder product: Magic Styling Powder. High quality and reliable performance.",
+    "desc": `It adds volume and a matte look. Powder texture hair on white leaves no residue. With creatine, the building block of keratin. It helps nourish and repair the hair with creatine, which is a building block of keratin It provides ease of use thanks to its 360-degree movable head. Experience the benefits of this professional-grade product and elevate your hairstyling game with Gummy Powder Hair Wax Volume Effect.`,
     "img": [
       ""
     ],
     "video": "",
     "categories": [
-      "Hair Powder"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 9.71,
     "discountedPrice": 8.44,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
-      "Hair Care",
-      "Professional"
+      "Hair Powder",
     ],
     "size": [],
     "keyBenefits": [
@@ -2138,24 +2138,23 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
   },
   {
     "title": "Styling Powder",
-    "desc": "Professional hair powder product: Styling Powder. High quality and reliable performance.",
+    "desc": `Rubber powder wax 20gr |Mattifying Volume Hair Styling Powder Wax |Matting Volume Pulzach |Powderwachs |Hair volume powder |20gr - (1 piece) 20 g (1 Pack) - Mattifying Volume Hair Styling Powder Wax |Matting Volume Pulzach |Powderwachs |Hair volume powder |20gr - (1 piece) 20 g (1 Pack)`,
     "img": [
       ""
     ],
     "video": "",
     "categories": [
-      "Hair Powder"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 2.01,
     "discountedPrice": 1.75,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
-      "Hair Care",
-      "Professional"
+      "Hair Powder"
     ],
     "size": [
-      "20gr"
+      "20gm"
     ],
     "keyBenefits": [
       "High quality",
@@ -2180,21 +2179,20 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
   },
   {
     "title": "Hair Mousse",
-    "desc": "Professional hair mousse product: Hair Mousse. High quality and reliable performance.",
+    "desc": `Gummy Hair Mousse has a specific formula that adds body and volume to styles, which makes styling easier and gives hair shine and flexibility. It will protect heat during heat styling and will not weigh down the hair. It is ideal for all hair types, especially fine and thin hair. Experience the benefits of this professional-grade product and elevate your hairstyling game with Gummy Hair Mousse.`,
     "img": [
       ""
     ],
     "video": "",
     "categories": [
-      "Hair Mousse"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 3.44,
     "discountedPrice": 2.99,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
-      "Hair Care",
-      "Professional"
+      "Hair Mousse",
     ],
     "size": [
       "225ml"
@@ -2228,15 +2226,14 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Hair Spray"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 3.44,
     "discountedPrice": 2.99,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
-      "Hair Care",
-      "Professional"
+      "Hair Spray",
     ],
     "size": [
       "400ml"
@@ -2270,15 +2267,14 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Hair Spray"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 2.29,
     "discountedPrice": 1.99,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
-      "Hair Care",
-      "Professional"
+      "Sea Salt Spray",
     ],
     "size": [],
     "keyBenefits": [
@@ -2310,17 +2306,14 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 2.29,
     "discountedPrice": 1.99,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax",
     ],
     "size": [],
     "keyBenefits": [
@@ -2353,17 +2346,14 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 2.29,
     "discountedPrice": 1.99,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax",
     ],
     "size": [
       "100ml"
@@ -2398,17 +2388,14 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 2.29,
     "discountedPrice": 1.99,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax"
     ],
     "size": [
       "150 ml"
@@ -2437,25 +2424,22 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
   },
   {
     "title": "Gummy No Touch Max Hold Hair Gel",
-    "desc": "Professional hair gel product: Gummy No Touch Max Hold Hair Gel. High quality and reliable performance.",
+    "desc":`Gummy Professional No Touch Hair Gel for Men and Women – Maximum Hold Styling Gel for Slick Back Look, Curls, Twists, and Ultra Edge Control – Clear Gel for Shine, Neat Styles, and Conditioning Benefits. Experience the benefits of this professional-grade product and elevate your hairstyling game with Gummy No Touch Max Hold Hair Gel.`,
     "img": [
       ""
     ],
     "video": "",
     "categories": [
-      "Hair Gel"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 3.89,
     "discountedPrice": 3.38,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Gel",
     ],
-    "size": [],
+    "size": ["98 ml"],
     "keyBenefits": [
       "Strong long-lasting hold",
       "Non-greasy finish",
@@ -2480,25 +2464,32 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
   },
   {
     "title": "Gummy No Touch Wax Dynamic",
-    "desc": "Professional hair wax product: Gummy No Touch Wax Dynamic. High quality and reliable performance.",
+    "desc": `Thanks to its airtight packaging without cover; It allows you to take the product in the palm of your hand without touching it. It provides an extra tough look, shape and hold without making hair greasy. It is perfect for dynamic hairstyle.
+
+It doesn't make hair oily. The transparent water-based structure provides strong holding power, a stable hold and an extra bright look throughout the day.
+
+The content of provitamin B5 (panthenol) helps strengthen hair strands.
+
+As a result of strengthening the hair strands from root to tip; It helps to increase the elasticity of the hair, making it stronger, softer and nourished. It does not contain paraben and alcohol.
+
+Thanks to the formulation - the moisturizers -; It helps the hair regain the moisture it needs and the water it has lost. It leaves no residue.
+
+Fonex, a professional cosmetics brand for men, has become an essential choice for men's hair studies and consumers in Europe and the world. Experience the benefits of this professional-grade product and elevate your hairstyling game with Gummy No Touch Wax Dynamic.`,
     "img": [
       ""
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 2.29,
     "discountedPrice": 1.99,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax"
     ],
-    "size": [],
+    "size": ["98 ml"],
     "keyBenefits": [
       "Strong long-lasting hold",
       "Non-greasy finish",
@@ -2523,25 +2514,32 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
   },
   {
     "title": "Gummy No Touch Wax Matte",
-    "desc": "Professional hair wax product: Gummy No Touch Wax Matte. High quality and reliable performance.",
+    "desc": `Thanks to its airtight packaging without cover; It allows you to take the product in the palm of your hand without touching it. It provides an extra tough look, shape and hold without making hair greasy. It is perfect for dynamic hairstyle.
+
+It doesn't make hair oily. The transparent water-based structure provides strong holding power, a stable hold and an extra bright look throughout the day.
+
+The content of provitamin B5 (panthenol) helps strengthen hair strands.
+
+As a result of strengthening the hair strands from root to tip; It helps to increase the elasticity of the hair, making it stronger, softer and nourished. It does not contain paraben and alcohol.
+
+Thanks to the formulation - the moisturizers -; It helps the hair regain the moisture it needs and the water it has lost. It leaves no residue.
+
+Fonex, a professional cosmetics brand for men, has become an essential choice for men's hair studies and consumers in Europe and the world. Experience the benefits of this professional-grade product and elevate your hairstyling game with Gummy No Touch Wax Matte.`,
     "img": [
       ""
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 2.29,
     "discountedPrice": 1.99,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax",
     ],
-    "size": [],
+    "size": ["98 ml"],
     "keyBenefits": [
       "Strong long-lasting hold",
       "Non-greasy finish",
@@ -2566,25 +2564,32 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
   },
   {
     "title": "Hair Styling Wax Matte Finish",
-    "desc": "Professional hair wax product: Hair Styling Wax Matte Finish. High quality and reliable performance.",
+    "desc":`The ultra-strong hold gives the hair a long-lasting shape. It is perfect for dynamic hairstyle. It doesn't make hair oily. His smell is watermelon.
+
+The transparent water-based structure offers strong holding power, stable hold and an extra radiant look all day long.
+
+The content of provitamin B5 (panthenol) helps strengthen hair strands.
+
+As a result of strengthening hair strands from root to tip; It helps to increase the elasticity of the hair, making it stronger, softer and nourished. It contains no parabens and no alcohol.
+
+Thanks to the formula - which moisturizes -; It helps hair regain needed moisture and lost water. It leaves no residue.
+
+Fonex, a professional cosmetics brand for men, has become an essential choice for men's hair studies and consumers in Europe and the world.`,
     "img": [
       ""
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 1.72,
     "discountedPrice": 1.5,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax",
     ],
-    "size": [],
+    "size": ["150 ml"],
     "keyBenefits": [
       "Strong long-lasting hold",
       "Non-greasy finish",
@@ -2609,25 +2614,32 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
   },
   {
     "title": "Hair Styling Wax Hard Finish",
-    "desc": "Professional hair wax product: Hair Styling Wax Hard Finish. High quality and reliable performance.",
+    "desc":`The ultra-strong hold gives the hair a long-lasting shape. It is perfect for dynamic hairstyle. It doesn't make hair oily. His smell is watermelon.
+
+The transparent water-based structure offers strong holding power, stable hold and an extra radiant look all day long.
+
+The content of provitamin B5 (panthenol) helps strengthen hair strands.
+
+As a result of strengthening hair strands from root to tip; It helps to increase the elasticity of the hair, making it stronger, softer and nourished. It contains no parabens and no alcohol.
+
+Thanks to the formula - which moisturizes -; It helps hair regain needed moisture and lost water. It leaves no residue.
+
+Fonex, a professional cosmetics brand for men, has become an essential choice for men's hair studies and consumers in Europe and the world.`,
     "img": [
       ""
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 1.72,
     "discountedPrice": 1.5,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax",
     ],
-    "size": [],
+    "size": ["150 ml"],
     "keyBenefits": [
       "Strong long-lasting hold",
       "Non-greasy finish",
@@ -2652,25 +2664,32 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
   },
   {
     "title": "Hair Styling Wax Bright Finish",
-    "desc": "Professional hair wax product: Hair Styling Wax Bright Finish. High quality and reliable performance.",
+    "desc":`The ultra-strong hold gives the hair a long-lasting shape. It is perfect for dynamic hairstyle. It doesn't make hair oily. His smell is watermelon.
+
+The transparent water-based structure offers strong holding power, stable hold and an extra radiant look all day long.
+
+The content of provitamin B5 (panthenol) helps strengthen hair strands.
+
+As a result of strengthening hair strands from root to tip; It helps to increase the elasticity of the hair, making it stronger, softer and nourished. It contains no parabens and no alcohol.
+
+Thanks to the formula - which moisturizes -; It helps hair regain needed moisture and lost water. It leaves no residue.
+
+Fonex, a professional cosmetics brand for men, has become an essential choice for men's hair studies and consumers in Europe and the world. Experience the benefits of this professional-grade product and elevate your hairstyling game with Gummy Hair Styling Wax Bright Finish.`,
     "img": [
       ""
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 1.72,
     "discountedPrice": 1.5,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+           "Hair Wax",
     ],
-    "size": [],
+    "size": ["150 ml"],
     "keyBenefits": [
       "Strong long-lasting hold",
       "Non-greasy finish",
@@ -2695,25 +2714,32 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
   },
   {
     "title": "Hair Styling Wax Ultra Hold",
-    "desc": "Professional hair wax product: Hair Styling Wax Ultra Hold. High quality and reliable performance.",
+    "desc":  `The ultra-strong hold gives the hair a long-lasting shape. It is perfect for dynamic hairstyle. It doesn't make hair oily. His smell is watermelon.
+
+The transparent water-based structure offers strong holding power, stable hold and an extra radiant look all day long.
+
+The content of provitamin B5 (panthenol) helps strengthen hair strands.
+
+As a result of strengthening hair strands from root to tip; It helps to increase the elasticity of the hair, making it stronger, softer and nourished. It contains no parabens and no alcohol.
+
+Thanks to the formula - which moisturizes -; It helps hair regain needed moisture and lost water. It leaves no residue.
+
+Fonex, a professional cosmetics brand for men, has become an essential choice for men's hair studies and consumers in Europe and the world. Experience the benefits of this professional-grade product and elevate your hairstyling game with Gummy Hair Styling Wax Ultra Hold.`,
     "img": [
       ""
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 1.72,
     "discountedPrice": 1.5,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax"
     ],
-    "size": [],
+    "size": ["150 ml"],
     "keyBenefits": [
       "Strong long-lasting hold",
       "Non-greasy finish",
@@ -2738,25 +2764,32 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
   },
   {
     "title": "Hair Styling Wax Extra Gloss",
-    "desc": "Professional hair wax product: Hair Styling Wax Extra Gloss. High quality and reliable performance.",
+    "desc": `The ultra-strong hold gives the hair a long-lasting shape. It is perfect for dynamic hairstyle. It doesn't make hair oily. His smell is watermelon.
+
+The transparent water-based structure offers strong holding power, stable hold and an extra radiant look all day long.
+
+The content of provitamin B5 (panthenol) helps strengthen hair strands.
+
+As a result of strengthening hair strands from root to tip; It helps to increase the elasticity of the hair, making it stronger, softer and nourished. It contains no parabens and no alcohol.
+
+Thanks to the formula - which moisturizes -; It helps hair regain needed moisture and lost water. It leaves no residue.
+
+Fonex, a professional cosmetics brand for men, has become an essential choice for men's hair studies and consumers in Europe and the world. Experience the benefits of this professional-grade product and elevate your hairstyling game with Gummy Hair Styling Wax Extra Gloss.`,
     "img": [
       ""
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 1.72,
     "discountedPrice": 1.5,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax"
     ],
-    "size": [],
+    "size": ["150 ml"],
     "keyBenefits": [
       "Strong long-lasting hold",
       "Non-greasy finish",
@@ -2781,25 +2814,32 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
   },
   {
     "title": "Hair Styling Wax Casual Look",
-    "desc": "Professional hair wax product: Hair Styling Wax Casual Look. High quality and reliable performance.",
+    "desc": `The ultra-strong hold gives the hair a long-lasting shape. It is perfect for dynamic hairstyle. It doesn't make hair oily. His smell is watermelon.
+
+The transparent water-based structure offers strong holding power, stable hold and an extra radiant look all day long.
+
+The content of provitamin B5 (panthenol) helps strengthen hair strands.
+
+As a result of strengthening hair strands from root to tip; It helps to increase the elasticity of the hair, making it stronger, softer and nourished. It contains no parabens and no alcohol.
+
+Thanks to the formula - which moisturizes -; It helps hair regain needed moisture and lost water. It leaves no residue.
+
+Fonex, a professional cosmetics brand for men, has become an essential choice for men's hair studies and consumers in Europe and the world. Experience the benefits of this professional-grade product and elevate your hairstyling game with Gummy Hair Styling Wax Casual Look.`,
     "img": [
       ""
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 1.72,
     "discountedPrice": 1.5,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax"
     ],
-    "size": [],
+    "size": ["150 ml"],
     "keyBenefits": [
       "Strong long-lasting hold",
       "Non-greasy finish",
@@ -2824,23 +2864,20 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
   },
   {
     "title": "Wax Keratin",
-    "desc": "Professional hair wax product: Wax Keratin. High quality and reliable performance.",
+    "desc":`Fonex Gummy Wax Matte Keratin Maximum Hold Extreme Look 140 ml`,
     "img": [
       ""
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Gummy",
     "originalPrice": 3.44,
     "discountedPrice": 2.99,
     "items_per_box": 0,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax"
     ],
     "size": [
       "140ml"
@@ -2867,1853 +2904,7 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
       }
     ]
   },
-  {
-    "title": "DERBY BLADE SINGLE EDGE PREMIUM BLACK 100 PCS",
-    "desc": "Derby Premium black razor blades for shavettes and single edge razors. They smoothly shave off coarse stubble. The four-layer coating protects the skin from scratches, and the blade itself from premature rusting. One blade lasts for 4-5 shaving sessions.",
-    "img": [
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780065744/BeautyStore/Blade_Images/urej5rfjwqqtsvo5qsnu.jpg",
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780065749/BeautyStore/Blade_Images/zsxw5e9uct5jtyxkesey.webp",
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780065785/BeautyStore/Blade_Images/vpxqhegh21esershzxf6.png",
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780065787/BeautyStore/Blade_Images/sfsccgkttc1aiiw3czio.jpg",
-
-    ],
-    "video": "",
-    "categories": [
-      "Beard & Shaving"
-    ],
-    "brand": "Derby",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 50,
-    "type": [
-      "Blade"
-    ],
-    "size": ["100 pcs"],
-    "keyBenefits": [
-      "High quality",
-      "Reliable performance",
-      "Value for money",
-      "Trusted brand"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Jessica Lee",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456771"
-      },
-      {
-        "star": "4",
-        "name": "Sarah Johnson",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567151"
-      }
-    ]
-  },
-  {
-    "title": "DERBY RAZOR BLADE DOUBLE EDGE EXTRA 100 PCS",
-    "desc": "Derby Extra Double Edge Razor Blades offer 100 premium stainless steel blades coated with chromium, ceramic, tungsten, platinum, and polymer for superior edge strength and smoothness. Individually wrapped in 20 packs of 5, these blades fit all double edge razors and undergo rigorous quality control to ensure a long-lasting, irritation-free shave.",
-    "img": [
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780065802/BeautyStore/Blade_Images/mscaqpayihfsxcms5sxm.jpg",
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780065816/BeautyStore/Blade_Images/ypgwn0dcpon5o0vm4r27.jpg",
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780065837/BeautyStore/Blade_Images/bnft4v2keqzztl0f9rrw.jpg",
-
-    ],
-    "video": "",
-    "categories": [
-      "Beard & Shaving"
-    ],
-    "brand": "Derby",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 50,
-    "type": [
-      "Blade"
-    ],
-    "size": ["100 pcs"],
-    "keyBenefits": [
-      "High quality",
-      "Reliable performance",
-      "Value for money",
-      "Trusted brand"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Jessica Lee",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456772"
-      },
-      {
-        "star": "4",
-        "name": "David Wilson",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567152"
-      }
-    ]
-  },
-  {
-    "title": "DERBY RAZOR BLADE SINGLE EDGE GREEN 100 PCS",
-    "desc": "Derby Professional Single Edge Razor Blades offer 100 precision-engineered blades compatible with all straight and cutthroat razors. Featuring advanced perforation, hardening, and a premium chromium, tungsten, and platinum edge coating, these blades deliver sharp, durable, and pain-free shaves trusted by thousands of users worldwide.",
-    "img": [
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780065914/BeautyStore/Blade_Images/iaxsu2e94swg9cedu9yc.jpg",
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780065948/BeautyStore/Blade_Images/ofsxvpeukubza4e01cji.jpg",
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780065981/BeautyStore/Blade_Images/srdgduw7lcbhnna8opka.jpg",
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780066023/BeautyStore/Blade_Images/jn9kwmywkgsvlqp10kxu.jpg",
-
-    ],
-    "video": "",
-    "categories": [
-      "Beard & Shaving"
-    ],
-    "brand": "Derby",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 50,
-    "type": [
-      "Blade"
-    ],
-    "size": ["100 pcs"],
-    "keyBenefits": [
-      "High quality",
-      "Reliable performance",
-      "Value for money",
-      "Trusted brand"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Michael Brown",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456773"
-      },
-      {
-        "star": "4",
-        "name": "David Wilson",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567153"
-      }
-    ]
-  },
-  {
-    "title": "DORCO RAZOR BLADE SINGLE EDGE 100 PCS",
-    "desc": "Dorco HQ Super Sharp Single Edge Blades offer 100 precision micro-grinded and coated blades designed for a smooth, irritation-free wet shave. Made in Korea, these blades combine exceptional sharpness with skin-friendly technology, making them a top choice for professionals and grooming aficionados alike.",
-    "img": [
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780066032/BeautyStore/Blade_Images/a8l3sdzujerfo9fliuec.jpg",
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780066043/BeautyStore/Blade_Images/xz3d902wblss4c7boqkg.jpg",
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780066064/BeautyStore/Blade_Images/mhnhg7f9gmb75s1auao2.jpg",
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780066112/BeautyStore/Blade_Images/syicnz1rw2nuy6w5zcne.jpg",
-
-    ],
-    "video": "",
-    "categories": [
-      "Beard & Shaving"
-    ],
-    "brand": "Dorco",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 10,
-    "type": [
-      "Blade"
-    ],
-    "size": ["100 pcs"],
-    "keyBenefits": [
-      "High quality",
-      "Reliable performance",
-      "Value for money",
-      "Trusted brand"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Michael Brown",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456774"
-      },
-      {
-        "star": "4",
-        "name": "Olivia Martin",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567154"
-      }
-    ]
-  },
-  {
-    "title": "PERMASHARP RAZOR BLADE SINGLE EDGE 100 PCS",
-    "desc": "Perma-Sharp 100-pack half razor blades are premium stainless steel, PTFE-coated blades designed for professional straight edge razors. Individually wrapped for hygiene and longevity, these blades deliver an exceptionally sharp, smooth shave favored by barbers globally. Perfect for millennials who demand precision grooming with lasting value.",
-    "img": [
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780066178/BeautyStore/Blade_Images/triniecfwzoor4ia17rx.jpg",
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780066187/BeautyStore/Blade_Images/nvnzzmuo5bomx3zeoxzg.jpg",
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780066222/BeautyStore/Blade_Images/bgwbe9lt1rmadgorjbbt.jpg",
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780066234/BeautyStore/Blade_Images/m5gmi3lphxjedwnt9mmg.jpg"
-
-    ],
-    "video": "",
-    "categories": [
-      "Beard & Shaving"
-    ],
-    "brand": "Permasharp",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 50,
-    "type": [
-      "Blade"
-    ],
-    "size": ["100 pcs"],
-    "keyBenefits": [
-      "High quality",
-      "Reliable performance",
-      "Value for money",
-      "Trusted brand"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Daniel Smith",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456775"
-      },
-      {
-        "star": "4",
-        "name": "Emily Clark",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567155"
-      }
-    ]
-  },
-  {
-    "title": "ASTRA RAZOR BLADE DOUBLE EDGE 100 PCS",
-    "desc": "Astra Platinum Double Edge Safety Razor Blades deliver superior sharpness and durability with a platinum coating, ensuring a smooth, irritation-free shave. Compatible with all standard double edge razors, this 100-count value pack offers long-lasting performance trusted worldwide by shaving enthusiasts.",
-    "img": [
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780065576/BeautyStore/Blade_Images/xx9o5wqbhxd4ncecltzv.jpg",
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780065577/BeautyStore/Blade_Images/icawbsgimdjjmenpjmju.jpg",
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780065579/BeautyStore/Blade_Images/dyevfgo6ckgqlq3vczd7.jpg",
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780065580/BeautyStore/Blade_Images/pcfnpyv8gdnjzpcwrh94.jpg",
-
-    ],
-    "video": "",
-    "categories": [
-      "Beard & Shaving"
-    ],
-    "brand": "Astra",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 100,
-    "type": [
-      "Blade"
-    ],
-    "size": ["100 pcs"],
-    "keyBenefits": [
-      "High quality",
-      "Reliable performance",
-      "Value for money",
-      "Trusted brand"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Emily Clark",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456776"
-      },
-      {
-        "star": "4",
-        "name": "Michael Brown",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567156"
-      }
-    ]
-  },
-  {
-    "title": "DERBY BLADE DOUBLE EDGE PREMIUM BLACK 100 PCS",
-    "desc": "Derby Premium Double Edge Razor Blades offer 100 blades made from 100% Swedish steel, designed to fit all standard double edge safety razors. Lightweight and corrosion-resistant, these blades provide a smooth shave suitable for sensitive skin. With a strong customer rating and bulk packaging, they deliver exceptional value for daily grooming needs.",
-    "img": [
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780065605/BeautyStore/Blade_Images/y36ksnu7kv4wmg9xgbff.jpg",
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780065647/BeautyStore/Blade_Images/kns0kprdvqbwq9mzwylw.jpg",
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780065661/BeautyStore/Blade_Images/yhziqhmrbuxqszlc8sfc.jpg",
-      "https://res.cloudinary.com/dawpx7aro/image/upload/v1780065709/BeautyStore/Blade_Images/od06gy02tc4zemxu56p0.jpg",
-    ],
-    "video": "",
-    "categories": [
-      "Beard & Shaving"
-    ],
-    "brand": "Derby",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 50,
-    "type": [
-      "Blade"
-    ],
-    "size": ["100 pcs"],
-    "keyBenefits": [
-      "High quality",
-      "Reliable performance",
-      "Value for money",
-      "Trusted brand"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Jessica Lee",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456777"
-      },
-      {
-        "star": "4",
-        "name": "Michael Brown",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567157"
-      }
-    ]
-  },
-  {
-    "title": "REDONE BEARD OIL ALMOND",
-    "desc": "Professional beard oil product: REDONE BEARD OIL ALMOND. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Beard Oil"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "General"
-    ],
-    "size": [
-      "50 ML"
-    ],
-    "keyBenefits": [
-      "High quality",
-      "Reliable performance",
-      "Value for money",
-      "Trusted brand"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Daniel Smith",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456778"
-      },
-      {
-        "star": "4",
-        "name": "David Wilson",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567158"
-      }
-    ]
-  },
-  {
-    "title": "REDONE BEARD OIL ARGAN",
-    "desc": "Professional beard oil product: REDONE BEARD OIL ARGAN. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Beard Oil"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "General"
-    ],
-    "size": [
-      "50 ML"
-    ],
-    "keyBenefits": [
-      "High quality",
-      "Reliable performance",
-      "Value for money",
-      "Trusted brand"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "David Wilson",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456779"
-      },
-      {
-        "star": "4",
-        "name": "Jessica Lee",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567159"
-      }
-    ]
-  },
-  {
-    "title": "REDONE BEARD OIL KERATIN",
-    "desc": "Professional beard oil product: REDONE BEARD OIL KERATIN. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Beard Oil"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "General"
-    ],
-    "size": [
-      "50 ML"
-    ],
-    "keyBenefits": [
-      "High quality",
-      "Reliable performance",
-      "Value for money",
-      "Trusted brand"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Emily Clark",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456780"
-      },
-      {
-        "star": "4",
-        "name": "Jessica Lee",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567160"
-      }
-    ]
-  },
-  {
-    "title": "REDONE COLOGNE AMBER",
-    "desc": "Professional cologne product: REDONE COLOGNE AMBER. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Cologne"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 48,
-    "type": [
-      "Personal Care",
-      "Fragrance"
-    ],
-    "size": [
-      "150 ML"
-    ],
-    "keyBenefits": [
-      "Long-lasting fragrance",
-      "Refined notes and balance",
-      "Skin-friendly formulation",
-      "Alcohol-balanced solution",
-      "Modern signature scent"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Daniel Smith",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456781"
-      },
-      {
-        "star": "4",
-        "name": "Emily Clark",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567161"
-      }
-    ]
-  },
-  {
-    "title": "REDONE COLOGNE AMBER",
-    "desc": "Professional cologne product: REDONE COLOGNE AMBER. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Cologne"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "Personal Care",
-      "Fragrance"
-    ],
-    "size": [
-      "400 ML"
-    ],
-    "keyBenefits": [
-      "Long-lasting fragrance",
-      "Refined notes and balance",
-      "Skin-friendly formulation",
-      "Alcohol-balanced solution",
-      "Modern signature scent"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Jessica Lee",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456782"
-      },
-      {
-        "star": "4",
-        "name": "Michael Brown",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567162"
-      }
-    ]
-  },
-  {
-    "title": "REDONE COLOGNE CARIBBEAN",
-    "desc": "Professional cologne product: REDONE COLOGNE CARIBBEAN. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Cologne"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "Personal Care",
-      "Fragrance"
-    ],
-    "size": [
-      "400 ML"
-    ],
-    "keyBenefits": [
-      "Long-lasting fragrance",
-      "Refined notes and balance",
-      "Skin-friendly formulation",
-      "Alcohol-balanced solution",
-      "Modern signature scent"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Michael Brown",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456783"
-      },
-      {
-        "star": "4",
-        "name": "Sarah Johnson",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567163"
-      }
-    ]
-  },
-  {
-    "title": "REDONE COLOGNE GOLD",
-    "desc": "Professional cologne product: REDONE COLOGNE GOLD. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Cologne"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 48,
-    "type": [
-      "Personal Care",
-      "Fragrance"
-    ],
-    "size": [
-      "150 ML"
-    ],
-    "keyBenefits": [
-      "Long-lasting fragrance",
-      "Refined notes and balance",
-      "Skin-friendly formulation",
-      "Alcohol-balanced solution",
-      "Modern signature scent"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Jessica Lee",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456784"
-      },
-      {
-        "star": "4",
-        "name": "Daniel Smith",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567164"
-      }
-    ]
-  },
-  {
-    "title": "REDONE COLOGNE GOLD",
-    "desc": "Professional cologne product: REDONE COLOGNE GOLD. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Cologne"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "Personal Care",
-      "Fragrance"
-    ],
-    "size": [
-      "400 ML"
-    ],
-    "keyBenefits": [
-      "Long-lasting fragrance",
-      "Refined notes and balance",
-      "Skin-friendly formulation",
-      "Alcohol-balanced solution",
-      "Modern signature scent"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Daniel Smith",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456785"
-      },
-      {
-        "star": "4",
-        "name": "Michael Brown",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567165"
-      }
-    ]
-  },
-  {
-    "title": "REDONE COLOGNE LEMON",
-    "desc": "Professional cologne product: REDONE COLOGNE LEMON. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Cologne"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 48,
-    "type": [
-      "Personal Care",
-      "Fragrance"
-    ],
-    "size": [
-      "150 ML"
-    ],
-    "keyBenefits": [
-      "Long-lasting fragrance",
-      "Refined notes and balance",
-      "Skin-friendly formulation",
-      "Alcohol-balanced solution",
-      "Modern signature scent"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Michael Brown",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456786"
-      },
-      {
-        "star": "4",
-        "name": "Jessica Lee",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567166"
-      }
-    ]
-  },
-  {
-    "title": "REDONE COLOGNE LEMON",
-    "desc": "Professional cologne product: REDONE COLOGNE LEMON. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Cologne"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "Personal Care",
-      "Fragrance"
-    ],
-    "size": [
-      "400 ML"
-    ],
-    "keyBenefits": [
-      "Long-lasting fragrance",
-      "Refined notes and balance",
-      "Skin-friendly formulation",
-      "Alcohol-balanced solution",
-      "Modern signature scent"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "David Wilson",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456787"
-      },
-      {
-        "star": "4",
-        "name": "David Wilson",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567167"
-      }
-    ]
-  },
-  {
-    "title": "REDONE COLOGNE SILVER",
-    "desc": "Professional cologne product: REDONE COLOGNE SILVER. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Cologne"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 48,
-    "type": [
-      "Personal Care",
-      "Fragrance"
-    ],
-    "size": [
-      "150 ML"
-    ],
-    "keyBenefits": [
-      "Long-lasting fragrance",
-      "Refined notes and balance",
-      "Skin-friendly formulation",
-      "Alcohol-balanced solution",
-      "Modern signature scent"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Olivia Martin",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456788"
-      },
-      {
-        "star": "4",
-        "name": "Michael Brown",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567168"
-      }
-    ]
-  },
-  {
-    "title": "REDONE COLOGNE SILVER",
-    "desc": "Professional cologne product: REDONE COLOGNE SILVER. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Cologne"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "Personal Care",
-      "Fragrance"
-    ],
-    "size": [
-      "400 ML"
-    ],
-    "keyBenefits": [
-      "Long-lasting fragrance",
-      "Refined notes and balance",
-      "Skin-friendly formulation",
-      "Alcohol-balanced solution",
-      "Modern signature scent"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "David Wilson",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456789"
-      },
-      {
-        "star": "4",
-        "name": "Michael Brown",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567169"
-      }
-    ]
-  },
-  {
-    "title": "REDONE COLOGNE SPRAY TOBACCO",
-    "desc": "Professional cologne spray product: REDONE COLOGNE SPRAY TOBACCO. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Cologne Spray"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "Personal Care",
-      "Fragrance"
-    ],
-    "size": [
-      "400 ML"
-    ],
-    "keyBenefits": [
-      "Long-lasting fragrance",
-      "Refined notes and balance",
-      "Skin-friendly formulation",
-      "Alcohol-balanced solution",
-      "Modern signature scent"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Olivia Martin",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456790"
-      },
-      {
-        "star": "4",
-        "name": "Jessica Lee",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567170"
-      }
-    ]
-  },
-  {
-    "title": "REDONE COLOGNE THUNDERBOLT",
-    "desc": "Professional cologne product: REDONE COLOGNE THUNDERBOLT. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Cologne"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 48,
-    "type": [
-      "Personal Care",
-      "Fragrance"
-    ],
-    "size": [
-      "150 ML"
-    ],
-    "keyBenefits": [
-      "Long-lasting fragrance",
-      "Refined notes and balance",
-      "Skin-friendly formulation",
-      "Alcohol-balanced solution",
-      "Modern signature scent"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "David Wilson",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456791"
-      },
-      {
-        "star": "4",
-        "name": "Emily Clark",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567171"
-      }
-    ]
-  },
-  {
-    "title": "REDONE COLOGNE UNDULATION",
-    "desc": "Professional cologne product: REDONE COLOGNE UNDULATION. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Cologne"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 48,
-    "type": [
-      "Personal Care",
-      "Fragrance"
-    ],
-    "size": [
-      "150 ML"
-    ],
-    "keyBenefits": [
-      "Long-lasting fragrance",
-      "Refined notes and balance",
-      "Skin-friendly formulation",
-      "Alcohol-balanced solution",
-      "Modern signature scent"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Daniel Smith",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456792"
-      },
-      {
-        "star": "4",
-        "name": "Michael Brown",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567172"
-      }
-    ]
-  },
-  {
-    "title": "REDONE COLOGNE UNDULATION",
-    "desc": "Professional cologne product: REDONE COLOGNE UNDULATION. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Cologne"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "Personal Care",
-      "Fragrance"
-    ],
-    "size": [
-      "400 ML"
-    ],
-    "keyBenefits": [
-      "Long-lasting fragrance",
-      "Refined notes and balance",
-      "Skin-friendly formulation",
-      "Alcohol-balanced solution",
-      "Modern signature scent"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Michael Brown",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456793"
-      },
-      {
-        "star": "4",
-        "name": "Michael Brown",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567173"
-      }
-    ]
-  },
-  {
-    "title": "REDONE COLOGNE VOLCANIC",
-    "desc": "Professional cologne product: REDONE COLOGNE VOLCANIC. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Cologne"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 48,
-    "type": [
-      "Personal Care",
-      "Fragrance"
-    ],
-    "size": [
-      "150 ML"
-    ],
-    "keyBenefits": [
-      "Long-lasting fragrance",
-      "Refined notes and balance",
-      "Skin-friendly formulation",
-      "Alcohol-balanced solution",
-      "Modern signature scent"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "David Wilson",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456794"
-      },
-      {
-        "star": "4",
-        "name": "Olivia Martin",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567174"
-      }
-    ]
-  },
-  {
-    "title": "REDONE COLOGNE VOLCANIC",
-    "desc": "Professional cologne product: REDONE COLOGNE VOLCANIC. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Cologne"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "Personal Care",
-      "Fragrance"
-    ],
-    "size": [
-      "400 ML"
-    ],
-    "keyBenefits": [
-      "Long-lasting fragrance",
-      "Refined notes and balance",
-      "Skin-friendly formulation",
-      "Alcohol-balanced solution",
-      "Modern signature scent"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Olivia Martin",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456795"
-      },
-      {
-        "star": "4",
-        "name": "Michael Brown",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567175"
-      }
-    ]
-  },
-  {
-    "title": "REDONE COLOGNE OLD MARIN",
-    "desc": "Professional cologne product: REDONE COLOGNE OLD MARIN. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Cologne"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 48,
-    "type": [
-      "Personal Care",
-      "Fragrance"
-    ],
-    "size": [
-      "150 ML"
-    ],
-    "keyBenefits": [
-      "Long-lasting fragrance",
-      "Refined notes and balance",
-      "Skin-friendly formulation",
-      "Alcohol-balanced solution",
-      "Modern signature scent"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Sarah Johnson",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456796"
-      },
-      {
-        "star": "4",
-        "name": "David Wilson",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567176"
-      }
-    ]
-  },
-  {
-    "title": "REDONE CREAM COLOGNE EXTREME",
-    "desc": "Professional cream cologne product: REDONE CREAM COLOGNE EXTREME. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Cream Cologne"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "Personal Care",
-      "Fragrance"
-    ],
-    "size": [
-      "400 ML"
-    ],
-    "keyBenefits": [
-      "Long-lasting fragrance",
-      "Refined notes and balance",
-      "Skin-friendly formulation",
-      "Alcohol-balanced solution",
-      "Modern signature scent"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Michael Brown",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456797"
-      },
-      {
-        "star": "4",
-        "name": "Emily Clark",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567177"
-      }
-    ]
-  },
-  {
-    "title": "REDONE CREAM COLOGNE REVITALISING",
-    "desc": "Professional cream cologne product: REDONE CREAM COLOGNE REVITALISING. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Cream Cologne"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "Personal Care",
-      "Fragrance"
-    ],
-    "size": [
-      "400 ML"
-    ],
-    "keyBenefits": [
-      "Long-lasting fragrance",
-      "Refined notes and balance",
-      "Skin-friendly formulation",
-      "Alcohol-balanced solution",
-      "Modern signature scent"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Olivia Martin",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456798"
-      },
-      {
-        "star": "4",
-        "name": "Jessica Lee",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567178"
-      }
-    ]
-  },
-  {
-    "title": "REDONE CREAM COLOGNE SILVER",
-    "desc": "Professional cream cologne product: REDONE CREAM COLOGNE SILVER. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Cream Cologne"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "Personal Care",
-      "Fragrance"
-    ],
-    "size": [
-      "400 ML"
-    ],
-    "keyBenefits": [
-      "Long-lasting fragrance",
-      "Refined notes and balance",
-      "Skin-friendly formulation",
-      "Alcohol-balanced solution",
-      "Modern signature scent"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Daniel Smith",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456799"
-      },
-      {
-        "star": "4",
-        "name": "David Wilson",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567179"
-      }
-    ]
-  },
-  {
-    "title": "REDONE CREAM COLOGNE SPORT",
-    "desc": "Professional cream cologne product: REDONE CREAM COLOGNE SPORT. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Cream Cologne"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "Personal Care",
-      "Fragrance"
-    ],
-    "size": [
-      "400 ML"
-    ],
-    "keyBenefits": [
-      "Long-lasting fragrance",
-      "Refined notes and balance",
-      "Skin-friendly formulation",
-      "Alcohol-balanced solution",
-      "Modern signature scent"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Michael Brown",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456710"
-      },
-      {
-        "star": "4",
-        "name": "Olivia Martin",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab123456790"
-      }
-    ]
-  },
-  {
-    "title": "REDONE CREAM COLOGNE FRESH",
-    "desc": "Professional cream cologne product: REDONE CREAM COLOGNE FRESH. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Cream Cologne"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "Personal Care",
-      "Fragrance"
-    ],
-    "size": [
-      "400 ML"
-    ],
-    "keyBenefits": [
-      "Long-lasting fragrance",
-      "Refined notes and balance",
-      "Skin-friendly formulation",
-      "Alcohol-balanced solution",
-      "Modern signature scent"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Daniel Smith",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456711"
-      },
-      {
-        "star": "4",
-        "name": "Sarah Johnson",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab123456791"
-      }
-    ]
-  },
-  {
-    "title": "REDONE CREAM COLOGNE GOLD",
-    "desc": "Professional cream cologne product: REDONE CREAM COLOGNE GOLD. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Cream Cologne"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "Personal Care",
-      "Fragrance"
-    ],
-    "size": [
-      "400 ML"
-    ],
-    "keyBenefits": [
-      "Long-lasting fragrance",
-      "Refined notes and balance",
-      "Skin-friendly formulation",
-      "Alcohol-balanced solution",
-      "Modern signature scent"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Daniel Smith",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456712"
-      },
-      {
-        "star": "4",
-        "name": "Sarah Johnson",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab123456792"
-      }
-    ]
-  },
-  {
-    "title": "REDONE DISPOSABLE TOWEL",
-    "desc": "Professional accessories product: REDONE DISPOSABLE TOWEL. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Accessories"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 0,
-    "type": [
-      "Accessories"
-    ],
-    "size": [],
-    "keyBenefits": [
-      "High quality",
-      "Reliable performance",
-      "Value for money",
-      "Trusted brand"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Sarah Johnson",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456713"
-      },
-      {
-        "star": "4",
-        "name": "Michael Brown",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab123456793"
-      }
-    ]
-  },
-  {
-    "title": "REDONE FACE & BODY SCRUB",
-    "desc": "Professional face care product: REDONE FACE & BODY SCRUB. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Face Care"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "General"
-    ],
-    "size": [
-      "450 ML"
-    ],
-    "keyBenefits": [
-      "High quality",
-      "Reliable performance",
-      "Value for money",
-      "Trusted brand"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Olivia Martin",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456714"
-      },
-      {
-        "star": "4",
-        "name": "Sarah Johnson",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab123456794"
-      }
-    ]
-  },
-  {
-    "title": "REDONE FACE TONIC",
-    "desc": "Professional face care product: REDONE FACE TONIC. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Face Care"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 48,
-    "type": [
-      "General"
-    ],
-    "size": [
-      "250 ML"
-    ],
-    "keyBenefits": [
-      "High quality",
-      "Reliable performance",
-      "Value for money",
-      "Trusted brand"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Michael Brown",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456715"
-      },
-      {
-        "star": "4",
-        "name": "Jessica Lee",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab123456795"
-      }
-    ]
-  },
-  {
-    "title": "REDONE HAIR TONIC",
-    "desc": "Professional hair tonic product: REDONE HAIR TONIC. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Hair Tonic"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 48,
-    "type": [
-      "Hair Care",
-      "Professional"
-    ],
-    "size": [
-      "250 ML"
-    ],
-    "keyBenefits": [
-      "Cleanses thoroughly",
-      "Gentle on scalp",
-      "Restores natural shine",
-      "Sulfate-free formulation",
-      "Suitable for daily use"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Emily Clark",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456716"
-      },
-      {
-        "star": "4",
-        "name": "Emily Clark",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab123456796"
-      }
-    ]
-  },
-  {
-    "title": "REDONE HAIR GEL ARGAN",
-    "desc": "Professional hair gel product: REDONE HAIR GEL ARGAN. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Hair Gel"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
-    ],
-    "size": [
-      "400 ML"
-    ],
-    "keyBenefits": [
-      "Strong long-lasting hold",
-      "Non-greasy finish",
-      "Easy to wash off",
-      "Professional salon quality",
-      "Suitable for all hair types"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Jessica Lee",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456717"
-      },
-      {
-        "star": "4",
-        "name": "Michael Brown",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab123456797"
-      }
-    ]
-  },
-  {
-    "title": "REDONE HAIR GEL ARGAN",
-    "desc": "Professional hair gel product: REDONE HAIR GEL ARGAN. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Hair Gel"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
-    ],
-    "size": [
-      "450 ML"
-    ],
-    "keyBenefits": [
-      "Strong long-lasting hold",
-      "Non-greasy finish",
-      "Easy to wash off",
-      "Professional salon quality",
-      "Suitable for all hair types"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Michael Brown",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456718"
-      },
-      {
-        "star": "4",
-        "name": "Emily Clark",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab123456798"
-      }
-    ]
-  },
-  {
-    "title": "REDONE HAIR GEL BUBBLEGUM",
-    "desc": "Professional hair gel product: REDONE HAIR GEL BUBBLEGUM. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Hair Gel"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
-    ],
-    "size": [
-      "400 ML"
-    ],
-    "keyBenefits": [
-      "Strong long-lasting hold",
-      "Non-greasy finish",
-      "Easy to wash off",
-      "Professional salon quality",
-      "Suitable for all hair types"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Jessica Lee",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456719"
-      },
-      {
-        "star": "4",
-        "name": "Michael Brown",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab123456799"
-      }
-    ]
-  },
-  {
-    "title": "REDONE HAIR GEL BUBBLEGUM",
-    "desc": "Professional hair gel product: REDONE HAIR GEL BUBBLEGUM. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Hair Gel"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
-    ],
-    "size": [
-      "450 ML"
-    ],
-    "keyBenefits": [
-      "Strong long-lasting hold",
-      "Non-greasy finish",
-      "Easy to wash off",
-      "Professional salon quality",
-      "Suitable for all hair types"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Olivia Martin",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456720"
-      },
-      {
-        "star": "4",
-        "name": "Jessica Lee",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567100"
-      }
-    ]
-  },
-  {
-    "title": "REDONE HAIR GEL KERATIN",
-    "desc": "Professional hair gel product: REDONE HAIR GEL KERATIN. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Hair Gel"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
-    ],
-    "size": [
-      "400 ML"
-    ],
-    "keyBenefits": [
-      "Strong long-lasting hold",
-      "Non-greasy finish",
-      "Easy to wash off",
-      "Professional salon quality",
-      "Suitable for all hair types"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "David Wilson",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456721"
-      },
-      {
-        "star": "4",
-        "name": "Olivia Martin",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567101"
-      }
-    ]
-  },
-  {
-    "title": "REDONE HAIR GEL KERATIN",
-    "desc": "Professional hair gel product: REDONE HAIR GEL KERATIN. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Hair Gel"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
-    ],
-    "size": [
-      "450 ML"
-    ],
-    "keyBenefits": [
-      "Strong long-lasting hold",
-      "Non-greasy finish",
-      "Easy to wash off",
-      "Professional salon quality",
-      "Suitable for all hair types"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Jessica Lee",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456722"
-      },
-      {
-        "star": "4",
-        "name": "Michael Brown",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567102"
-      }
-    ]
-  },
-  {
-    "title": "REDONE HAIR GEL MAGIC POWER",
-    "desc": "Professional hair gel product: REDONE HAIR GEL MAGIC POWER. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Hair Gel"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
-    ],
-    "size": [
-      "450 ML"
-    ],
-    "keyBenefits": [
-      "Strong long-lasting hold",
-      "Non-greasy finish",
-      "Easy to wash off",
-      "Professional salon quality",
-      "Suitable for all hair types"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Daniel Smith",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456723"
-      },
-      {
-        "star": "4",
-        "name": "Olivia Martin",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567103"
-      }
-    ]
-  },
+ 
   {
     "title": "REDONE HAIR POWDER WAX",
     "desc": "Professional hair powder product: REDONE HAIR POWDER WAX. High quality and reliable performance.",
@@ -4722,15 +2913,15 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Hair Powder"
+      "HairCare"
     ],
     "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
+    "originalPrice": 5.73,
+    "discountedPrice": 4.99,
     "items_per_box": 24,
     "type": [
-      "Hair Care",
-      "Professional"
+     "Hair Powder",
+     "Hair Wax",
     ],
     "size": [
       "20 GR"
@@ -4764,15 +2955,14 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Hair Spray"
+      "HairCare"
     ],
     "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
+    "originalPrice": 5.73,
+    "discountedPrice": 4.99,
     "items_per_box": 24,
     "type": [
-      "Hair Care",
-      "Professional"
+      "Hair Spray",
     ],
     "size": [
       "400 ML"
@@ -4806,15 +2996,14 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Hair Spray"
+      "HairCare"
     ],
     "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
+    "originalPrice": 5.73,
+    "discountedPrice": 4.99,
     "items_per_box": 24,
     "type": [
-      "Hair Care",
-      "Professional"
+      "Hair Spray",
     ],
     "size": [
       "400 ML"
@@ -4848,15 +3037,14 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Hair Spray"
+      "HairCare"
     ],
     "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
+    "originalPrice": 5.73,
+    "discountedPrice": 4.99,
     "items_per_box": 24,
     "type": [
-      "Hair Care",
-      "Professional"
+      "Hair Spray"
     ],
     "size": [
       "400 ML"
@@ -4884,23 +3072,20 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
   },
   {
     "title": "REDONE HAIR WAX BLUE",
-    "desc": "Professional hair wax product: REDONE HAIR WAX BLUE. High quality and reliable performance.",
+    "desc": `Achieve bold, defined, and long-lasting hairstyles with RedOne Aqua Hair Wax Blue  — the ultimate styling essential for men who demand control and confidence. This professional-grade, water-based wax delivers maximum hold and shine without flakes or stiffness, keeping your look sharp and fresh from day to night. Perfect for sleek, textured, or creative hairstyles, it’s the go-to choice for effortless styling and easy washout. Infused with nourishing ingredients, it provides a non-greasy finish that keeps your hair healthy and manageable. Whether you’re going for a classic slick-back or a modern textured look, RedOne Aqua Hair Wax Blue is your secret weapon for all-day style and confidence.`,
     "img": [
       ""
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
+    "originalPrice": 3.43,
+    "discountedPrice": 2.99,
     "items_per_box": 48,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax",
     ],
     "size": [
       "150 ML"
@@ -4929,23 +3114,20 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
   },
   {
     "title": "REDONE HAIR WAX BLACK",
-    "desc": "Professional hair wax product: REDONE HAIR WAX BLACK. High quality and reliable performance.",
+    "desc": `RedOne Aqua Hair  Gel Wax Black is the ultimate styling product that combines the benefits of both gel and wax. Designed for long-lasting hold and a sleek, polished finish, this high-performance styling gel-wax provides an extra strong, flexible hold without the greasiness or flaking. Infused with vitamin-rich ingredients, it hydrates while styling, making it perfect for all hair types, from straight to wavy to curly.`,
     "img": [
       ""
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
+    "originalPrice": 3.43,
+    "discountedPrice": 2.99,
     "items_per_box": 48,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax",
     ],
     "size": [
       "150 ML"
@@ -4973,69 +3155,21 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ]
   },
   {
-    "title": "REDONE HAIR WAX CLAY",
-    "desc": "Professional hair wax product: REDONE HAIR WAX CLAY. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Hair Wax"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 48,
-    "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
-    ],
-    "size": [
-      "100 ML"
-    ],
-    "keyBenefits": [
-      "Strong long-lasting hold",
-      "Non-greasy finish",
-      "Easy to wash off",
-      "Professional salon quality",
-      "Suitable for all hair types"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Michael Brown",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456730"
-      },
-      {
-        "star": "4",
-        "name": "Olivia Martin",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567110"
-      }
-    ]
-  },
-  {
     "title": "REDONE HAIR WAX COBRA",
-    "desc": "Professional hair wax product: REDONE HAIR WAX COBRA. High quality and reliable performance.",
+    "desc":  `REDONE Cobra Aqua Hair Wax Full Force delivers bold style with strong hold and shine. Its non-greasy, lasting formula lets you shape sleek or textured looks with ease. Infused with nourishing ingredients, it keeps hair healthy while providing a professional salon finish. Perfect for all hair types, this versatile wax is your go-to for confident, all-day style.`,
     "img": [
       ""
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
+    "originalPrice": 3.43,
+    "discountedPrice": 2.99,
     "items_per_box": 48,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax",
     ],
     "size": [
       "150 ML"
@@ -5062,96 +3196,7 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
       }
     ]
   },
-  {
-    "title": "REDONE HAIR WAX MATTE ARGAN",
-    "desc": "Professional hair wax product: REDONE HAIR WAX MATTE ARGAN. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Hair Wax"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 48,
-    "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
-    ],
-    "size": [
-      "150 ML"
-    ],
-    "keyBenefits": [
-      "Strong long-lasting hold",
-      "Non-greasy finish",
-      "Easy to wash off",
-      "Professional salon quality",
-      "Suitable for all hair types"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Michael Brown",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456732"
-      },
-      {
-        "star": "4",
-        "name": "Sarah Johnson",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567112"
-      }
-    ]
-  },
-  {
-    "title": "REDONE HAIR WAX MATTE BLACK",
-    "desc": "Professional hair wax product: REDONE HAIR WAX MATTE BLACK. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Hair Wax"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 36,
-    "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
-    ],
-    "size": [
-      "100 ML"
-    ],
-    "keyBenefits": [
-      "Strong long-lasting hold",
-      "Non-greasy finish",
-      "Easy to wash off",
-      "Professional salon quality",
-      "Suitable for all hair types"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Daniel Smith",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456733"
-      },
-      {
-        "star": "4",
-        "name": "Emily Clark",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567113"
-      }
-    ]
-  },
+  // 
   {
     "title": "REDONE HAIR WAX MATTE GREEN",
     "desc": "Professional hair wax product: REDONE HAIR WAX MATTE GREEN. High quality and reliable performance.",
@@ -5160,17 +3205,14 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
+    "originalPrice": 3.43,
+    "discountedPrice": 2.99,
     "items_per_box": 48,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax",
     ],
     "size": [
       "150 ML"
@@ -5205,17 +3247,14 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
+    "originalPrice": 3.43,
+    "discountedPrice": 2.99,
     "items_per_box": 48,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax",
     ],
     "size": [
       "150 ML"
@@ -5242,70 +3281,25 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
       }
     ]
   },
-  {
-    "title": "REDONE HAIR WAX MATTE WHITE",
-    "desc": "Professional hair wax product: REDONE HAIR WAX MATTE WHITE. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Hair Wax"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 36,
-    "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
-    ],
-    "size": [
-      "100 ML"
-    ],
-    "keyBenefits": [
-      "Strong long-lasting hold",
-      "Non-greasy finish",
-      "Easy to wash off",
-      "Professional salon quality",
-      "Suitable for all hair types"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Olivia Martin",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456736"
-      },
-      {
-        "star": "4",
-        "name": "Emily Clark",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567116"
-      }
-    ]
-  },
+
   {
     "title": "REDONE HAIR WAX OLIVE",
-    "desc": "Professional hair wax product: REDONE HAIR WAX OLIVE. High quality and reliable performance.",
+    "desc": `RedOne Olive Hair Wax offers strong hold and long-lasting control with a soft olive-inspired scent. Perfect for structured styles, texture, and all-day shape retention, this wax is ideal for both men and women.
+
+Its creamy texture allows for easy application, adding definition without stickiness or flaking. Whether you want a natural finish or bold sculpted look, this wax gives flexibility and control for any hairstyle. Infused with nourishing ingredients, it helps keep hair healthy while providing a professional salon-quality finish. Suitable for all hair types, RedOne Olive Hair Wax is your go-to styling product for confidence and effortless style.`,
     "img": [
       ""
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
+    "originalPrice": 3.43,
+    "discountedPrice": 2.99,
     "items_per_box": 48,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax",
     ],
     "size": [
       "150 ML"
@@ -5340,17 +3334,14 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
+    "originalPrice": 3.43,
+    "discountedPrice": 2.99,
     "items_per_box": 48,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax",
     ],
     "size": [
       "150 ML"
@@ -5385,17 +3376,14 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
+    "originalPrice": 3.43,
+    "discountedPrice": 2.99,
     "items_per_box": 48,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax",
     ],
     "size": [
       "150 ML"
@@ -5430,17 +3418,14 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
+    "originalPrice": 3.43,
+    "discountedPrice": 2.99,
     "items_per_box": 48,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax",
     ],
     "size": [
       "150 ML"
@@ -5475,17 +3460,14 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
+    "originalPrice": 3.43,
+    "discountedPrice": 2.99,
     "items_per_box": 48,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax",
     ],
     "size": [
       "150 ML"
@@ -5520,17 +3502,14 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Hair Wax"
+      "HairCare"
     ],
     "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
+    "originalPrice": 3.43,
+    "discountedPrice": 2.99,
     "items_per_box": 48,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Hair Wax"
     ],
     "size": [
       "150 ML"
@@ -5558,228 +3537,6 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ]
   },
   {
-    "title": "REDONE OLIVE SHEEN SPRAY",
-    "desc": "Professional hair spray product: REDONE OLIVE SHEEN SPRAY. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Hair Spray"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "Hair Care",
-      "Professional"
-    ],
-    "size": [
-      "500 ML"
-    ],
-    "keyBenefits": [
-      "High quality",
-      "Reliable performance",
-      "Value for money",
-      "Trusted brand"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Michael Brown",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456743"
-      },
-      {
-        "star": "4",
-        "name": "Jessica Lee",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567123"
-      }
-    ]
-  },
-  {
-    "title": "REDONE SPIDER HAIR WAX PASSION",
-    "desc": "Professional hair wax product: REDONE SPIDER HAIR WAX PASSION. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Hair Wax"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 36,
-    "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
-    ],
-    "size": [
-      "100 ML"
-    ],
-    "keyBenefits": [
-      "Strong long-lasting hold",
-      "Non-greasy finish",
-      "Easy to wash off",
-      "Professional salon quality",
-      "Suitable for all hair types"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "David Wilson",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456744"
-      },
-      {
-        "star": "4",
-        "name": "Jessica Lee",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567124"
-      }
-    ]
-  },
-  {
-    "title": "REDONE SPIDER WAX BLUE SHOW OFF",
-    "desc": "Professional hair wax product: REDONE SPIDER WAX BLUE SHOW OFF. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Hair Wax"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 36,
-    "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
-    ],
-    "size": [
-      "100 ML"
-    ],
-    "keyBenefits": [
-      "Strong long-lasting hold",
-      "Non-greasy finish",
-      "Easy to wash off",
-      "Professional salon quality",
-      "Suitable for all hair types"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Michael Brown",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456745"
-      },
-      {
-        "star": "4",
-        "name": "Jessica Lee",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567125"
-      }
-    ]
-  },
-  {
-    "title": "REDONE WAX FIBER",
-    "desc": "Professional hair wax product: REDONE WAX FIBER. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Hair Wax"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 48,
-    "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
-    ],
-    "size": [
-      "100 ML"
-    ],
-    "keyBenefits": [
-      "Strong long-lasting hold",
-      "Non-greasy finish",
-      "Easy to wash off",
-      "Professional salon quality",
-      "Suitable for all hair types"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Michael Brown",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456746"
-      },
-      {
-        "star": "4",
-        "name": "Sarah Johnson",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567126"
-      }
-    ]
-  },
-  {
-    "title": "REDONE WAX POMADE",
-    "desc": "Professional hair wax product: REDONE WAX POMADE. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Hair Wax"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 48,
-    "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
-    ],
-    "size": [
-      "100 ML"
-    ],
-    "keyBenefits": [
-      "Strong long-lasting hold",
-      "Non-greasy finish",
-      "Easy to wash off",
-      "Professional salon quality",
-      "Suitable for all hair types"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Jessica Lee",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456747"
-      },
-      {
-        "star": "4",
-        "name": "Sarah Johnson",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567127"
-      }
-    ]
-  },
-  {
     "title": "REDONE SHAVING GEL FRUIT",
     "desc": "Professional shaving gel product: REDONE SHAVING GEL FRUIT. High quality and reliable performance.",
     "img": [
@@ -5787,17 +3544,14 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Shaving Gel"
+      "Beard & Shaving"
     ],
     "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
+    "originalPrice": 5.73,
+    "discountedPrice": 4.99,
     "items_per_box": 12,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Shaving Gel"
     ],
     "size": [
       "1000 ML"
@@ -5832,17 +3586,14 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Shaving Gel"
+      "Beard & Shaving"
     ],
     "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
+    "originalPrice": 5.73,
+    "discountedPrice": 4.99,
     "items_per_box": 12,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Shaving Gel"
     ],
     "size": [
       "1000 ML"
@@ -5877,17 +3628,14 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Shaving Gel"
+      "Beard & Shaving"
     ],
     "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
+    "originalPrice": 5.73,
+    "discountedPrice": 4.99,
     "items_per_box": 12,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Shaving Gel"
     ],
     "size": [
       "1000 ML"
@@ -5914,51 +3662,7 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
       }
     ]
   },
-  {
-    "title": "REDONE SHAVING GEL SILVER",
-    "desc": "Professional shaving gel product: REDONE SHAVING GEL SILVER. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Shaving Gel"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 12,
-    "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
-    ],
-    "size": [
-      "500 ML"
-    ],
-    "keyBenefits": [
-      "Strong long-lasting hold",
-      "Non-greasy finish",
-      "Easy to wash off",
-      "Professional salon quality",
-      "Suitable for all hair types"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Sarah Johnson",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456751"
-      },
-      {
-        "star": "4",
-        "name": "Michael Brown",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567131"
-      }
-    ]
-  },
+
   {
     "title": "REDONE SHAVING GEL FACE FRESH",
     "desc": "Professional shaving gel product: REDONE SHAVING GEL FACE FRESH. High quality and reliable performance.",
@@ -5967,17 +3671,14 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Shaving Gel"
+      "Beard & Shaving"
     ],
     "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
+    "originalPrice": 5.73,
+    "discountedPrice": 4.99,
     "items_per_box": 12,
     "type": [
-      "Styling",
-      "Salon Product",
-      "Hair Care",
-      "Professional"
+      "Shaving Gel"
     ],
     "size": [
       "1000 ML"
@@ -6005,47 +3706,6 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ]
   },
   {
-    "title": "REDONE WHITE CLAY MASK",
-    "desc": "Professional face care product: REDONE WHITE CLAY MASK. High quality and reliable performance.",
-    "img": [
-      ""
-    ],
-    "video": "",
-    "categories": [
-      "Face Care"
-    ],
-    "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
-    "items_per_box": 24,
-    "type": [
-      "General"
-    ],
-    "size": [
-      "300 ML"
-    ],
-    "keyBenefits": [
-      "High quality",
-      "Reliable performance",
-      "Value for money",
-      "Trusted brand"
-    ],
-    "ratings": [
-      {
-        "star": "5",
-        "name": "Daniel Smith",
-        "comment": "Excellent quality and performance.",
-        "postedBy": "664bc91234f98ab123456753"
-      },
-      {
-        "star": "4",
-        "name": "David Wilson",
-        "comment": "Very satisfied with the product.",
-        "postedBy": "664bc91234f98ab1234567133"
-      }
-    ]
-  },
-  {
     "title": "REDONE NECK STRIP",
     "desc": "Professional accessories product: REDONE NECK STRIP. High quality and reliable performance.",
     "img": [
@@ -6053,14 +3713,14 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ],
     "video": "",
     "categories": [
-      "Accessories"
+      "Beard & Shaving"
     ],
     "brand": "Redone",
-    "originalPrice": 0,
-    "discountedPrice": 0,
+    "originalPrice": 5.73,
+    "discountedPrice": 4.99,
     "items_per_box": 20,
     "type": [
-      "Accessories"
+      "Neck Strips"
     ],
     "size": [
       "5 PCS"
@@ -6087,5 +3747,4 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     ]
   },
 ];
-
-module.exports = products;
+export default hairProducts;

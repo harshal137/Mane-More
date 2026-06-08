@@ -4,7 +4,6 @@ import {
   FaCreditCard,
   FaChevronDown,
   FaChevronUp,
-  FaBoxOpen,
   FaMapMarkerAlt,
   FaPhone,
   FaEnvelope,
@@ -35,13 +34,26 @@ const THEME = {
   SOFT_GREEN: "#E8F1D8",
 };
 
+const CANCELLATION_REASONS = [
+  "Ordered by mistake",
+  "Found a better price",
+  "Need to change delivery address",
+  "Delivery is taking too long",
+  "Changed my mind",
+  "Other",
+];
+
 const Order = () => {
   const user = useSelector((state) => state.user);
   const [orders, setOrders] = useState([]);
   const [expandedOrders, setExpandedOrders] = useState({});
+  const [orderToCancel, setOrderToCancel] = useState(null);
+  const [cancellationReason, setCancellationReason] = useState("");
+  const [otherReason, setOtherReason] = useState("");
+  const [isCancelling, setIsCancelling] = useState(false);
 
   const dispatch = useDispatch();
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const fetchUserOrders = useCallback(async () => {
     try {
       if (!user.currentUser?._id) return;
@@ -110,7 +122,7 @@ useEffect(() => {
   }, [fetchUserOrders, user.currentUser]);
 
   const formatCurrency = (amount) => {
-    return `₹ ${Number(amount || 0).toLocaleString("en-IN")}`;
+    return `$ ${Number(amount || 0).toLocaleString("en-US")}`;
   };
 
   const formatDate = (dateString) => {
@@ -122,6 +134,13 @@ useEffect(() => {
   };
 
   const getPaymentStatus = (order) => {
+    if (order.refundStatus === "succeeded") return "Refunded";
+    if (
+      order.refundStatus === "pending" ||
+      order.refundStatus === "processing"
+    ) {
+      return "Refund pending";
+    }
     if (order.status_of_transaction) return order.status_of_transaction;
     if (order.status === 0) return "Unpaid";
     if (order.status === 1) return "Paid";
@@ -130,6 +149,14 @@ useEffect(() => {
 
   const getPaymentStyle = (status) => {
     const value = status.toLowerCase();
+
+    if (value.includes("refund")) {
+      return {
+        bg: "#DBEAFE",
+        color: "#2563EB",
+        icon: <FaClock />,
+      };
+    }
 
     if (value.includes("paid") || value.includes("completed") || value.includes("success")) {
       return {
@@ -166,6 +193,7 @@ useEffect(() => {
   const getDeliveryStep = (status) => {
     const value = status.toLowerCase();
 
+    if (value.includes("cancel")) return 0;
     if (value.includes("delivered")) return 4;
     if (value.includes("shipped") || value.includes("dispatch")) return 3;
     if (value.includes("processing")) return 2;
@@ -182,6 +210,58 @@ useEffect(() => {
       ...prev,
       [orderId]: !prev[orderId],
     }));
+  };
+
+  const canCancelOrder = (order) => {
+    const status = getDeliveryStatus(order).toLowerCase();
+    return status === "placed" || status === "processing";
+  };
+
+  const openCancellationModal = (order) => {
+    setOrderToCancel(order);
+    setCancellationReason("");
+    setOtherReason("");
+  };
+
+  const closeCancellationModal = () => {
+    if (isCancelling) return;
+    setOrderToCancel(null);
+    setCancellationReason("");
+    setOtherReason("");
+  };
+
+  const handleCancelOrder = async () => {
+    if (!orderToCancel || !cancellationReason) return;
+
+    if (cancellationReason === "Other" && !otherReason.trim()) {
+      toast.error("Please enter a cancellation reason.");
+      return;
+    }
+
+    try {
+      setIsCancelling(true);
+      const res = await userRequest.put(`/orders/${orderToCancel._id}/cancel`, {
+        reason: cancellationReason,
+        otherReason: otherReason.trim(),
+      });
+
+      setOrders((currentOrders) =>
+        currentOrders.map((order) =>
+          order._id === orderToCancel._id ? res.data.order : order
+        )
+      );
+      toast.success(res.data.message || "Order cancelled successfully.");
+      setOrderToCancel(null);
+      setCancellationReason("");
+      setOtherReason("");
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          "Could not cancel this order. Please try again."
+      );
+    } finally {
+      setIsCancelling(false);
+    }
   };
 
   return (
@@ -256,6 +336,7 @@ useEffect(() => {
               const deliveryLabel = getDeliveryLabel(deliveryStatus);
               const deliveryStep = getDeliveryStep(deliveryStatus);
               const isExpanded = expandedOrders[order._id];
+              const isCancelled = deliveryStatus.toLowerCase() === "cancelled";
 
               return (
                 <div
@@ -344,46 +425,83 @@ useEffect(() => {
                         <span
                           className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold"
                           style={{
-                            backgroundColor: THEME.SOFT_GREEN,
-                            color: THEME.PRIMARY,
+                            backgroundColor: isCancelled ? "#FEE2E2" : THEME.SOFT_GREEN,
+                            color: isCancelled ? "#DC2626" : THEME.PRIMARY,
                           }}
                         >
-                          <FaTruck />
+                          {isCancelled ? <FaTimesCircle /> : <FaTruck />}
                           {deliveryLabel}
                         </span>
                       </div>
                     </div>
 
                     {/* Delivery progress */}
-                    <div className="mb-6">
-                      <div className="grid grid-cols-4 gap-2 text-center text-xs font-semibold">
-                        {["Ordered", "Processing", "Shipped", "Delivered"].map(
-                          (step, index) => {
-                            const active = index + 1 <= deliveryStep;
+                    {!isCancelled && (
+                      <div className="mb-6">
+                        <div className="grid grid-cols-4 gap-2 text-center text-xs font-semibold">
+                          {["Ordered", "Processing", "Shipped", "Delivered"].map(
+                            (step, index) => {
+                              const active = index + 1 <= deliveryStep;
 
-                            return (
-                              <div key={step}>
-                                <div
-                                  className="mb-2 h-2 rounded-full"
-                                  style={{
-                                    backgroundColor: active
-                                      ? THEME.PRIMARY
-                                      : THEME.BORDER,
-                                  }}
-                                />
-                                <span
-                                  style={{
-                                    color: active ? THEME.PRIMARY : THEME.MUTED,
-                                  }}
-                                >
-                                  {step}
-                                </span>
-                              </div>
-                            );
-                          }
-                        )}
+                              return (
+                                <div key={step}>
+                                  <div
+                                    className="mb-2 h-2 rounded-full"
+                                    style={{
+                                      backgroundColor: active
+                                        ? THEME.PRIMARY
+                                        : THEME.BORDER,
+                                    }}
+                                  />
+                                  <span
+                                    style={{
+                                      color: active
+                                        ? THEME.PRIMARY
+                                        : THEME.MUTED,
+                                    }}
+                                  >
+                                    {step}
+                                  </span>
+                                </div>
+                              );
+                            }
+                          )}
+                        </div>
                       </div>
-                    </div>
+                    )}
+
+                    {isCancelled && order.cancellationReason && (
+                      <div
+                        className="mb-6 rounded-2xl p-4 text-sm"
+                        style={{
+                          backgroundColor: "#FEF2F2",
+                          border: "1px solid #FECACA",
+                          color: "#991B1B",
+                        }}
+                      >
+                        <span className="font-bold">Cancellation reason:</span>{" "}
+                        {order.cancellationReason}
+                      </div>
+                    )}
+
+                    {isCancelled &&
+                      order.mode_of_transaction !== "COD" &&
+                      order.refundStatus &&
+                      order.refundStatus !== "not_required" && (
+                        <div
+                          className="mb-6 rounded-2xl p-4 text-sm"
+                          style={{
+                            backgroundColor: "#EFF6FF",
+                            border: "1px solid #BFDBFE",
+                            color: "#1D4ED8",
+                          }}
+                        >
+                          <span className="font-bold">Refund status:</span>{" "}
+                          {order.refundStatus === "succeeded"
+                            ? "Refund issued to your original payment method."
+                            : "Awaiting admin refund action. After Stripe accepts the refund, banks typically show it within 5-10 business days."}
+                        </div>
+                      )}
 
                     {/* Product preview */}
                     <div className="space-y-4">
@@ -496,6 +614,22 @@ useEffect(() => {
                         </>
                       )}
                     </button>
+
+                    {canCancelOrder(order) && (
+                      <button
+                        type="button"
+                        onClick={() => openCancellationModal(order)}
+                        className="ml-3 mt-5 inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition-all duration-300"
+                        style={{
+                          backgroundColor: "#FFFFFF",
+                          color: "#DC2626",
+                          border: "1px solid #FCA5A5",
+                        }}
+                      >
+                        <FaTimesCircle />
+                        Cancel Order
+                      </button>
+                    )}
 
                     {/* Details panel */}
                     {isExpanded && (
@@ -627,6 +761,124 @@ useEffect(() => {
           </div>
         )}
       </div>
+
+      {orderToCancel && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="cancel-order-title"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) closeCancellationModal();
+          }}
+        >
+          <div
+            className="w-full max-w-lg rounded-3xl p-6 sm:p-8"
+            style={{
+              backgroundColor: THEME.CARD,
+              boxShadow: "0 24px 70px rgba(17,24,39,0.25)",
+            }}
+          >
+            <div className="mb-5 flex items-start justify-between gap-4">
+              <div>
+                <h2
+                  id="cancel-order-title"
+                  className="text-2xl font-bold"
+                  style={{ color: THEME.HEADING }}
+                >
+                  Cancel order
+                </h2>
+                <p className="mt-1 text-sm" style={{ color: THEME.TEXT }}>
+                  Tell us why you want to cancel order #
+                  {orderToCancel._id.slice(-8).toUpperCase()}.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={closeCancellationModal}
+                disabled={isCancelling}
+                className="text-2xl leading-none"
+                style={{ color: THEME.MUTED }}
+                aria-label="Close cancellation dialog"
+              >
+                &times;
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {CANCELLATION_REASONS.map((reason) => (
+                <label
+                  key={reason}
+                  className="flex cursor-pointer items-center gap-3 rounded-xl border p-3"
+                  style={{
+                    borderColor:
+                      cancellationReason === reason
+                        ? THEME.PRIMARY
+                        : THEME.BORDER,
+                    backgroundColor:
+                      cancellationReason === reason ? "#F7F2FA" : THEME.CARD,
+                  }}
+                >
+                  <input
+                    type="radio"
+                    name="cancellationReason"
+                    value={reason}
+                    checked={cancellationReason === reason}
+                    onChange={(event) =>
+                      setCancellationReason(event.target.value)
+                    }
+                    className="h-4 w-4"
+                    style={{ accentColor: THEME.PRIMARY }}
+                  />
+                  <span className="text-sm font-medium" style={{ color: THEME.HEADING }}>
+                    {reason}
+                  </span>
+                </label>
+              ))}
+            </div>
+
+            {cancellationReason === "Other" && (
+              <textarea
+                value={otherReason}
+                onChange={(event) => setOtherReason(event.target.value)}
+                maxLength={300}
+                rows={3}
+                placeholder="Please tell us your reason"
+                className="mt-4 w-full resize-none rounded-xl border p-3 text-sm outline-none"
+                style={{ borderColor: THEME.BORDER, color: THEME.HEADING }}
+              />
+            )}
+
+            <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                onClick={closeCancellationModal}
+                disabled={isCancelling}
+                className="rounded-full px-6 py-2.5 text-sm font-semibold"
+                style={{
+                  color: THEME.PRIMARY,
+                  border: `1px solid ${THEME.BORDER}`,
+                }}
+              >
+                Keep Order
+              </button>
+              <button
+                type="button"
+                onClick={handleCancelOrder}
+                disabled={
+                  isCancelling ||
+                  !cancellationReason ||
+                  (cancellationReason === "Other" && !otherReason.trim())
+                }
+                className="rounded-full px-6 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+                style={{ backgroundColor: "#DC2626" }}
+              >
+                {isCancelling ? "Cancelling..." : "Confirm Cancellation"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

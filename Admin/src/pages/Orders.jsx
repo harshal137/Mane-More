@@ -9,6 +9,7 @@ import {
   FaMoneyBillWave,
   FaRedo,
   FaSearch,
+  FaTimesCircle,
   FaTruck,
 } from "react-icons/fa";
 import { userRequest } from "../requestMethods";
@@ -44,7 +45,7 @@ const Orders = () => {
   }, []);
 
   const formatCurrency = (amount) =>
-    `₹ ${Number(amount || 0).toLocaleString("en-IN", {
+    `$ ${Number(amount || 0).toLocaleString("en-US", {
       maximumFractionDigits: 2,
     })}`;
 
@@ -64,8 +65,12 @@ const Orders = () => {
 
   const getDeliveryStatus = (order) => String(order.delivery_status || "Placed");
 
-  const getDeliveryLabel = (status) =>
-    status.toLowerCase() === "placed" ? "Ordered" : status;
+  const requiresRefund = (order) =>
+    getDeliveryStatus(order).toLowerCase() === "cancelled" &&
+    String(order.mode_of_transaction || "").toLowerCase() !== "cod" &&
+    (String(order.status_of_transaction || "").toLowerCase() === "paid" ||
+      String(order.payment_status || "").toLowerCase() === "success") &&
+    !["processing", "succeeded"].includes(order.refundStatus);
 
   const getStatusInfo = (status) => {
     switch (String(status || "").toLowerCase()) {
@@ -124,9 +129,13 @@ const Orders = () => {
     const paid = orders.filter(
       (order) => String(order.status_of_transaction || "").toLowerCase() === "paid"
     );
+    const cancelled = orders.filter(
+      (order) => getDeliveryStatus(order).toLowerCase() === "cancelled"
+    );
     const unpaidCod = orders.filter(
       (order) =>
         String(order.mode_of_transaction || "").toLowerCase() === "cod" &&
+        getDeliveryStatus(order).toLowerCase() !== "cancelled" &&
         String(order.status_of_transaction || "").toLowerCase() !== "paid"
     );
 
@@ -135,9 +144,8 @@ const Orders = () => {
       active: active.length,
       delivered: delivered.length,
       paid: paid.length,
+      cancelled: cancelled.length,
       unpaidCod: unpaidCod.length,
-      deliveredRevenue: delivered.reduce((sum, order) => sum + getOrderAmount(order), 0),
-      totalOrderValue: orders.reduce((sum, order) => sum + getOrderAmount(order), 0),
     };
   }, [orders]);
 
@@ -195,11 +203,24 @@ const Orders = () => {
       headerName: "Payment",
       width: 130,
       renderCell: (params) => {
-        const paid = String(params.row.status_of_transaction || "").toLowerCase() === "paid";
+        const paymentStatus = String(
+          params.row.status_of_transaction || "unpaid"
+        ).toLowerCase();
+        const isPaid = paymentStatus === "paid";
+        const isRefunded =
+          paymentStatus === "refunded" ||
+          params.row.refundStatus === "succeeded";
+
+        const label = isRefunded ? "Refunded" : isPaid ? "Paid" : "Unpaid";
+        const color = isRefunded
+          ? "bg-blue-100 text-blue-800"
+          : isPaid
+            ? "bg-green-100 text-green-800"
+            : "bg-red-100 text-red-800";
 
         return (
-          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${paid ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
-            {paid ? "Paid" : "Unpaid"}
+          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${color}`}>
+            {label}
           </span>
         );
       },
@@ -213,6 +234,38 @@ const Orders = () => {
           {params.row.mode_of_transaction || "-"}
         </span>
       ),
+    },
+    {
+      field: "refundStatus",
+      headerName: "Refund",
+      width: 150,
+      renderCell: (params) => {
+        if (requiresRefund(params.row)) {
+          return (
+            <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-800">
+              Refund required
+            </span>
+          );
+        }
+
+        if (params.row.refundStatus === "processing") {
+          return (
+            <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-800">
+              Processing
+            </span>
+          );
+        }
+
+        if (params.row.refundStatus === "succeeded") {
+          return (
+            <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800">
+              Refunded
+            </span>
+          );
+        }
+
+        return <span className="text-sm text-gray-400">Not required</span>;
+      },
     },
     {
       field: "createdAt",
@@ -230,9 +283,13 @@ const Orders = () => {
       renderCell: (params) => (
         <Link
           to={`/order/${params.row._id}`}
-          className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800"
+          className={`rounded-lg px-4 py-2 text-sm font-semibold text-white ${
+            requiresRefund(params.row)
+              ? "bg-red-600 hover:bg-red-700"
+              : "bg-gray-900 hover:bg-gray-800"
+          }`}
         >
-          Details
+          {requiresRefund(params.row) ? "Refund" : "Details"}
         </Link>
       ),
     },
@@ -258,12 +315,13 @@ const Orders = () => {
           </button>
         </div>
 
-        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-5">
+        <div className="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <StatCard label="Total Orders" value={metrics.total} icon={<FaBoxOpen />} color="bg-blue-100 text-blue-700" />
           <StatCard label="Active" value={metrics.active} icon={<FaTruck />} color="bg-yellow-100 text-yellow-700" />
           <StatCard label="Delivered" value={metrics.delivered} icon={<FaCheckDouble />} color="bg-green-100 text-green-700" />
+          <StatCard label="Paid Orders" value={metrics.paid} icon={<FaMoneyBillWave />} color="bg-emerald-100 text-emerald-700" />
+          <StatCard label="Cancelled" value={metrics.cancelled} icon={<FaTimesCircle />} color="bg-red-100 text-red-700" />
           <StatCard label="Unpaid COD" value={metrics.unpaidCod} icon={<FaCreditCard />} color="bg-red-100 text-red-700" />
-          <StatCard label="Delivered Revenue" value={formatCurrency(metrics.deliveredRevenue)} icon={<FaMoneyBillWave />} color="bg-purple-100 text-purple-700" />
         </div>
 
         <div className="rounded-xl border border-gray-200 bg-white shadow-sm">

@@ -6,6 +6,7 @@ import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
 import User from "../models/user.model.js";
 import protect from "../Middleware/auth.middleware.js";
+import adminAuth from "../Middleware/adminAuth.middleware.js";
 import { sendInngestEventSafely } from "../utils/sendInngestEventSafely.js";
 
 dotenv.config();
@@ -49,9 +50,9 @@ const getCheckoutPaymentMethodTypes = () => {
   }
 
   // Stripe does not support "netbanking" as a Checkout payment_method_types value.
-  // Keep UPI here; bank redirect methods must be enabled through Stripe Dashboard
-  // or use a Stripe-supported enum for your account/currency.
-  return ["card", "upi"];
+  // USD Checkout works with card by default. Add more methods through
+  // STRIPE_PAYMENT_METHOD_TYPES only if Stripe supports them for USD.
+  return ["card"];
 };
 
 const STRIPE_FAILURE_REASON_LABELS = {
@@ -82,6 +83,70 @@ const getStripeFailureReason = (stripeObject = {}, fallback = "Payment failed") 
 
 const isAdminUser = (user) =>
   user?.role === "admin" || user?.isAdmin === true || user?.admin === true;
+
+const normalizeRefundStatus = (status) => {
+  if (status === "succeeded") return "succeeded";
+  if (status === "failed" || status === "canceled") return "failed";
+  return "processing";
+};
+
+const syncRefundToRecords = async (refund) => {
+  const paymentIntentId =
+    typeof refund.payment_intent === "string" ? refund.payment_intent : "";
+  const orderId = refund.metadata?.orderId;
+  const refundStatus = normalizeRefundStatus(refund.status);
+  const refundAmount = Number(refund.amount || 0) / 100;
+  const refundedAt = refundStatus === "succeeded" ? new Date() : null;
+  const refundFailureReason =
+    refundStatus === "failed"
+      ? refund.failure_reason || "Stripe could not complete the refund"
+      : "";
+  const sharedUpdates = {
+    refundStatus,
+    refundId: refund.id,
+    refundAmount,
+    refundCurrency: String(refund.currency || "").toUpperCase(),
+    refundedAt,
+    refundFailureReason,
+  };
+
+  const orderFilter = orderId
+    ? { _id: orderId }
+    : {
+        $or: [
+          { stripePaymentIntentId: paymentIntentId },
+          { stripe_payment_intent_id: paymentIntentId },
+        ],
+      };
+  const paymentFilter = {
+    $or: [
+      { stripePaymentIntentId: paymentIntentId },
+      { stripe_payment_intent_id: paymentIntentId },
+    ],
+  };
+  const successUpdates =
+    refundStatus === "succeeded"
+      ? {
+          payment_status: "refunded",
+          status_of_transaction: "refunded",
+        }
+      : {};
+
+  await Promise.all([
+    Order.findOneAndUpdate(orderFilter, {
+      $set: { ...sharedUpdates, ...successUpdates },
+    }),
+    Payment.findOneAndUpdate(paymentFilter, {
+      $set: {
+        ...sharedUpdates,
+        ...successUpdates,
+        ...(refundStatus === "succeeded" ? { status: "refunded" } : {}),
+      },
+    }),
+  ]);
+
+  return { refundStatus, refundAmount };
+};
 
 const markPaymentFailed = async ({
   payment,
@@ -353,7 +418,7 @@ router.post("/create-checkout-session", protect, express.json(), async (req, res
 
     const line_items = products.map((product) => ({
       price_data: {
-        currency: "inr",
+        currency: "usd",
         product_data: {
           name: product.title,
           images: product.img ? [product.img] : [],
@@ -368,7 +433,7 @@ router.post("/create-checkout-session", protect, express.json(), async (req, res
     if (safeShippingFee > 0) {
       line_items.push({
         price_data: {
-          currency: "inr",
+          currency: "usd",
           product_data: { name: `Shipping - ${locationType || "Delivery"}` },
           unit_amount: Math.round(safeShippingFee * 100),
         },
@@ -382,7 +447,7 @@ router.post("/create-checkout-session", protect, express.json(), async (req, res
       amount,
       shippingFee: safeShippingFee,
       totalAmount,
-      currency: "inr",
+      currency: "usd",
       payment_status: "pending",
       status: "initiated",
       status_of_transaction: "unpaid",
@@ -523,6 +588,142 @@ router.post("/cancel-session/:sessionId", protect, express.json(), async (req, r
   }
 });
 
+router.post(
+  "/refund-order/:orderId",
+  protect,
+  adminAuth,
+  express.json(),
+  async (req, res) => {
+    let lockedOrder;
+
+    try {
+      const order = await Order.findById(req.params.orderId).populate("paymentId");
+
+      if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+
+      const isCancelled =
+        String(order.delivery_status || order.order_status).toLowerCase() ===
+        "cancelled";
+      const isPaidOnline =
+        order.mode_of_transaction !== "COD" &&
+        (order.status_of_transaction === "paid" ||
+          order.payment_status === "success");
+
+      if (!isCancelled || !isPaidOnline) {
+        return res.status(400).json({
+          message: "Only cancelled, paid online orders can be refunded",
+        });
+      }
+
+      if (order.refundStatus === "succeeded") {
+        return res.status(200).json({
+          message: "This order has already been refunded",
+          order,
+        });
+      }
+
+      if (order.refundStatus === "processing") {
+        return res.status(409).json({
+          message: "A refund is already being processed for this order",
+        });
+      }
+
+      const paymentIntentId =
+        order.stripePaymentIntentId ||
+        order.stripe_payment_intent_id ||
+        order.paymentId?.stripePaymentIntentId ||
+        order.paymentId?.stripe_payment_intent_id;
+
+      if (!paymentIntentId) {
+        return res.status(400).json({
+          message: "Stripe PaymentIntent ID is missing for this order",
+        });
+      }
+
+      lockedOrder = await Order.findOneAndUpdate(
+        {
+          _id: order._id,
+          refundStatus: { $nin: ["processing", "succeeded"] },
+        },
+        {
+          $set: {
+            refundStatus: "processing",
+            refundFailureReason: "",
+          },
+        },
+        { new: true }
+      );
+
+      if (!lockedOrder) {
+        return res.status(409).json({
+          message: "A refund is already being processed for this order",
+        });
+      }
+
+      await Payment.findByIdAndUpdate(order.paymentId?._id || order.paymentId, {
+        $set: {
+          refundStatus: "processing",
+          refundFailureReason: "",
+        },
+      });
+
+      const refund = await stripe.refunds.create(
+        {
+          payment_intent: paymentIntentId,
+          reason: "requested_by_customer",
+          metadata: {
+            orderId: order._id.toString(),
+            paymentId: (order.paymentId?._id || order.paymentId).toString(),
+          },
+        },
+        {
+          idempotencyKey: `order-refund-${order._id}`,
+        }
+      );
+      const { refundStatus, refundAmount } = await syncRefundToRecords(refund);
+      const updatedOrder = await Order.findById(order._id).populate("paymentId");
+
+      return res.status(200).json({
+        message:
+          refundStatus === "succeeded"
+            ? "Refund issued successfully"
+            : "Refund submitted to Stripe and is processing",
+        refundStatus,
+        refundAmount,
+        order: updatedOrder,
+      });
+    } catch (error) {
+      console.error("Stripe refund error:", error);
+
+      if (lockedOrder) {
+        const failureReason =
+          error.raw?.message || error.message || "Stripe refund failed";
+
+        await Promise.all([
+          Order.findByIdAndUpdate(lockedOrder._id, {
+            $set: {
+              refundStatus: "failed",
+              refundFailureReason: failureReason,
+            },
+          }),
+          Payment.findByIdAndUpdate(lockedOrder.paymentId, {
+            $set: {
+              refundStatus: "failed",
+              refundFailureReason: failureReason,
+            },
+          }),
+        ]);
+      }
+
+      return res.status(error.statusCode || 500).json({
+        message: error.message || "Could not refund this order",
+      });
+    }
+  }
+);
+
 // Stripe webhook confirms payment here.
 // This is the source of truth.
 // IMPORTANT in server.js/app.js: mount this route before express.json(), or use raw body only for this route.
@@ -626,6 +827,13 @@ router.post("/webhook", express.raw({ type: "application/json" }), async (req, r
             transactionId: typeof session.payment_intent === "string" ? session.payment_intent : session.id,
           });
         }
+        break;
+      }
+
+      case "refund.created":
+      case "refund.updated":
+      case "refund.failed": {
+        await syncRefundToRecords(event.data.object);
         break;
       }
 

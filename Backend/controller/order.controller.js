@@ -8,6 +8,15 @@ import { sendInngestEventSafely } from "../utils/sendInngestEventSafely.js";
 const normalizeProductId = (item) => item.productId || item._id;
 const normalizeStatus = (status = "") => String(status || "").trim().toLowerCase();
 const shippingEmailStatuses = new Set(["shipped", "out for delivery", "arriving today"]);
+const cancellableOrderStatuses = new Set(["placed", "processing"]);
+const cancellationReasons = new Set([
+  "Ordered by mistake",
+  "Found a better price",
+  "Need to change delivery address",
+  "Delivery is taking too long",
+  "Changed my mind",
+  "Other",
+]);
 
 const decrementProductStockForDeliveredOrder = async (products = []) => {
   const quantityByProductId = new Map();
@@ -285,6 +294,14 @@ const updateOrder = asyncHandler(async (req, res) => {
   const oldDeliveryStatus = normalizeStatus(order.delivery_status);
   const oldOrderStatus = normalizeStatus(order.order_status);
 
+  if (
+    (oldDeliveryStatus === "cancelled" || oldOrderStatus === "cancelled") &&
+    normalizeStatus(nextDeliveryStatus) !== "cancelled"
+  ) {
+    res.status(400);
+    throw new Error("A cancelled order cannot be returned to fulfillment");
+  }
+
   if (isDelivered && isCOD) {
     req.body.status_of_transaction = "paid";
     req.body.payment_status = "success";
@@ -365,6 +382,111 @@ const updateOrder = asyncHandler(async (req, res) => {
   res.status(200).json(updatedOrder);
 });
 
+const cancelOrder = asyncHandler(async (req, res) => {
+  const selectedReason = String(req.body.reason || "").trim();
+  const otherReason = String(req.body.otherReason || "").trim();
+
+  if (!cancellationReasons.has(selectedReason)) {
+    res.status(400);
+    throw new Error("Please select a valid cancellation reason");
+  }
+
+  if (selectedReason === "Other" && !otherReason) {
+    res.status(400);
+    throw new Error("Please provide a cancellation reason");
+  }
+
+  const cancellationReason =
+    selectedReason === "Other" ? otherReason.slice(0, 300) : selectedReason;
+  const order = await Order.findById(req.params.id);
+
+  if (!order) {
+    res.status(404);
+    throw new Error("Order not found");
+  }
+
+  if (order.userId.toString() !== req.user._id.toString()) {
+    res.status(403);
+    throw new Error("You can only cancel your own orders");
+  }
+
+  const currentStatus = normalizeStatus(
+    order.delivery_status || order.order_status
+  );
+
+  if (!cancellableOrderStatuses.has(currentStatus)) {
+    res.status(400);
+    throw new Error(
+      currentStatus === "cancelled"
+        ? "This order has already been cancelled"
+        : "This order can no longer be cancelled"
+    );
+  }
+
+  const isPaidOnlineOrder =
+    order.mode_of_transaction !== "COD" &&
+    (normalizeStatus(order.status_of_transaction) === "paid" ||
+      normalizeStatus(order.payment_status) === "success");
+  const cancelledAt = new Date();
+  const cancellationUpdates = {
+    order_status: "Cancelled",
+    delivery_status: "Cancelled",
+    cancellationReason,
+    cancelledAt,
+    cancelledBy: "customer",
+  };
+
+  if (isPaidOnlineOrder) {
+    cancellationUpdates.refundStatus = "pending";
+    cancellationUpdates.refundRequestedAt = cancelledAt;
+    cancellationUpdates.refundDeadlineAt = new Date(
+      cancelledAt.getTime() + 24 * 60 * 60 * 1000
+    );
+    cancellationUpdates.refundFailureReason = "";
+  }
+
+  const cancelledOrder = await Order.findOneAndUpdate(
+    {
+      _id: order._id,
+      userId: req.user._id,
+      delivery_status: { $in: ["Placed", "Processing"] },
+    },
+    {
+      $set: cancellationUpdates,
+    },
+    { new: true }
+  );
+
+  if (!cancelledOrder) {
+    res.status(409);
+    throw new Error("Order status changed and can no longer be cancelled");
+  }
+
+  if (cancelledOrder.mode_of_transaction === "COD" && cancelledOrder.paymentId) {
+    await Payment.findByIdAndUpdate(cancelledOrder.paymentId, {
+      $set: {
+        payment_status: "cancelled",
+        status: "cancelled",
+        status_of_transaction: "unpaid",
+      },
+    });
+  } else if (isPaidOnlineOrder && cancelledOrder.paymentId) {
+    await Payment.findByIdAndUpdate(cancelledOrder.paymentId, {
+      $set: {
+        refundStatus: "pending",
+        refundRequestedAt: cancelledAt,
+        refundDeadlineAt: cancellationUpdates.refundDeadlineAt,
+        refundFailureReason: "",
+      },
+    });
+  }
+
+  res.status(200).json({
+    message: "Order cancelled successfully",
+    order: cancelledOrder,
+  });
+});
+
 const deleteOrder = asyncHandler(async (req, res) => {
   const order = await Order.findByIdAndDelete(req.params.id);
 
@@ -407,7 +529,8 @@ const getUserOrder = asyncHandler(async (req, res) => {
     $or: [
       { mode_of_transaction: "COD" },
       { status_of_transaction: "paid" },
-      { payment_status: "success" },
+      { status_of_transaction: "refunded" },
+      { payment_status: { $in: ["success", "refunded"] } },
     ],
   }).sort({ createdAt: -1 });
 
@@ -442,4 +565,5 @@ export {
   createCODOrder,
   updateOrder,
   getOrderById,
+  cancelOrder,
 };

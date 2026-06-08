@@ -13,6 +13,7 @@ import {
   FaSave,
   FaTruck,
   FaUser,
+  FaUndo,
 } from "react-icons/fa";
 
 const THEME = {
@@ -35,6 +36,7 @@ const OrderDetail = () => {
   const [updating, setUpdating] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationData, setLocationData] = useState(null);
+  const [refunding, setRefunding] = useState(false);
 
   useEffect(() => {
     const getOrder = async () => {
@@ -184,9 +186,40 @@ const OrderDetail = () => {
     return match?.label || status || "Ordered";
   };
 
+  const refundOrder = async () => {
+    const confirmed = window.confirm(
+      `Refund ${formatCurrency(order.totalAmount || order.total)} to the customer's original payment method?`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setRefunding(true);
+      const res = await userRequest.post(`/stripe/refund-order/${order._id}`);
+      setOrder(res.data.order || order);
+      alert(res.data.message || "Refund submitted successfully");
+    } catch (error) {
+      console.log(error);
+      alert(error.response?.data?.message || "Failed to refund this order");
+    } finally {
+      setRefunding(false);
+    }
+  };
+
   const currentStepIndex = deliverySteps.findIndex(
     (step) => step.value.toLowerCase() === deliveryStatus.toLowerCase()
   );
+  const isCancelled =
+    String(order?.delivery_status || order?.order_status).toLowerCase() ===
+    "cancelled";
+  const isPaidOnline =
+    order?.mode_of_transaction !== "COD" &&
+    (order?.status_of_transaction === "paid" ||
+      order?.payment_status === "success");
+  const canRefund =
+    isCancelled &&
+    isPaidOnline &&
+    !["processing", "succeeded"].includes(order?.refundStatus);
 
   if (loading) {
     return (
@@ -252,14 +285,74 @@ const OrderDetail = () => {
             <span
               className="w-fit rounded-full px-5 py-2 text-sm font-semibold"
               style={{
-                backgroundColor: THEME.SOFT_GREEN,
-                color: THEME.PRIMARY,
+                backgroundColor: isCancelled ? "#FEE2E2" : THEME.SOFT_GREEN,
+                color: isCancelled ? "#B91C1C" : THEME.PRIMARY,
               }}
             >
               {getDeliveryLabel(order.delivery_status)}
             </span>
           </div>
         </div>
+
+        {isCancelled && (
+          <div
+            className="mb-8 rounded-3xl p-6"
+            style={{
+              backgroundColor: "#FEF2F2",
+              border: "1px solid #FECACA",
+            }}
+          >
+            <h2 className="text-xl font-bold" style={{ color: "#991B1B" }}>
+              Order Cancelled
+            </h2>
+            <p className="mt-2 text-sm" style={{ color: "#991B1B" }}>
+              <strong>Reason:</strong>{" "}
+              {order.cancellationReason || "No reason recorded"}
+            </p>
+            <p className="mt-1 text-sm" style={{ color: "#991B1B" }}>
+              <strong>Cancelled at:</strong> {formatDate(order.cancelledAt)}
+            </p>
+
+            {order.mode_of_transaction !== "COD" && (
+              <div
+                className="mt-5 rounded-2xl p-4"
+                style={{ backgroundColor: "#FFFFFF", border: "1px solid #FECACA" }}
+              >
+                <p className="font-semibold" style={{ color: THEME.HEADING }}>
+                  Refund status:{" "}
+                  <span className="capitalize">
+                    {(order.refundStatus || "pending").replace("_", " ")}
+                  </span>
+                </p>
+                <p className="mt-1 text-sm" style={{ color: THEME.TEXT }}>
+                  Admin action deadline: {formatDate(order.refundDeadlineAt)}
+                </p>
+                <p className="mt-1 text-sm" style={{ color: THEME.TEXT }}>
+                  Stripe sends the refund to the original payment method. The
+                  customer&apos;s bank typically posts it in 5-10 business days.
+                </p>
+
+                {order.refundFailureReason && (
+                  <p className="mt-2 text-sm font-semibold text-red-700">
+                    {order.refundFailureReason}
+                  </p>
+                )}
+
+                {canRefund && (
+                  <button
+                    type="button"
+                    onClick={refundOrder}
+                    disabled={refunding}
+                    className="mt-4 inline-flex items-center justify-center gap-2 rounded-2xl bg-red-600 px-6 py-3 font-semibold text-white hover:bg-red-700 disabled:opacity-60"
+                  >
+                    <FaUndo />
+                    {refunding ? "Refunding..." : "Refund Full Amount"}
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Status Update */}
         <div
@@ -313,6 +406,7 @@ const OrderDetail = () => {
               <select
                 value={deliveryStatus}
                 onChange={(e) => setDeliveryStatus(e.target.value)}
+                disabled={isCancelled}
                 className="w-full rounded-2xl px-4 py-3 outline-none"
                 style={{
                   backgroundColor: THEME.BG,
@@ -324,12 +418,13 @@ const OrderDetail = () => {
                 <option value="Processing">Processing</option>
                 <option value="Shipped">Shipped</option>
                 <option value="Delivered">Delivered</option>
+                <option value="Cancelled">Cancelled</option>
               </select>
             </div>
 
             <button
               onClick={updateOrderStatus}
-              disabled={updating}
+              disabled={updating || isCancelled}
               className="inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3 font-semibold disabled:opacity-60"
               style={{
                 backgroundColor: THEME.PRIMARY,
@@ -337,7 +432,11 @@ const OrderDetail = () => {
               }}
             >
               <FaSave />
-              {updating ? "Updating..." : "Save Status"}
+              {isCancelled
+                ? "Order Cancelled"
+                : updating
+                  ? "Updating..."
+                  : "Save Status"}
             </button>
           </div>
         </div>
@@ -602,6 +701,19 @@ const OrderDetail = () => {
                 label="Transaction ID"
                 value={order.transaction_id || "Not available"}
               />
+              <SummaryRow
+                label="Refund Status"
+                value={(order.refundStatus || "not_required").replace("_", " ")}
+              />
+              {order.refundId && (
+                <SummaryRow label="Stripe Refund ID" value={order.refundId} />
+              )}
+              {order.refundAmount > 0 && (
+                <SummaryRow
+                  label="Refund Amount"
+                  value={formatCurrency(order.refundAmount)}
+                />
+              )}
             </div>
 
             {/* Admin Notes */}

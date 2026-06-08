@@ -6,6 +6,192 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  color: #334155;
+  background: #f8fafc;
+}
 
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #f8fafc;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.admin-shell {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top right, rgba(139, 92, 246, 0.08), transparent 28rem),
+    #f8fafc;
+}
+
+.admin-content {
+  min-width: 0;
+  min-height: 100vh;
+}
+
+.admin-content > * {
+  min-height: 100vh;
+}
+
+/* Shared protected-page theme. It intentionally leaves the login page untouched. */
+.admin-content .bg-gray-50,
+.admin-content .bg-gray-100 {
+  background-color: #f8fafc !important;
+}
+
+.admin-content .text-gray-900,
+.admin-content .text-gray-800 {
+  color: #0f172a !important;
+}
+
+.admin-content .text-gray-700,
+.admin-content .text-gray-600 {
+  color: #475569 !important;
+}
+
+.admin-content .text-gray-500,
+.admin-content .text-gray-400 {
+  color: #64748b !important;
+}
+
+.admin-content .border-gray-300,
+.admin-content .border-gray-200,
+.admin-content .border-gray-100 {
+  border-color: #e2e8f0 !important;
+}
+
+.admin-content .shadow-lg,
+.admin-content .shadow-xl {
+  box-shadow: 0 16px 40px rgba(71, 54, 116, 0.08) !important;
+}
+
+.admin-content .shadow-sm {
+  box-shadow: 0 5px 18px rgba(71, 54, 116, 0.05) !important;
+}
+
+.admin-content input:not([type="checkbox"]):not([type="radio"]),
+.admin-content select,
+.admin-content textarea {
+  border-color: #cbd5e1;
+  color: #334155;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+.admin-content input:not([type="checkbox"]):not([type="radio"]):focus,
+.admin-content select:focus,
+.admin-content textarea:focus {
+  border-color: #8b5cf6 !important;
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1) !important;
+}
+
+.admin-content .bg-gray-900,
+.admin-content .bg-blue-600,
+.admin-content .bg-blue-700 {
+  background-color: #6d28d9 !important;
+}
+
+.admin-content .hover\:bg-gray-800:hover,
+.admin-content .hover\:bg-blue-700:hover,
+.admin-content .hover\:bg-blue-800:hover {
+  background-color: #5b21b6 !important;
+}
+
+.admin-content .focus\:border-blue-500:focus {
+  border-color: #8b5cf6 !important;
+}
+
+.admin-content .focus\:ring-blue-100:focus,
+.admin-content .focus\:ring-blue-200:focus {
+  --tw-ring-color: rgba(139, 92, 246, 0.12) !important;
+}
+
+.admin-content .text-blue-700,
+.admin-content .text-blue-800 {
+  color: #6d28d9 !important;
+}
+
+.admin-content .bg-blue-50,
+.admin-content .bg-blue-100 {
+  background-color: #f3e8ff !important;
+}
+
+.admin-content .bg-pink-500,
+.admin-content .bg-blue-500 {
+  background-color: #7c3aed !important;
+}
+
+.admin-content .hover\:bg-pink-600:hover,
+.admin-content .hover\:bg-blue-600:hover {
+  background-color: #6d28d9 !important;
+}
+
+.admin-content .text-pink-500,
+.admin-content .text-pink-600,
+.admin-content .text-blue-500,
+.admin-content .text-blue-600 {
+  color: #7c3aed !important;
+}
+
+.admin-content .bg-pink-50,
+.admin-content .bg-pink-100 {
+  background-color: #f5f3ff !important;
+}
+
+.admin-content .border-pink-300,
+.admin-content .border-pink-400,
+.admin-content .border-pink-500,
+.admin-content .border-blue-400,
+.admin-content .border-blue-500 {
+  border-color: #8b5cf6 !important;
+}
+
+.admin-content .from-pink-500,
+.admin-content .from-blue-500,
+.admin-content .from-blue-600 {
+  --tw-gradient-from: #7c3aed var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgb(124 58 237 / 0) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+.admin-content .to-rose-600,
+.admin-content .to-blue-700,
+.admin-content .to-cyan-500 {
+  --tw-gradient-to: #5b21b6 var(--tw-gradient-to-position) !important;
+}
+
+.admin-content .hover\:from-pink-600:hover,
+.admin-content .hover\:from-blue-700:hover {
+  --tw-gradient-from: #6d28d9 var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgb(109 40 217 / 0) var(--tw-gradient-to-position) !important;
+}
+
+.admin-content .hover\:to-rose-700:hover,
+.admin-content .hover\:to-blue-800:hover {
+  --tw-gradient-to: #4c1d95 var(--tw-gradient-to-position) !important;
+}
+
+.admin-content table thead,
+.admin-content .MuiDataGrid-columnHeaders {
+  background: #f8fafc !important;
+}
+
+.admin-content .MuiDataGrid-row:hover {
+  background-color: #faf5ff !important;
+}
+
+@media (max-width: 640px) {
+  .admin-content > div {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 }
 

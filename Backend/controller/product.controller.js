@@ -65,7 +65,7 @@ const getALLproducts = asyncHandler(async (req, res) => {
   const qSort = req.query.sort;
 
   const page = parseInt(req.query.page, 10) || 1;
-  const limit = Math.min(parseInt(req.query.limit, 10) || 32, 100);
+  const limit = Math.min(parseInt(req.query.limit, 10) || 32, 500);
   const skip = (page - 1) * limit;
 
   const filter = {};

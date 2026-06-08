@@ -20,13 +20,11 @@ import OrderDetail from "./pages/OrderDetail";
 function App () {
   const Layout = () => {
     return (
-      <div className="flex">
-        <div>
-          <Menu />
-        </div>
-        <div className="flex-1">
+      <div className="admin-shell">
+        <Menu />
+        <main className="admin-content">
           <Outlet />
-        </div>
+        </main>
       </div>
     );
   };

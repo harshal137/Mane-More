@@ -3,6 +3,7 @@ const router = express.Router();
 import protect from "../Middleware/auth.middleware.js";
 import adminAuth from "../Middleware/adminAuth.middleware.js";
 import {
+  createUser,
   getAllUsers,
   getUser,
   deleteUser,
@@ -15,6 +16,9 @@ import {
 
 //GET ALL USERS ROUTE - Admin only
 router.get("/", protect, adminAuth, getAllUsers);
+
+// CREATE USER ROUTE - Admin only
+router.post("/", protect, adminAuth, createUser);
 
 // DELETE USER ROUTE - Admin only
 router.delete("/:id", protect, adminAuth, deleteUser);

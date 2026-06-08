@@ -2,9 +2,11 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useEffect, useMemo, useState } from "react";
 import {
   FaEnvelope,
+  FaPlus,
   FaRedo,
   FaSearch,
   FaShieldAlt,
+  FaTimes,
   FaTrash,
   FaUserCheck,
   FaUsers,
@@ -17,6 +19,16 @@ const Users = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
+  const [showAddUser, setShowAddUser] = useState(false);
+  const [creatingUser, setCreatingUser] = useState(false);
+  const [createError, setCreateError] = useState("");
+  const [newUser, setNewUser] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+    role: "user",
+  });
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
@@ -39,6 +51,35 @@ const Users = () => {
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  const closeAddUser = (force = false) => {
+    if (creatingUser && !force) return;
+    setShowAddUser(false);
+    setCreateError("");
+    setNewUser({
+      name: "",
+      email: "",
+      phone: "",
+      password: "",
+      role: "user",
+    });
+  };
+
+  const handleCreateUser = async (event) => {
+    event.preventDefault();
+    setCreateError("");
+
+    try {
+      setCreatingUser(true);
+      const res = await userRequest.post("/users", newUser);
+      setUsers((currentUsers) => [res.data, ...currentUsers]);
+      closeAddUser(true);
+    } catch (error) {
+      setCreateError(error.response?.data?.message || "User creation failed");
+    } finally {
+      setCreatingUser(false);
+    }
+  };
 
   const handleDelete = async (id) => {
     if (
@@ -135,15 +176,15 @@ const Users = () => {
       width: 280,
       renderCell: (params) => (
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-900 text-sm font-bold text-white">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-violet-700 text-sm font-bold text-white">
             {getInitial(params.row.name, params.row.email)}
           </div>
-          <div>
-            <div className="font-semibold text-gray-900">
+          <div className="min-w-0">
+            <div className="truncate font-semibold text-gray-900">
               {params.row.name || "Unnamed user"}
             </div>
-            <div className="flex items-center gap-1 text-xs text-gray-500">
-              <FaEnvelope />
+            <div className="flex items-center gap-1 truncate text-xs text-gray-500">
+              <FaEnvelope className="shrink-0" />
               {params.row.email || "No email"}
             </div>
           </div>
@@ -169,8 +210,8 @@ const Users = () => {
           <span
             className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${
               role === "admin"
-                ? "bg-purple-100 text-purple-800"
-                : "bg-green-100 text-green-800"
+                ? "bg-violet-100 text-violet-700"
+                : "bg-emerald-100 text-emerald-700"
             }`}
           >
             {role}
@@ -213,22 +254,71 @@ const Users = () => {
               Review registered customers, admin accounts, and recent signups.
             </p>
           </div>
-
-          <button
-            onClick={() => fetchUsers({ silent: true })}
-            disabled={refreshing}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-gray-900 px-4 py-2 font-semibold text-white hover:bg-gray-800 disabled:opacity-60"
-          >
-            <FaRedo className={refreshing ? "animate-spin" : ""} />
-            {refreshing ? "Refreshing..." : "Refresh"}
-          </button>
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={() => setShowAddUser(true)}
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-violet-700 px-4 py-2 font-semibold text-white hover:bg-violet-800"
+            >
+              <FaPlus />
+              Add User
+            </button>
+            <button
+              onClick={() => fetchUsers({ silent: true })}
+              disabled={refreshing}
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-60"
+            >
+              <FaRedo className={refreshing ? "animate-spin" : ""} />
+              {refreshing ? "Refreshing..." : "Refresh"}
+            </button>
+          </div>
         </div>
 
-        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-4">
-          <StatCard label="Total Accounts" value={metrics.total} icon={<FaUsers />} color="bg-blue-100 text-blue-700" />
-          <StatCard label="Customers" value={metrics.customers} icon={<FaUserCheck />} color="bg-green-100 text-green-700" />
-          <StatCard label="Admins" value={metrics.admins} icon={<FaShieldAlt />} color="bg-purple-100 text-purple-700" />
-          <StatCard label="New This Month" value={metrics.thisMonth} icon={<FaUserCheck />} color="bg-yellow-100 text-yellow-700" />
+        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+          {[
+            {
+              label: "Total Accounts",
+              value: metrics.total,
+              icon: <FaUsers />,
+              color: "bg-blue-100 text-blue-700",
+            },
+            {
+              label: "Customers",
+              value: metrics.customers,
+              icon: <FaUserCheck />,
+              color: "bg-green-100 text-green-700",
+            },
+            {
+              label: "Admins",
+              value: metrics.admins,
+              icon: <FaShieldAlt />,
+              color: "bg-purple-100 text-purple-700",
+            },
+            {
+              label: "New This Month",
+              value: metrics.thisMonth,
+              icon: <FaUserCheck />,
+              color: "bg-yellow-100 text-yellow-700",
+            },
+          ].map((card) => (
+            <div
+              key={card.label}
+              className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
+            >
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">{card.label}</p>
+                  <p className="mt-2 text-2xl font-bold text-gray-900">
+                    {card.value}
+                  </p>
+                </div>
+                <div
+                  className={`flex h-12 w-12 items-center justify-center rounded-lg ${card.color}`}
+                >
+                  {card.icon}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
 
         <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
@@ -283,29 +373,179 @@ const Users = () => {
                 pageSizeOptions={[10, 25, 50]}
                 disableRowSelectionOnClick
                 autoHeight
+                rowHeight={72}
                 sx={gridSx}
               />
             )}
           </div>
         </div>
+
+        <div className="mt-4 flex flex-col gap-2 text-sm text-gray-600 sm:flex-row sm:items-center sm:justify-between">
+          <span>
+            Showing {Math.min(filteredUsers.length, paginationModel.pageSize)} of{" "}
+            {filteredUsers.length} filtered users
+          </span>
+          <span>
+            Customers: {metrics.customers} | Administrators: {metrics.admins}
+          </span>
+        </div>
       </div>
+
+      {showAddUser && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="add-user-title"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) closeAddUser();
+          }}
+        >
+          <div className="w-full max-w-lg rounded-2xl border border-gray-200 bg-white p-6 shadow-2xl">
+            <div className="mb-6 flex items-start justify-between gap-4">
+              <div>
+                <h2 id="add-user-title" className="text-2xl font-bold text-gray-900">
+                  Add User
+                </h2>
+                <p className="mt-1 text-sm text-gray-500">
+                  Create a customer or administrator account.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={closeAddUser}
+                disabled={creatingUser}
+                className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+                aria-label="Close add user dialog"
+              >
+                <FaTimes />
+              </button>
+            </div>
+
+            {createError && (
+              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                {createError}
+              </div>
+            )}
+
+            <form onSubmit={handleCreateUser} className="space-y-4">
+              <div>
+                <label className="mb-1 block text-sm font-semibold text-gray-700">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  value={newUser.name}
+                  onChange={(event) =>
+                    setNewUser((current) => ({
+                      ...current,
+                      name: event.target.value,
+                    }))
+                  }
+                  className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1 block text-sm font-semibold text-gray-700">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={newUser.email}
+                    onChange={(event) =>
+                      setNewUser((current) => ({
+                        ...current,
+                        email: event.target.value,
+                      }))
+                    }
+                    className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-semibold text-gray-700">
+                    Phone
+                  </label>
+                  <input
+                    type="tel"
+                    value={newUser.phone}
+                    onChange={(event) =>
+                      setNewUser((current) => ({
+                        ...current,
+                        phone: event.target.value,
+                      }))
+                    }
+                    className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1 block text-sm font-semibold text-gray-700">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    minLength={6}
+                    value={newUser.password}
+                    onChange={(event) =>
+                      setNewUser((current) => ({
+                        ...current,
+                        password: event.target.value,
+                      }))
+                    }
+                    className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-semibold text-gray-700">
+                    Role
+                  </label>
+                  <select
+                    value={newUser.role}
+                    onChange={(event) =>
+                      setNewUser((current) => ({
+                        ...current,
+                        role: event.target.value,
+                      }))
+                    }
+                    className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none"
+                  >
+                    <option value="user">Customer</option>
+                    <option value="admin">Administrator</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
+                <button
+                  type="button"
+                  onClick={closeAddUser}
+                  disabled={creatingUser}
+                  className="rounded-lg border border-gray-300 px-5 py-2.5 font-semibold text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={creatingUser}
+                  className="rounded-lg bg-violet-700 px-5 py-2.5 font-semibold text-white hover:bg-violet-800 disabled:opacity-60"
+                >
+                  {creatingUser ? "Creating..." : "Create User"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
-
-const StatCard = ({ label, value, icon, color }) => (
-  <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-    <div className="flex items-center justify-between gap-4">
-      <div>
-        <p className="text-sm font-medium text-gray-600">{label}</p>
-        <p className="mt-2 text-2xl font-bold text-gray-900">{value}</p>
-      </div>
-      <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${color}`}>
-        {icon}
-      </div>
-    </div>
-  </div>
-);
 
 const gridSx = {
   border: "none",

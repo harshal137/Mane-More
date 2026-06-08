@@ -24,15 +24,15 @@ const Menu = () => {
   const { logout } = useAuth();
 
   const menuItems = [
-    { icon: FaHome, label: "Home", path: "/home", color: "text-blue-500" },
-    { icon: FaUsers, label: "Users", path: "/users", color: "text-purple-500" },
-    { icon: FaBox, label: "Products", path: "/products", color: "text-orange-500" },
-    { icon: FaClipboardList, label: "Orders", path: "/orders", color: "text-red-500" },
-    { icon: FaDollarSign, label: "Payments", path: "/payments", color: "text-teal-500" },
-    { icon: FaClipboard, label: "Tracking users", path: "/tracking", color: "text-cyan-500" },
-    { icon: FaGift, label: "Bundles", path: "/bundles", color: "text-pink-500" },
-    { icon: FaElementor, label: "Banners", path: "/banners", color: "text-indigo-500" },
-    { icon: FaCog, label: "Admin Settings", path: "/settings", color: "text-yellow-500" },
+    { icon: FaHome, label: "Home", path: "/home" },
+    { icon: FaUsers, label: "Users", path: "/users" },
+    { icon: FaBox, label: "Products", path: "/products" },
+    { icon: FaClipboardList, label: "Orders", path: "/orders" },
+    { icon: FaDollarSign, label: "Payments", path: "/payments" },
+    { icon: FaClipboard, label: "Tracking users", path: "/tracking" },
+    { icon: FaGift, label: "Bundles", path: "/bundles" },
+    { icon: FaElementor, label: "Banners", path: "/banners" },
+    { icon: FaCog, label: "Admin Settings", path: "/settings" },
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -47,7 +47,8 @@ const Menu = () => {
       {/* Menu Open Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed top-4 right-4 z-50 w-11 h-11 rounded-xl bg-gray-900/80 backdrop-blur-md border border-white/10 shadow-lg flex items-center justify-center text-white"
+        className="fixed right-4 top-4 z-50 flex h-11 w-11 items-center justify-center rounded-xl border border-violet-200 bg-white/95 text-violet-700 shadow-lg shadow-violet-900/10 backdrop-blur-md transition hover:bg-violet-50"
+        aria-label="Open admin menu"
       >
         <FaBars />
       </button>
@@ -56,7 +57,7 @@ const Menu = () => {
       {isOpen && (
         <div
           onClick={() => setIsOpen(false)}
-          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm overflow-hidden"
+          className="fixed inset-0 z-40 overflow-hidden bg-slate-950/40 backdrop-blur-sm"
         />
       )}
 
@@ -64,8 +65,8 @@ const Menu = () => {
       <div
         className={`
           fixed top-0 right-0 z-50 h-screen w-80 max-w-[85vw]
-          bg-gradient-to-b from-gray-900/85 to-gray-800/85
-          backdrop-blur-xl border-r border-white/10 shadow-2xl
+          border-l border-slate-800 bg-gradient-to-b from-slate-950 to-violet-950
+          shadow-2xl shadow-slate-950/30
           p-6 flex flex-col
           transition-transform duration-300 ease-in-out
           ${isOpen ? "translate-x-0" : "translate-x-full"}
@@ -74,18 +75,19 @@ const Menu = () => {
         {/* Close Button */}
         <button
           onClick={() => setIsOpen(false)}
-          className="absolute top-4 right-4 w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white transition hover:bg-white/10"
+          aria-label="Close admin menu"
         >
           <FaTimes />
         </button>
 
         {/* Header */}
-        <div className="text-center mb-8 pt-4">
-          <div className="w-16 h-16 bg-gradient-to-r from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg">
+        <div className="mb-8 pt-4 text-center">
+          <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-purple-700 shadow-lg shadow-violet-950/40">
             <FaGift className="text-white text-2xl" />
           </div>
           <h1 className="text-2xl font-bold text-white">Mane & More</h1>
-          <p className="text-gray-400 text-sm">Admin Dashboard</p>
+          <p className="text-sm text-violet-200">Admin Dashboard</p>
         </div>
 
         {/* Navigation */}
@@ -103,37 +105,32 @@ const Menu = () => {
                 >
                   <div
                     className={`
-                      flex items-center px-4 py-3 rounded-xl transition-all duration-300 group cursor-pointer mb-1
+                      group mb-1 flex cursor-pointer items-center rounded-xl px-3 py-2.5 transition-all duration-200
                       ${
                         active
-                          ? "bg-white/10 shadow-lg border-l-4 border-pink-500"
-                          : "hover:bg-white/5 hover:border-l-4 hover:border-gray-600"
+                          ? "bg-white/10 text-white shadow-sm"
+                          : "text-slate-300 hover:bg-white/5 hover:text-white"
                       }
                     `}
                   >
                     <div
                       className={`
-                        w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-all duration-300
+                        mr-3 flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-200
                         ${
                           active
-                            ? "bg-pink-500 shadow-lg"
-                            : "bg-gray-700 group-hover:bg-gray-600"
+                            ? "bg-violet-500 text-white shadow-md shadow-violet-950/30"
+                            : "bg-white/5 text-violet-300 group-hover:bg-white/10"
                         }
                       `}
                     >
-                      <Icon
-                        className={`
-                          text-lg transition-all duration-300
-                          ${active ? "text-white" : item.color}
-                        `}
-                      />
+                      <Icon className="text-base" />
                     </div>
 
                     <div className="flex-1">
                       <p
                         className={`
                           font-medium transition-all duration-300
-                          ${active ? "text-white" : "text-gray-300 group-hover:text-white"}
+                          ${active ? "text-white" : "text-slate-300 group-hover:text-white"}
                         `}
                       >
                         {item.label}
@@ -141,7 +138,7 @@ const Menu = () => {
                     </div>
 
                     {active && (
-                      <div className="w-2 h-2 bg-pink-400 rounded-full animate-pulse" />
+                      <div className="h-2 w-2 rounded-full bg-violet-300" />
                     )}
                   </div>
                 </Link>
@@ -151,17 +148,17 @@ const Menu = () => {
         </div>
 
         {/* Logout */}
-        <div className="mt-auto pt-4 border-t border-gray-700">
+        <div className="mt-auto border-t border-white/10 pt-4">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center px-4 py-3 rounded-xl transition-all duration-300 hover:bg-red-500/10 group border border-transparent hover:border-red-500/30"
+            className="group flex w-full items-center rounded-xl border border-transparent px-3 py-2.5 transition hover:border-red-400/20 hover:bg-red-400/10"
           >
-            <div className="w-10 h-10 bg-gradient-to-r from-red-500 to-orange-500 rounded-lg flex items-center justify-center mr-3">
-              <FaSignOutAlt className="text-white text-lg" />
+            <div className="mr-3 flex h-9 w-9 items-center justify-center rounded-lg bg-red-400/10 text-red-300">
+              <FaSignOutAlt />
             </div>
             <div className="text-left flex-1">
               <p className="text-white font-medium">Logout</p>
-              <p className="text-gray-400 text-xs">Secure sign out</p>
+              <p className="text-xs text-slate-400">Secure sign out</p>
             </div>
           </button>
         </div>

@@ -1,7 +1,6 @@
 import {
   FaCheckCircle,
   FaClock,
-  FaCreditCard,
   FaExclamationTriangle,
   FaFilter,
   FaMoneyBillWave,
@@ -15,7 +14,15 @@ import { Link } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { userRequest } from "../requestMethods";
 
-const statusOptions = ["all", "success", "pending", "failed", "cancelled", "incomplete"];
+const statusOptions = [
+  "all",
+  "success",
+  "refunded",
+  "pending",
+  "failed",
+  "cancelled",
+  "incomplete",
+];
 
 const statusMap = {
   completed: {
@@ -32,6 +39,11 @@ const statusMap = {
     text: "Paid",
     color: "bg-green-100 text-green-800",
     icon: FaCheckCircle,
+  },
+  refunded: {
+    text: "Refunded",
+    color: "bg-blue-100 text-blue-800",
+    icon: FaMoneyBillWave,
   },
   pending: {
     text: "Pending",
@@ -73,7 +85,7 @@ const Payments = () => {
   });
 
   const formatCurrency = (amount) =>
-    `₹ ${Number(amount || 0).toLocaleString("en-IN", {
+    `$ ${Number(amount || 0).toLocaleString("en-US", {
       maximumFractionDigits: 2,
     })}`;
 
@@ -89,13 +101,23 @@ const Payments = () => {
     });
   };
 
-  const getPaymentStatus = (payment) =>
-    String(
+  const getPaymentStatus = (payment) => {
+    if (
+      payment.refundStatus === "succeeded" ||
+      payment.payment_status === "refunded" ||
+      payment.status_of_transaction === "refunded" ||
+      payment.status === "refunded"
+    ) {
+      return "refunded";
+    }
+
+    return String(
       payment.payment_status ||
         payment.status ||
         payment.status_of_transaction ||
         "pending"
     ).toLowerCase();
+  };
 
   const getTransactionStatus = (payment) =>
     String(payment.status_of_transaction || "").toLowerCase();
@@ -111,6 +133,8 @@ const Payments = () => {
     );
   };
 
+  const isRefundedPayment = (payment) => getPaymentStatus(payment) === "refunded";
+
   const isFailedPayment = (payment) => {
     const paymentStatus = getPaymentStatus(payment);
 
@@ -122,7 +146,9 @@ const Payments = () => {
   };
 
   const isPendingPayment = (payment) =>
-    !isSuccessfulPayment(payment) && !isFailedPayment(payment);
+    !isSuccessfulPayment(payment) &&
+    !isRefundedPayment(payment) &&
+    !isFailedPayment(payment);
 
   const getStatusInfo = (payment) => {
     const status = getPaymentStatus(payment);
@@ -158,6 +184,18 @@ const Payments = () => {
     payment.rawStatusDetails?.last_payment_error?.message ||
     payment.rawStatusDetails?.failure_message ||
     "No failure reason recorded";
+
+  const getStatusReason = (payment) => {
+    if (isRefundedPayment(payment)) {
+      return (
+        payment.orderId?.cancellationReason ||
+        payment.refundFailureReason ||
+        "No cancellation reason recorded"
+      );
+    }
+
+    return getFailureReason(payment);
+  };
 
   const fetchPayments = async ({ silent = false } = {}) => {
     try {
@@ -261,6 +299,7 @@ const Payments = () => {
         payment.stripeSessionId,
         payment.stripe_session_id,
         getFailureReason(payment),
+        getStatusReason(payment),
         method,
         status,
       ]
@@ -315,7 +354,7 @@ const Payments = () => {
             #{params.row._id.slice(-8).toUpperCase()}
           </div>
           <div className="text-xs text-gray-400">
-            {params.row.currency?.toUpperCase() || "INR"}
+            {params.row.currency?.toUpperCase() || "USD"}
           </div>
         </div>
       ),
@@ -404,11 +443,22 @@ const Payments = () => {
       },
     },
     {
-      field: "failureReason",
-      headerName: "Failure Reason",
+      field: "statusReason",
+      headerName: "Status Reason",
       width: 260,
       headerClassName: "font-bold text-gray-700",
       renderCell: (params) => {
+        if (isRefundedPayment(params.row)) {
+          return (
+            <span
+              className="text-sm font-medium text-blue-700"
+              title={getStatusReason(params.row)}
+            >
+              User cancelled the order: {getStatusReason(params.row)}
+            </span>
+          );
+        }
+
         if (!isFailedPayment(params.row)) {
           return <span className="text-sm text-gray-400">Not applicable</span>;
         }
@@ -478,10 +528,11 @@ const Payments = () => {
       renderCell: (params) => {
         const successful = isSuccessfulPayment(params.row);
         const failed = isFailedPayment(params.row);
+        const refunded = isRefundedPayment(params.row);
 
         return (
           <div className="flex items-center gap-2">
-            {!successful && (
+            {!successful && !refunded && (
               <button
                 onClick={() => handleUpdatePayment(params.row._id, "completed")}
                 className="rounded bg-green-600 px-2 py-1 text-xs font-semibold text-white hover:bg-green-700"
@@ -490,7 +541,7 @@ const Payments = () => {
                 Complete
               </button>
             )}
-            {!failed && (
+            {!failed && !refunded && (
               <button
                 onClick={() => handleUpdatePayment(params.row._id, "failed")}
                 className="rounded bg-red-600 px-2 py-1 text-xs font-semibold text-white hover:bg-red-700"
@@ -499,13 +550,19 @@ const Payments = () => {
                 Fail
               </button>
             )}
-            <button
-              onClick={() => handleDeletePayment(params.row._id)}
-              className="rounded bg-gray-700 px-2 py-1 text-xs font-semibold text-white hover:bg-gray-800"
-              title="Delete payment record"
-            >
-              Delete
-            </button>
+            {refunded ? (
+              <span className="rounded bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-800">
+                Refund complete
+              </span>
+            ) : (
+              <button
+                onClick={() => handleDeletePayment(params.row._id)}
+                className="rounded bg-gray-700 px-2 py-1 text-xs font-semibold text-white hover:bg-gray-800"
+                title="Delete payment record"
+              >
+                Delete
+              </button>
+            )}
           </div>
         );
       },

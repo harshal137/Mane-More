@@ -428,7 +428,7 @@ const Cart = () => {
                 <FaBox className="mr-3" />
                 Cash On Delivery
               </span>
-              <span> ₹ {total.toLocaleString("en-IN")}</span>
+              <span> $ {total.toLocaleString("en-US")}</span>
             </button>
 
             <button
@@ -444,7 +444,7 @@ const Cart = () => {
                 <FaCreditCard className="mr-3" />
                 Pay Online
               </span>
-              <span> ₹ {total.toLocaleString("en-IN")} </span>
+              <span> $ {total.toLocaleString("en-US")} </span>
             </button>
           </div>
 
@@ -526,7 +526,7 @@ const Cart = () => {
             </span>
 
             <span className="ml-auto font-bold" style={{ color: THEME.HEADING }}>
-              ₹ {total.toLocaleString("en-IN")}
+              $ {total.toLocaleString("en-US")}
             </span>
           </div>
         </div>
@@ -548,7 +548,7 @@ const Cart = () => {
               }
             >
               <span className="font-semibold">Within London</span>
-              <p className="mt-1 text-xs">₹2 Shipping</p>
+              <p className="mt-1 text-xs">$2 Shipping</p>
             </button>
 
             <button
@@ -562,7 +562,7 @@ const Cart = () => {
               }
             >
               <span className="font-semibold">Outside London</span>
-              <p className="mt-1 text-xs">₹4 Shipping</p>
+              <p className="mt-1 text-xs">$4 Shipping</p>
             </button>
           </div>
         </div>
@@ -784,7 +784,7 @@ const Cart = () => {
           <div className="space-y-3 text-sm">
             <div className="flex justify-between" style={{ color: THEME.TEXT }}>
               <span>Items ({cart.quantity})</span>
-              <span> ₹{subtotal.toLocaleString("en-IN")}</span>
+              <span> ${subtotal.toLocaleString("en-US")}</span>
             </div>
 
             <div className="flex justify-between" style={{ color: THEME.TEXT }}>
@@ -792,7 +792,7 @@ const Cart = () => {
               <span>
                 {shippingFee === 0
                   ? "Select area"
-                  : `₹ ${shippingFee.toLocaleString("en-IN")}`}
+                  : `$ ${shippingFee.toLocaleString("en-US")}`}
               </span>
             </div>
 
@@ -805,7 +805,7 @@ const Cart = () => {
             >
               <span>Total</span>
               <span style={{ color: THEME.PRIMARY }}>
-                ₹ {total.toLocaleString("en-IN")}
+                $ {total.toLocaleString("en-US")}
               </span>
             </div>
           </div>
@@ -835,7 +835,7 @@ const Cart = () => {
             ) : orderDetails.payNow ? (
               <>
                 <FaCreditCard className="mr-2" />
-                Pay Online, ₹ {total.toLocaleString("en-IN")}
+                Pay Online, $ {total.toLocaleString("en-US")}
               </>
             ) : (
               <>
@@ -1051,12 +1051,12 @@ const Cart = () => {
 
                         <div className="text-right">
                           <p className="text-lg font-bold" style={{ color: THEME.PRIMARY }}>
-                            ₹ {((product.price * product.quantity).toLocaleString("en-IN"))}
+                            $ {((product.price * product.quantity).toLocaleString("en-US"))}
                           </p>
 
                           {product.quantity > 1 && (
                             <p className="text-xs" style={{ color: THEME.MUTED }}>
-                              ₹ {product.price.toLocaleString("en-IN")} each
+                              $ {product.price.toLocaleString("en-US")} each
                             </p>
                           )}
                         </div>
@@ -1089,7 +1089,7 @@ const Cart = () => {
                 <div className="mb-6 space-y-4">
                   <div className="flex justify-between" style={{ color: THEME.TEXT }}>
                     <span>Subtotal ({cart.quantity} items)</span>
-                    <span className="font-semibold"> ₹ {subtotal.toLocaleString("en-IN")}</span>
+                    <span className="font-semibold"> $ {subtotal.toLocaleString("en-US")}</span>
                   </div>
 
                   <div className="flex justify-between" style={{ color: THEME.TEXT }}>
@@ -1106,8 +1106,8 @@ const Cart = () => {
                   >
                     <strong>Shipping Options</strong>
                     <ul className="mt-2 space-y-1 text-xs">
-                      <li>Delivery within London: ₹ 2</li>
-                      <li>Delivery outside London: ₹ 4</li>
+                      <li>Delivery within London: $ 2</li>
+                      <li>Delivery outside London: $ 4</li>
                     </ul>
                   </div>
                 </div>

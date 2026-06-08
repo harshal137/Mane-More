@@ -9,6 +9,7 @@ import {
   createCODOrder,
   updateOrder,
   getOrderById,
+  cancelOrder,
 } from "../controller/order.controller.js";
 
 import protect from "../Middleware/auth.middleware.js";
@@ -30,6 +31,9 @@ router.get("/find/:id",protect, getUserOrder);
 
 // GET ALL ORDERS ROUTE - Admin only
 router.get("/", protect, adminAuth, getAllOrders);
+
+// CANCEL ORDER ROUTE - order owner only
+router.put("/:id/cancel", protect, cancelOrder);
 
 // UPDATE ORDER ROUTE - Admin only
 router.put("/:id", protect, adminAuth, updateOrder);

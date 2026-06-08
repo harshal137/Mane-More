@@ -43,6 +43,7 @@ const typeOptionsByCategory = {
     "Razor Blades",
     "Aftershave",
     "Bump Repair Spray",
+    "Neck Strips",
   ],
   skincare: ["Face Scrub", "Face Tonic", "Clay Mask", "Coffee Scrub"],
   fragrance: ["Cologne", "Aftershave Cologne", "Cream Cologne"],
@@ -88,6 +89,7 @@ const defaultTypeOptions = [
   "Face Tonic",
   "Clay Mask",
   "Coffee Scrub",
+  "Neck Strips",
 ];
 
 const brandOptions = [

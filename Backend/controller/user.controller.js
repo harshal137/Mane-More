@@ -5,6 +5,61 @@ import asyncHandler from "express-async-handler";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 
+const createUser = asyncHandler(async (req, res) => {
+  const {
+    name,
+    email,
+    password,
+    phone = "",
+    address = "",
+    role = "user",
+  } = req.body;
+  const normalizedEmail = String(email || "").trim().toLowerCase();
+  const normalizedRole = String(role || "user").toLowerCase();
+
+  if (!name?.trim() || !normalizedEmail || !password) {
+    res.status(400);
+    throw new Error("Name, email, and password are required");
+  }
+
+  if (password.length < 6) {
+    res.status(400);
+    throw new Error("Password should be at least 6 characters long");
+  }
+
+  if (!["user", "admin"].includes(normalizedRole)) {
+    res.status(400);
+    throw new Error("Role must be user or admin");
+  }
+
+  const existingUser = await User.findOne({ email: normalizedEmail });
+
+  if (existingUser) {
+    res.status(400);
+    throw new Error("A user with this email already exists");
+  }
+
+  const user = await User.create({
+    name: name.trim(),
+    email: normalizedEmail,
+    password,
+    phone: String(phone || "").trim(),
+    address: String(address || "").trim(),
+    role: normalizedRole,
+  });
+
+  res.status(201).json({
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    phone: user.phone || "",
+    address: user.address || "",
+    role: user.role,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  });
+});
+
 // UPDATE USER
 
 const updateUser = asyncHandler(async (req, res) => {
@@ -296,6 +351,7 @@ const getAllUsers = asyncHandler(async(req,res) =>{
 })
 
 export {
+  createUser,
   getAllUsers,
   getUser,
   deleteUser,

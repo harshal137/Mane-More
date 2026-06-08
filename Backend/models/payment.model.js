@@ -23,22 +23,30 @@ const PaymentSchema = mongoose.Schema(
     amount: { type: Number, required: true }, // subtotal before shipping
     shippingFee: { type: Number, default: 0 },
     totalAmount: { type: Number, required: true },
-    currency: { type: String, default: "inr" },
+    currency: { type: String, default: "usd" },
 
     // ADDED/UPDATED: normalized payment states
     payment_status: {
       type: String,
-      enum: ["pending", "success", "failed", "cancelled", "incomplete"],
+      enum: ["pending", "success", "failed", "cancelled", "incomplete", "refunded"],
       default: "pending",
     },
     status: {
       type: String,
-      enum: ["initiated", "completed", "failed", "cancelled", "pending", "incomplete"],
+      enum: [
+        "initiated",
+        "completed",
+        "failed",
+        "cancelled",
+        "pending",
+        "incomplete",
+        "refunded",
+      ],
       default: "initiated",
     },
     status_of_transaction: {
       type: String,
-      enum: ["paid", "unpaid"],
+      enum: ["paid", "unpaid", "refunded"],
       default: "unpaid",
     },
     mode_of_transaction: {
@@ -79,6 +87,18 @@ const PaymentSchema = mongoose.Schema(
     failure_reason: { type: String, default: "" },
     stripeEventType: { type: String, default: "" },
     rawStatusDetails: { type: mongoose.Schema.Types.Mixed, default: {} },
+    refundStatus: {
+      type: String,
+      enum: ["not_required", "pending", "processing", "succeeded", "failed"],
+      default: "not_required",
+    },
+    refundRequestedAt: { type: Date, default: null },
+    refundDeadlineAt: { type: Date, default: null },
+    refundedAt: { type: Date, default: null },
+    refundId: { type: String, default: "" },
+    refundAmount: { type: Number, default: 0 },
+    refundCurrency: { type: String, default: "" },
+    refundFailureReason: { type: String, default: "" },
   },
   { timestamps: true }
 );

@@ -104,7 +104,7 @@ const Home = () => {
     Number(order.totalAmount ?? order.total ?? order.amount ?? 0);
 
   const formatCurrency = (amount) =>
-    `₹ ${Number(amount || 0).toLocaleString("en-IN", {
+    `$ ${Number(amount || 0).toLocaleString("en-US", {
       maximumFractionDigits: 2,
     })}`;
 

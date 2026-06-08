@@ -46,12 +46,12 @@ const OrderSchema = mongoose.Schema(
 
     payment_status: {
       type: String,
-      enum: ["pending", "success", "failed", "cancelled", "incomplete"],
+      enum: ["pending", "success", "failed", "cancelled", "incomplete", "refunded"],
       default: "pending",
     },
     status_of_transaction: {
       type: String,
-      enum: ["paid", "unpaid"],
+      enum: ["paid", "unpaid", "refunded"],
       default: "unpaid",
     },
     mode_of_transaction: {
@@ -80,6 +80,25 @@ const OrderSchema = mongoose.Schema(
       enum: ["Placed", "Processing", "Shipped", "Delivered", "Cancelled"],
       default: "Placed",
     },
+    cancellationReason: { type: String, default: "" },
+    cancelledAt: { type: Date, default: null },
+    cancelledBy: {
+      type: String,
+      enum: ["customer", "admin", ""],
+      default: "",
+    },
+    refundStatus: {
+      type: String,
+      enum: ["not_required", "pending", "processing", "succeeded", "failed"],
+      default: "not_required",
+    },
+    refundRequestedAt: { type: Date, default: null },
+    refundDeadlineAt: { type: Date, default: null },
+    refundedAt: { type: Date, default: null },
+    refundId: { type: String, default: "" },
+    refundAmount: { type: Number, default: 0 },
+    refundCurrency: { type: String, default: "" },
+    refundFailureReason: { type: String, default: "" },
   },
   { timestamps: true }
 );

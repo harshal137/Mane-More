@@ -27,7 +27,9 @@ const Products = () => {
   const fetchProducts = async ({ silent = false } = {}) => {
     try {
       silent ? setRefreshing(true) : setLoading(true);
-      const res = await userRequest.get("/products");
+      const res = await userRequest.get("/products", {
+        params: { limit: 500 },
+      });
       setProducts(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
       console.log("Fetch products error:", error);
@@ -43,7 +45,7 @@ const Products = () => {
   }, []);
 
   const formatCurrency = (amount) =>
-    `₹ ${Number(amount || 0).toLocaleString("en-IN", {
+    `$ ${Number(amount || 0).toLocaleString("en-US", {
       maximumFractionDigits: 2,
     })}`;
 
@@ -93,6 +95,11 @@ const Products = () => {
       return matchesStock && (!term || searchable.includes(term));
     });
   }, [products, searchTerm, stockFilter]);
+
+  const visibleProductCount = Math.min(
+    Math.max(filteredProducts.length - paginationModel.page * paginationModel.pageSize, 0),
+    paginationModel.pageSize
+  );
 
   const metrics = useMemo(() => {
     const inStock = products.filter((product) => Number(product.stock || 0) > 0);
@@ -394,8 +401,7 @@ const Products = () => {
 
         <div className="mt-4 flex flex-col gap-2 text-sm text-gray-600 sm:flex-row sm:items-center sm:justify-between">
           <span>
-            Showing {Math.min(filteredProducts.length, paginationModel.pageSize)} of{" "}
-            {filteredProducts.length} filtered products
+            Showing {visibleProductCount} of {filteredProducts.length} filtered products
           </span>
           <span>
             All products: {metrics.total} | In stock: {metrics.inStock} | Out of stock:{" "}
