@@ -1,69 +1,85 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import cloudinary from '../cloudinary.config.js';
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import cloudinary from "../cloudinary.config.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const bladeImagesDir = path.join(__dirname, '../data/Blade_Images');
+
+const uploadFolders = [
+  {
+    name: "Redone_Images",
+    localDirectory: path.join(__dirname, "../data/Redone_Images"),
+    cloudinaryFolder: "BeautyStore/Redone_Images",
+  },
+  {
+    name: "Gummy_Images",
+    localDirectory: path.join(__dirname, "../data/Gummy_Images"),
+    cloudinaryFolder: "BeautyStore/Gummy_Images",
+  },
+];
+
+const uploadDirectory = async ({ name, localDirectory, cloudinaryFolder }) => {
+  if (!fs.existsSync(localDirectory)) {
+    throw new Error(`Directory not found: ${localDirectory}`);
+  }
+
+  const files = fs
+    .readdirSync(localDirectory, { withFileTypes: true })
+    .filter((entry) => entry.isFile())
+    .map((entry) => entry.name);
+  const imageMap = {};
+
+  console.log(`\n${name}: found ${files.length} images. Uploading to ${cloudinaryFolder}...\n`);
+
+  for (const file of files) {
+    const filePath = path.join(localDirectory, file);
+
+    try {
+      console.log(`Uploading: ${file}...`);
+      const result = await cloudinary.uploader.upload(filePath, {
+        folder: cloudinaryFolder,
+        resource_type: "auto",
+      });
+
+      imageMap[file] = result.secure_url;
+      console.log(`Uploaded: ${file}`);
+    } catch (error) {
+      console.error(`Failed to upload ${file}:`, error.message || error);
+    }
+  }
+
+  return imageMap;
+};
 
 const run = async () => {
   try {
-    // Check credentials first
-    console.log('Checking Cloudinary credentials...');
-    console.log('  CLOUDINARY_CLOUD_NAME:', process.env.CLOUDINARY_CLOUD_NAME ? '✓' : '✗ MISSING');
-    console.log('  CLOUDINARY_API_KEY:', process.env.CLOUDINARY_API_KEY ? '✓' : '✗ MISSING');
-    console.log('  CLOUDINARY_API_SECRET:', process.env.CLOUDINARY_API_SECRET ? '✓' : '✗ MISSING');
+    console.log("Checking Cloudinary credentials...");
 
-    if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
-      throw new Error('Missing Cloudinary credentials in .env file');
+    if (
+      !process.env.CLOUDINARY_CLOUD_NAME ||
+      !process.env.CLOUDINARY_API_KEY ||
+      !process.env.CLOUDINARY_API_SECRET
+    ) {
+      throw new Error("Missing Cloudinary credentials in .env file");
     }
 
-    // Check if directory exists
-    console.log('\nChecking Blade_Images directory:', bladeImagesDir);
-    if (!fs.existsSync(bladeImagesDir)) {
-      throw new Error(`Directory not found: ${bladeImagesDir}`);
+    const imageMappings = {};
+
+    for (const folder of uploadFolders) {
+      imageMappings[folder.name] = await uploadDirectory(folder);
     }
 
-    const files = fs.readdirSync(bladeImagesDir);
-    const imageMap = {};
-    
-    console.log(`\nFound ${files.length} images. Uploading...\n`);
-    
-    for (const file of files) {
-      const filePath = path.join(bladeImagesDir, file);
-      
-      try {
-        console.log(`Uploading: ${file}...`);
-        const res = await cloudinary.uploader.upload(filePath, {
-          folder: 'BeautyStore/Blade_Images',
-          resource_type: 'auto',
-        });
-        
-        imageMap[file] = res.secure_url;
-        console.log(`✓ ${file} → ${res.secure_url}`);
-      } catch (fileError) {
-        console.error(`✗ Failed to upload ${file}:`, fileError.message || fileError);
-        // Continue with next file instead of stopping
-      }
-    }
-    
     fs.writeFileSync(
-      path.join(__dirname, 'image-mapping.json'),
-      JSON.stringify(imageMap, null, 2)
+      path.join(__dirname, "image-mapping.json"),
+      JSON.stringify(imageMappings, null, 2)
     );
-    
-    console.log('\n✓ All images uploaded! Mapping saved to image-mapping.json');
-    
+
+    console.log("\nAll images uploaded. Mapping saved to scripts/image-mapping.json");
   } catch (error) {
-    console.error('\n✗ Upload failed:');
-    console.error('  Message:', error.message);
-    console.error('  Full error:', error);
-    if (error.stack) {
-      console.error('  Stack:', error.stack);
-    }
+    console.error("\nUpload failed:", error.message || error);
     process.exit(1);
   }
 };

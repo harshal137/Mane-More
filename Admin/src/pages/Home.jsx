@@ -33,6 +33,35 @@ const STATUS_STYLES = {
   incomplete: "bg-orange-50 text-orange-700",
 };
 
+const isPaymentSuccess = (payment) => {
+  const values = [
+    payment.payment_status,
+    payment.status,
+    payment.status_of_transaction,
+  ].map((value) => String(value || "").toLowerCase());
+
+  return values.includes("success") || values.includes("completed") || values.includes("paid");
+};
+
+const isCancelledCodPayment = (payment) => {
+  const paymentMethod = String(payment.mode_of_transaction || "").toLowerCase();
+  const deliveryStatus = String(
+    payment.orderId?.delivery_status || payment.orderId?.order_status || ""
+  ).toLowerCase();
+
+  return paymentMethod === "cod" && deliveryStatus === "cancelled";
+};
+
+const isPaymentFailed = (payment) => {
+  if (isCancelledCodPayment(payment)) return false;
+
+  const values = [payment.payment_status, payment.status].map((value) =>
+    String(value || "").toLowerCase()
+  );
+
+  return values.includes("failed") || values.includes("cancelled") || values.includes("incomplete");
+};
+
 const Home = () => {
   const [dashboardData, setDashboardData] = useState(EMPTY_DASHBOARD);
   const [loading, setLoading] = useState(true);
@@ -50,7 +79,7 @@ const Home = () => {
       setError("");
 
       const [productsRes, ordersRes, usersRes, paymentsRes] = await Promise.all([
-        userRequest.get("/products"),
+        userRequest.get("/products", { params: { limit: 500 } }),
         userRequest.get("/orders"),
         userRequest.get("/users"),
         userRequest.get("/payments"),
@@ -79,29 +108,8 @@ const Home = () => {
     fetchDashboardData();
   }, []);
 
-  const isPaymentSuccess = (payment) => {
-    const values = [
-      payment.payment_status,
-      payment.status,
-      payment.status_of_transaction,
-    ].map((value) => String(value || "").toLowerCase());
-
-    return values.includes("success") || values.includes("completed") || values.includes("paid");
-  };
-
-  const isPaymentFailed = (payment) => {
-    const values = [payment.payment_status, payment.status].map((value) =>
-      String(value || "").toLowerCase()
-    );
-
-    return values.includes("failed") || values.includes("cancelled") || values.includes("incomplete");
-  };
-
   const getPaymentAmount = (payment) =>
     Number(payment.totalAmount ?? payment.amount ?? payment.orderId?.totalAmount ?? 0);
-
-  const getOrderAmount = (order) =>
-    Number(order.totalAmount ?? order.total ?? order.amount ?? 0);
 
   const formatCurrency = (amount) =>
     `$ ${Number(amount || 0).toLocaleString("en-US", {
@@ -148,7 +156,10 @@ const Home = () => {
     const successfulPayments = payments.filter(isPaymentSuccess);
     const failedPayments = payments.filter(isPaymentFailed);
     const pendingPayments = payments.filter(
-      (payment) => !isPaymentSuccess(payment) && !isPaymentFailed(payment)
+      (payment) =>
+        !isCancelledCodPayment(payment) &&
+        !isPaymentSuccess(payment) &&
+        !isPaymentFailed(payment)
     );
 
     const paidRevenue = successfulPayments.reduce(
@@ -162,8 +173,22 @@ const Home = () => {
     );
 
     const activeOrders = orders.filter((order) => {
-      const status = String(order.delivery_status || "Placed").toLowerCase();
-      return status !== "delivered" && status !== "cancelled";
+      const deliveryStatus = String(order.delivery_status || "placed").toLowerCase();
+      return deliveryStatus !== "delivered" && deliveryStatus !== "cancelled";
+    });
+
+    const refundedCancelledOrders = orders.filter((order) => {
+      const deliveryStatus = String(order.delivery_status || "").toLowerCase();
+      const paymentStatus = String(order.payment_status || "").toLowerCase();
+      const transactionStatus = String(order.status_of_transaction || "").toLowerCase();
+      const refundStatus = String(order.refundStatus || "").toLowerCase();
+
+      return (
+        deliveryStatus === "cancelled" &&
+        (paymentStatus === "refunded" ||
+          transactionStatus === "refunded" ||
+          refundStatus === "succeeded")
+      );
     });
 
     const deliveredOrders = orders.filter(
@@ -173,6 +198,7 @@ const Home = () => {
     const unpaidCodOrders = orders.filter(
       (order) =>
         String(order.mode_of_transaction || "").toLowerCase() === "cod" &&
+        String(order.delivery_status || "").toLowerCase() !== "cancelled" &&
         String(order.status_of_transaction || "").toLowerCase() !== "paid"
     );
 
@@ -184,6 +210,7 @@ const Home = () => {
       totalProducts: products.length,
       totalOrders: orders.length,
       activeOrders: activeOrders.length,
+      refundedPayments: refundedCancelledOrders.length,
       deliveredOrders: deliveredOrders.length,
       totalUsers: registeredCustomers.length,
       totalPayments: payments.length,
@@ -497,6 +524,12 @@ const Home = () => {
                   label="Active fulfillment"
                   value={metrics.activeOrders}
                   color="text-blue-600"
+                />
+                <HealthRow
+                  icon={<FaMoneyBillWave />}
+                  label="Refunded payments"
+                  value={metrics.refundedPayments}
+                  color="text-purple-600"
                 />
               </div>
             </div>

@@ -66,6 +66,7 @@ const NewProduct = () => {
       "Face Tonic",
       "Clay Mask",
       "Coffee Scrub",
+      "Neck Strips",
     ],
 
     size: [

@@ -169,75 +169,123 @@ const Product = () => {
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input
-                    name="title"
-                    value={inputs.title || ""}
-                    onChange={handleChange}
-                    placeholder="Product title"
-                    className="p-3 border rounded-lg"
-                  />
+                  <div>
+                    <label htmlFor="title" className="mb-1.5 block text-sm font-semibold text-gray-700">
+                      Product Title
+                    </label>
+                    <input
+                      id="title"
+                      name="title"
+                      value={inputs.title || ""}
+                      onChange={handleChange}
+                      placeholder="Product title"
+                      className="w-full p-3 border rounded-lg"
+                    />
+                  </div>
 
-                  <input
-                    name="brand"
-                    value={inputs.brand || ""}
-                    onChange={handleChange}
-                    placeholder="Brand"
-                    className="p-3 border rounded-lg"
-                  />
+                  <div>
+                    <label htmlFor="brand" className="mb-1.5 block text-sm font-semibold text-gray-700">
+                      Brand
+                    </label>
+                    <input
+                      id="brand"
+                      name="brand"
+                      value={inputs.brand || ""}
+                      onChange={handleChange}
+                      placeholder="Brand"
+                      className="w-full p-3 border rounded-lg"
+                    />
+                  </div>
 
-                  <input
-                    type="number"
-                    name="originalPrice"
-                    value={inputs.originalPrice || ""}
-                    onChange={handleChange}
-                    placeholder="Original price"
-                    className="p-3 border rounded-lg"
-                  />
+                  <div>
+                    <label htmlFor="originalPrice" className="mb-1.5 block text-sm font-semibold text-gray-700">
+                      Original Price
+                    </label>
+                    <input
+                      id="originalPrice"
+                      type="number"
+                      name="originalPrice"
+                      value={inputs.originalPrice || ""}
+                      onChange={handleChange}
+                      placeholder="Original price"
+                      className="w-full p-3 border rounded-lg"
+                    />
+                  </div>
 
-                  <input
-                    type="number"
-                    name="discountedPrice"
-                    value={inputs.discountedPrice || ""}
-                    onChange={handleChange}
-                    placeholder="Discounted price"
-                    className="p-3 border rounded-lg"
-                  />
+                  <div>
+                    <label htmlFor="discountedPrice" className="mb-1.5 block text-sm font-semibold text-gray-700">
+                      Discounted Price
+                    </label>
+                    <input
+                      id="discountedPrice"
+                      type="number"
+                      name="discountedPrice"
+                      value={inputs.discountedPrice || ""}
+                      onChange={handleChange}
+                      placeholder="Discounted price"
+                      className="w-full p-3 border rounded-lg"
+                    />
+                  </div>
 
-                  <input
-                    type="number"
-                    name="items_per_box"
-                    value={inputs.items_per_box || ""}
-                    onChange={handleChange}
-                    placeholder="Items per box"
-                    className="p-3 border rounded-lg"
-                  />
+                  <div>
+                    <label htmlFor="items_per_box" className="mb-1.5 block text-sm font-semibold text-gray-700">
+                      Items Per Box
+                    </label>
+                    <input
+                      id="items_per_box"
+                      type="number"
+                      name="items_per_box"
+                      value={inputs.items_per_box || ""}
+                      onChange={handleChange}
+                      placeholder="Items per box"
+                      className="w-full p-3 border rounded-lg"
+                    />
+                  </div>
 
-                  <input
-                    type="number"
-                    name="stock"
-                    value={inputs.stock || ""}
+                  <div>
+                    <label htmlFor="stock" className="mb-1.5 block text-sm font-semibold text-gray-700">
+                      Available Stock
+                    </label>
+                    <input
+                      id="stock"
+                      type="number"
+                      name="stock"
+                      value={inputs.stock || ""}
+                      onChange={handleChange}
+                      placeholder="Available stock"
+                      className="w-full p-3 border rounded-lg"
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  <label htmlFor="desc" className="mb-1.5 block text-sm font-semibold text-gray-700">
+                    Product Description
+                  </label>
+                  <textarea
+                    id="desc"
+                    name="desc"
+                    value={inputs.desc || ""}
                     onChange={handleChange}
-                    placeholder="Available stock"
-                    className="p-3 border rounded-lg"
+                    placeholder="Product description"
+                    rows={5}
+                    className="w-full p-3 border rounded-lg"
                   />
                 </div>
 
-                <textarea
-                  name="desc"
-                  value={inputs.desc || ""}
-                  onChange={handleChange}
-                  placeholder="Product description"
-                  rows={5}
-                  className="w-full mt-4 p-3 border rounded-lg"
-                />
-
-                <input
-                  name="video"
-                  value={inputs.video || ""}
-                  onChange={handleChange}
-                  placeholder="Video URL"
-                  className="w-full mt-4 p-3 border rounded-lg"
-                />
+                <div className="mt-4">
+                  <label htmlFor="video" className="mb-1.5 block text-sm font-semibold text-gray-700">
+                    Video URL
+                  </label>
+                  <input
+                    id="video"
+                    name="video"
+                    value={inputs.video || ""}
+                    onChange={handleChange}
+                    placeholder="Video URL"
+                    className="w-full p-3 border rounded-lg"
+                  />
+                </div>
               </div>
 
               <div>
@@ -246,29 +294,47 @@ const Product = () => {
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <input
-                    name="categories"
-                    value={inputs.categories || ""}
-                    onChange={handleChange}
-                    placeholder="Hair Care, Skin Care"
-                    className="p-3 border rounded-lg"
-                  />
+                  <div>
+                    <label htmlFor="categories" className="mb-1.5 block text-sm font-semibold text-gray-700">
+                      Categories
+                    </label>
+                    <input
+                      id="categories"
+                      name="categories"
+                      value={inputs.categories || ""}
+                      onChange={handleChange}
+                      placeholder="Hair Care, Skin Care"
+                      className="w-full p-3 border rounded-lg"
+                    />
+                  </div>
 
-                  <input
-                    name="type"
-                    value={inputs.type || ""}
-                    onChange={handleChange}
-                    placeholder="Shampoo, Wax"
-                    className="p-3 border rounded-lg"
-                  />
+                  <div>
+                    <label htmlFor="type" className="mb-1.5 block text-sm font-semibold text-gray-700">
+                      Product Type
+                    </label>
+                    <input
+                      id="type"
+                      name="type"
+                      value={inputs.type || ""}
+                      onChange={handleChange}
+                      placeholder="Shampoo, Wax"
+                      className="w-full p-3 border rounded-lg"
+                    />
+                  </div>
 
-                  <input
-                    name="size"
-                    value={inputs.size || ""}
-                    onChange={handleChange}
-                    placeholder="100ML, 200ML"
-                    className="p-3 border rounded-lg"
-                  />
+                  <div>
+                    <label htmlFor="size" className="mb-1.5 block text-sm font-semibold text-gray-700">
+                      Size
+                    </label>
+                    <input
+                      id="size"
+                      name="size"
+                      value={inputs.size || ""}
+                      onChange={handleChange}
+                      placeholder="100ML, 200ML"
+                      className="w-full p-3 border rounded-lg"
+                    />
+                  </div>
                 </div>
 
                 <p className="text-xs text-gray-500 mt-2">

@@ -166,7 +166,7 @@ const Product = ({ product }) => {
               className="text-2xl font-bold"
               style={{ color: THEME.PRIMARY }}
             >
-              ${product.originalPrice}
+              ${product.discountedPrice}
             </div>
 
             {product.originalPrice > product.price && (

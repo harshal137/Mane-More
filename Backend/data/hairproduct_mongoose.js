@@ -15,8 +15,8 @@ During shaving and epilation, there may be a sharp hair cut that causes razor bu
 Fonex, a professional cosmetics brand for men, has become an indispensable choice for men's hair studies and consumers in Europe and in the world.
 `,
     "img": [
-      "Gummy_Images/Bump Repair Spray.jpg",
-      "Gummy_Images/Bump Repair Spray_1.jpg"
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175143/BeautyStore/Gummy_Images/fibq41xqogow4bzn6knb.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175144/BeautyStore/Gummy_Images/xvqsaelnwtoh9nwa9sch.jpg"
     ],
     "video": "",
     "categories": [
@@ -55,7 +55,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     "title": "Gummy New Aftershave Cologne Amber",
     "desc": "Professional aftershave product: Gummy New Aftershave Cologne Amber. High quality and reliable performance.",
     "img": [
-      "Gummy_Images/Gummy New Aftershave Cologne Amber.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175238/BeautyStore/Gummy_Images/nbetirsnsxbmydxbxwhi.jpg",
     ],
     "video": "",
     "categories": [
@@ -97,7 +97,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     "title": "Gummy New Aftershave Cologne Amethyst",
     "desc": "Professional aftershave product: Gummy New Aftershave Cologne Amethyst. High quality and reliable performance.",
     "img": [
-      "Gummy_Images/Gummy New Aftershave Cologne Amethyst.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175239/BeautyStore/Gummy_Images/feuqoemqsgiwj7tkug6m.jpg",
     ],
     "video": "",
     "categories": [
@@ -151,7 +151,7 @@ It keeps fresh and energy with its durable perfume.
 Fonex, a professional cosmetics brand for men, has become an indispensable choice for men's hair studies and consumers in Europe and in the world.
   `,
     "img": [
-      "Gummy_Images/Gummy New Aftershave Cologne Lemon.jpeg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175240/BeautyStore/Gummy_Images/ynio7see5qlk3ux4cigw.jpg",
     ],
     "video": "",
     "categories": [
@@ -193,7 +193,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     "title": "Gummy New Aftershave Cologne Quartz",
     "desc": "Professional aftershave product: Gummy New Aftershave Cologne Quartz. High quality and reliable performance.",
     "img": [
-      "Gummy_Images/Gummy New Aftershave Cologne Quartz.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175241/BeautyStore/Gummy_Images/deghtdgfgilz3y9rrzft.jpg",
     ],
     "video": "",
     "categories": [
@@ -235,7 +235,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     "title": "Gummy New Aftershave Cologne Tiger Eye",
     "desc": "Professional aftershave product: Gummy New Aftershave Cologne Tiger Eye. High quality and reliable performance.",
     "img": [
-      "Gummy_Images/Gummy New Aftershave Cologne Tiger Eye.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175242/BeautyStore/Gummy_Images/ntscn5zfpgochbbe2uoe.jpg",
     ],
     "video": "",
     "categories": [
@@ -277,7 +277,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     "title": "Beard Conditioner",
     "desc": "Professional beard care product: Beard Conditioner. High quality and reliable performance.",
     "img": [
-      "Gummy_Images/Beard Conditioner.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175127/BeautyStore/Gummy_Images/h9fwpb7d9sc5werxrsbc.jpg",
     ],
     "video": "",
     "categories": [
@@ -328,10 +328,10 @@ Premium oils expertly blended.
 Fonex, a professional cosmetics brand for men, has become an indispensable choice for men's hair studies and consumers in Europe and in the world.
   `,
     "img": [
-      "Gummy_Images/Beard Oil_1.jpg",
-      "Gummy_Images/Beard Oil_2.jpg",
-      "Gummy_Images/Beard Oil_3.jpg",
-      "Gummy_Images/Beard Oil_4.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175130/BeautyStore/Gummy_Images/qvefel1d8aav7jwrvjyu.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175132/BeautyStore/Gummy_Images/wwexxdsaee8fozbyxszc.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175133/BeautyStore/Gummy_Images/hbaofdyxas19omu3j7vo.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175134/BeautyStore/Gummy_Images/b4mabikrl6luciz4dcgw.jpg",
     ],
     "video": "",
     "categories": [
@@ -382,7 +382,7 @@ Your satisfaction is our priority: No questions asked! We stand behind every pro
 Fonex, a professional cosmetics brand for men, has become an indispensable choice for men's hair studies and consumers in Europe and in the world.
   `,
     "img": [
-      "Gummy_Images/Beard Conditioner_1.jpg"
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175128/BeautyStore/Gummy_Images/qupvxgnlqu1s8dmq1mww.jpg"
     ],
     "video": "",
     "categories": [
@@ -433,8 +433,8 @@ Your satisfaction is our priority: No questions asked! We stand behind every pro
 Fonex, a professional cosmetics brand for men, has become an indispensable choice for men's hair studies and consumers in Europe and in the world.
   `,
     "img": [
-      "Gummy_Images/Beard Conditioner_1.jpg",
-      "Gummy_Images/Beard Conditioner_2.jpg"
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175128/BeautyStore/Gummy_Images/qupvxgnlqu1s8dmq1mww.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175129/BeautyStore/Gummy_Images/grhxmdiyuijhzjodaou5.jpg"
     ],
     "video": "",
     "categories": [
@@ -486,9 +486,9 @@ Competition-leading, yet still smooth. Wax doesn't set after application. The ha
 Fonex, a professional cosmetics brand for men, has become an indispensable choice for men's hair studies and consumers in Europe and in the world.
   `,
     "img": [
-      "Gummy_Images/Beard and Moustache Wax_1.jpg",
-      "Gummy_Images/Beard and Moustache Wax_2.jpg",
-      "Gummy_Images/Beard and Moustache Wax_3.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175123/BeautyStore/Gummy_Images/f1xpjhx12tsdeniesxrc.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175124/BeautyStore/Gummy_Images/ohzfiubt5njkt8qzvbfv.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175125/BeautyStore/Gummy_Images/et7jpmyphrjb1imxf01u.jpg",
     ],
     "video": "",
     "categories": [
@@ -531,7 +531,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
   `,
 
     "img": [
-      "Gummy_Images/Braid Control Foaming Argan.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175136/BeautyStore/Gummy_Images/jqf6rabxz9uxvwzjzbzr.jpg",
     ],
     "video": "",
     "categories": [
@@ -572,10 +572,10 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     "title": "Braid Control Gel Huge Hold",
     "desc": `Gummy Professional Braid Control Hair Gel – Extreme Hold Edge Control for Braids, Locs, and Dreads – Shining Styling Gel for Men and Women – Anti-Frizz, Residue-Free, Professional Formula – 500ml`,
     "img": [
-      "Gummy_Images/Braid Control Gel Huge Hold_1.jpg",
-      "Gummy_Images/Braid Control Gel Huge Hold_2.jpg",
-      "Gummy_Images/Braid Control Gel Huge Hold_3.jpg",
-      "Gummy_Images/Braid Control Gel Huge Hold_4.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175137/BeautyStore/Gummy_Images/cbzximmrd3ug6sueel35.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175138/BeautyStore/Gummy_Images/ya3yk8542kcgbcix9zme.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175139/BeautyStore/Gummy_Images/tyygqr9wq8esomux6iks.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175141/BeautyStore/Gummy_Images/cuwpzhod89jcqeqb0yc9.jpg",
     ],
     "video": "",
     "categories": [
@@ -617,7 +617,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     "title": "Braid Control Scalp & Hair Oil",
     "desc": "Gummy Braid Control Scalp & Hair Oil Strengthening 100ml is a nourishing hair oil designed to strengthen and moisturize the scalp and hair. Infused with natural oils, it promotes healthy hair growth, reduces dryness, and helps prevent breakage. Ideal for maintaining scalp health and enhancing the overall condition of your hair.",
     "img": [
-      "Gummy_Images/Braid Control Scalp & Hair Oil_1.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175142/BeautyStore/Gummy_Images/cuvgnodbpzhv2uoksrlx.jpg",
     ],
     "video": "",
     "categories": [
@@ -668,8 +668,8 @@ It cleanses dull and pale skin and helps to always look bright, clean and vibran
 
 Fonex, a professional cosmetics brand for men, has become an indispensable choice for men's hair studies and consumers in Europe and in the world.`,
     "img": [
-      "Gummy_Images/Gummy Hair Tonic Herbal Complex_1.jpg",
-      "Gummy_Images/Gummy Hair Tonic Herbal Complex_2.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175236/BeautyStore/Gummy_Images/ed8t9gvxwcrspsnahokh.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175237/BeautyStore/Gummy_Images/vkrhgcyvgd5wn7sv8ra3.jpg",
     ],
     "video": "",
     "categories": [
@@ -759,9 +759,9 @@ Reduce Irritation - A light refreshing scent that contains skin soothing aloe ve
 
 Fonex, a professional cosmetics brand for men, has become an indispensable choice for men's hair studies and consumers in Europe and in the world.`,
     "img": [
-      "Gummy_Images/Gummy Shave Gel Bloom_1.jpg",
-      "Gummy_Images/Gummy Shave Gel Bloom_2.jpg",
-      "Gummy_Images/Gummy Shave Gel Bloom_3.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175482/BeautyStore/Gummy_Images/dye8nm61k74wqzwkqysa.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175484/BeautyStore/Gummy_Images/zqj5ffvm3e09kvkoxqf4.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175485/BeautyStore/Gummy_Images/piyxebaxjwr6xkqmd6lg.jpg",
     ],
     "video": "",
     "categories": [
@@ -813,9 +813,9 @@ Reduce Irritation – Features a lightly refreshing fragrance and contains sooth
 
 Fonex, a professional cosmetics brand for men, has become an essential choice for men’s hair salons and consumers across Europe and around the world.`,
     "img": [
-      "Gummy_Images/Gummy Shave Gel Savour_1.jpg",
-      "Gummy_Images/Gummy Shave Gel Savour_2.jpg",
-      "Gummy_Images/Gummy Shave Gel Savour_3.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175486/BeautyStore/Gummy_Images/zvfbfvfkzbe0iojwfobe.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175487/BeautyStore/Gummy_Images/cetrpvttbjmpteaytgek.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175489/BeautyStore/Gummy_Images/nvwta2tk1is4inewc2k7.jpg",
     ],
     "video": "",
     "categories": [
@@ -868,7 +868,7 @@ Our shaving cream helps you get a closer shave, protect your skin, keep skin hea
 
 Fonex, a professional cosmetics brand for men, has become an indispensable choice for men's hair studies and consumers in Europe and in the world.`,
     "img": [
-      "Gummy_Images/Shave Cream.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175549/BeautyStore/Gummy_Images/bnfluiodpuylww58llj9.jpg",
     ],
     "video": "",
     "categories": [
@@ -920,7 +920,7 @@ Our shaving cream helps you get a closer shave, protect your skin, keep skin hea
 
 Fonex, a professional cosmetics brand for men, has become an indispensable choice for men's hair studies and consumers in Europe and in the world.`,
     "img": [
-      "Gummy_Images/Shave Cream.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175549/BeautyStore/Gummy_Images/bnfluiodpuylww58llj9.jpg",
     ],
     "video": "",
     "categories": [
@@ -972,9 +972,9 @@ Our shaving cream helps you get a closer shave, protect your skin, keep skin hea
 
 Fonex, a professional cosmetics brand for men, has become an indispensable choice for men's hair studies and consumers in Europe and in the world.`,
     "img": [
-      "Gummy_Images/Shave Cream Extra Menthol_1.jpg",
-      "Gummy_Images/Shave Cream Extra Menthol_2.jpg",
-      "Gummy_Images/Shave Cream Extra Menthol_3.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175546/BeautyStore/Gummy_Images/afmfkx1kflxv64cocuqh.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175547/BeautyStore/Gummy_Images/zxjgtz15ma1kfikjnoar.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175548/BeautyStore/Gummy_Images/bs95vm08b3svstrv0i5u.jpg",
     ],
     "video": "",
     "categories": [
@@ -1026,9 +1026,9 @@ Our shaving cream helps you get a closer shave, protect your skin, keep skin hea
 
 Fonex, a professional cosmetics brand for men, has become an indispensable choice for men's hair studies and consumers in Europe and in the world.`,
     "img": [
-      "Gummy_Images/Shave Cream Extra Menthol_1.jpg",
-      "Gummy_Images/Shave Cream Extra Menthol_2.jpg",
-      "Gummy_Images/Shave Cream Extra Menthol_3.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175546/BeautyStore/Gummy_Images/afmfkx1kflxv64cocuqh.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175547/BeautyStore/Gummy_Images/zxjgtz15ma1kfikjnoar.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175548/BeautyStore/Gummy_Images/bs95vm08b3svstrv0i5u.jpg",
     ],
     "video": "",
     "categories": [
@@ -1079,9 +1079,9 @@ Say goodbye to dull, dry skin. Our premium face and body scrubs can remove daily
 
 Fonex, a professional cosmetics brand for men, has become an indispensable choice for men's hair studies and consumers in Europe and in the world.`,
     "img": [
-      "Gummy_Images/Face Scrub_1.jpg",
-      "Gummy_Images/Face Scrub_2.jpg",
-      "Gummy_Images/Face Scrub_3.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175145/BeautyStore/Gummy_Images/yejquwerztfmv5eedovc.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175146/BeautyStore/Gummy_Images/lmqrqiamu1qzgiemtfm5.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175147/BeautyStore/Gummy_Images/wmdfdqprbygukqmkevxw.jpg",
     ],
     "video": "",
     "categories": [
@@ -1130,9 +1130,9 @@ You will have more nourished and vibrant hair as it helps to accelerate blood ci
 
 Fonex, a professional cosmetics brand for men, has become an indispensable choice for men's hair studies and consumers in Europe and in the world.`,
     "img": [
-      "Gummy_Images/Face Tonic_1.jpg",
-      "Gummy_Images/Face Tonic_2.jpg",
-      "Gummy_Images/Face Tonic_3.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175149/BeautyStore/Gummy_Images/uhtmjwk8gbpruhphx9pa.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175150/BeautyStore/Gummy_Images/zwbw6tfipvi6n9ohthya.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175150/BeautyStore/Gummy_Images/a5eukldqr0zwywizh6eb.jpg",
     ],
     "video": "",
     "categories": [
@@ -1173,7 +1173,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     "title": "Facial Clay Mask",
     "desc": "Professional face care product: Facial Clay Mask. High quality and reliable performance.",
     "img": [
-      "Gummy_Images/Facial Clay Mask.png",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175151/BeautyStore/Gummy_Images/acdroqr9yq3w5ridtqq7.png",
     ],
     "video": "",
     "categories": [
@@ -1214,10 +1214,10 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     "title": "GUMMY Arabica Coffee Scrub Caramel & Mocha",
     "desc": `Gummy Professional Arabica Coffee Face Scrub – Gentle Exfoliating Facial Scrub with Vitamin E, Macadamia & Hemp Oil & – Moisturizing Daily Face Care with Caramel & Mocha Scent for Men & Women – 300ml`,
     "img": [
-      "Gummy_Images/GUMMY Arabica Coffee Scrub Caramel & Mocha_1.jpg",
-      "Gummy_Images/GUMMY Arabica Coffee Scrub Caramel & Mocha_2.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175152/BeautyStore/Gummy_Images/yjm0kijfqtqzw7tdfsme.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175165/BeautyStore/Gummy_Images/ud6efmdrvtq9hyefvtiq.jpg",
       "Gummy_Images/GUMMY Arabica Coffee Scrub Caramel & Mocha_3.jpg",
-      "Gummy_Images/GUMMY Arabica Coffee Scrub Caramel & Mocha_4.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175227/BeautyStore/Gummy_Images/thse7zej4ak37r2s5kpg.jpg",
     ],
     "video": "",
     "categories": [
@@ -1258,9 +1258,9 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     "title": "Gummy Hair Cream",
     "desc": `Transform your hair care routine with the Gummy Hair Cream for Hair & Scalp Care 200ml, expertly formulated to promote overall hair and scalp health. Infused with a powerful blend of Ferment Oil, Hair Complex, and Ceramides, this cream penetrates deeply to revitalise your hair from root to tip. Whether you’re dealing with the effects of environmental stressors or damage from styling, this product nourishes each strand while restoring your hair’s natural shine. More than just a treatment, it provides a transformative experience that addresses both hair loss and scalp dryness, leaving you with visibly healthier, fuller hair. The Gummy Hair Cream is designed to be a versatile addition to your hair care regimen, suitable for all hair types. Its lightweight formula ensures that it won’t weigh your hair down, making it perfect for daily use. Whether you’re looking to enhance your hair’s natural beauty or seeking a solution for specific hair concerns, this cream offers a comprehensive approach to achieving the healthy, vibrant hair you desire. Experience the benefits of advanced hair care technology with the Gummy Hair Cream and give your hair the nourishment it deserves.`,
     "img": [
-      "Gummy_Images/Gummy Hair Cream_1.jpg",
-      "Gummy_Images/Gummy Hair Cream_2.jpg",
-      "Gummy_Images/Gummy Hair Cream_3.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175230/BeautyStore/Gummy_Images/zfbda0dckufvwqsgx6ra.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175231/BeautyStore/Gummy_Images/xfshb3dfdcrubxnqdvzj.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175234/BeautyStore/Gummy_Images/hxhzzk8ajjgdxbf5kehs.jpg",
     ],
     "video": "",
     "categories": [
@@ -1301,10 +1301,10 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     "title": "Gummy Shiner Cream",
     "desc": "Professional hair cream product: Gummy Shiner Cream. High quality and reliable performance.",
     "img": [
-      "Gummy_Images/Gummy Shiner Cream_1.jpg",
-      "Gummy_Images/Gummy Shiner Cream_2.jpg",
-      "Gummy_Images/Gummy Shiner Cream_3.jpg",
-      "Gummy_Images/Gummy Shiner Cream_4.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175490/BeautyStore/Gummy_Images/zxxs5husvlm5lk8bgask.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175491/BeautyStore/Gummy_Images/xnijwmzgd94m6oo6d7kv.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175492/BeautyStore/Gummy_Images/cgjpdj0eudnavjz3l6qp.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175493/BeautyStore/Gummy_Images/nirddmpvu6rmq8wwd04l.jpg",
     ],
     "video": "",
     "categories": [
@@ -1345,8 +1345,8 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     "title": "Hair Styling Gel Cream",
     "desc": `Gummy Wet & Bright Hair Cream 500ml | Shine & Hold Men Styling Cream`,
     "img": [
-      "Gummy_Images/Hair Styling Gel Cream 500ml.jpg",
-      "Gummy_Images/Hair Styling Gel Cream 500ml_1.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175520/BeautyStore/Gummy_Images/llkf2kpl9t2mwdptosdw.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175521/BeautyStore/Gummy_Images/xf7eqwhzvxylgtk9kivn.png",
     ],
     "video": "",
     "categories": [
@@ -1388,8 +1388,8 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     "title": "Hair Styling Gel Cream",
     "desc": `Gummy Wet & Bright Hair Cream 500ml | Shine & Hold Men Styling Cream`,
     "img": [
-      "Gummy_Images/Hair Styling Gel Cream 500ml.jpg",
-      "Gummy_Images/Hair Styling Gel Cream 500ml_1.jpg"
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175520/BeautyStore/Gummy_Images/llkf2kpl9t2mwdptosdw.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175521/BeautyStore/Gummy_Images/xf7eqwhzvxylgtk9kivn.png"
     ],
     "video": "",
     "categories": [
@@ -1441,10 +1441,10 @@ Thanks to the formulation - the moisturizers -; It helps the hair get the moistu
 
 Fonex, a professional cosmetics brand for men, has become an essential choice for men's hair studies and consumers in Europe and the world.`,
     "img": [
-      "Gummy_Images/Hair Gel 220ml_1.jpg",
-      "Gummy_Images/Hair Gel 220ml_2.jpg",
-      "Gummy_Images/Hair Gel 220ml_3.jpg",
-      "Gummy_Images/Hair Gel 220ml_4.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175495/BeautyStore/Gummy_Images/wkjg786c7dmezpezuwey.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175497/BeautyStore/Gummy_Images/niqsmdql7ae1v89htv75.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175498/BeautyStore/Gummy_Images/j0r2epyrc8jq8ledvxxj.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175499/BeautyStore/Gummy_Images/n0bbobyzjalcjfgwrhmv.jpg",
     ],
     "video": "",
     "categories": [
@@ -1496,10 +1496,10 @@ Thanks to the formulation - the moisturizers -; It helps the hair get the moistu
 
 Fonex, a professional cosmetics brand for men, has become an essential choice for men's hair studies and consumers in Europe and the world.`,
     "img": [
-      "Gummy_Images/Hair Gel Plus_1.jpg",
-      "Gummy_Images/Hair Gel Plus_2.jpg",
-      "Gummy_Images/Hair Gel Plus_3.jpg",
-      "Gummy_Images/Hair Gel Plus_4.jpg"
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175508/BeautyStore/Gummy_Images/jzoepchee2lahfx9mxaa.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175509/BeautyStore/Gummy_Images/xofl25ct1xzsohfgqorm.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175510/BeautyStore/Gummy_Images/kehsb5iecz8p7hjvu770.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175511/BeautyStore/Gummy_Images/dqk6exobhyvzdrlqvldq.jpg"
     ],
     "video": "",
     "categories": [
@@ -1551,10 +1551,10 @@ It leaves no residue.
 
 Fonex, a professional cosmetics brand for men, has become an indispensable choice for men’s hair salons and consumers in Europe and around the world.`,
     "img": [
-      "Gummy_Images/Hair Gel Keratin_1.jpg",
-      "Gummy_Images/Hair Gel Keratin_2.jpg",
-      "Gummy_Images/Hair Gel Keratin_3.jpg",
-      "Gummy_Images/Hair Gel Keratin_4.jpg"
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175504/BeautyStore/Gummy_Images/fkeodrmiyizqfcvq7vfm.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175505/BeautyStore/Gummy_Images/zwrcclpslfnzsuzf2x1m.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175506/BeautyStore/Gummy_Images/verzilknou5uay7rr14m.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175507/BeautyStore/Gummy_Images/ixmru5icdip9i6cq0kiy.jpg"
     ],
     "video": "",
     "categories": [
@@ -1596,9 +1596,9 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     "title": "Hair Gel 35oz",
     "desc": "Gummy Hair Gel - Maximum Hold & Extreme Look - 35 oz",
     "img": [
-      "Gummy_Images/Hair Gel 35oz_1.jpg",
-      "Gummy_Images/Hair Gel 35oz_2.jpg",
-      "Gummy_Images/Hair Gel 35oz_3.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175500/BeautyStore/Gummy_Images/a0k9md8zifozfntapbqw.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175501/BeautyStore/Gummy_Images/tzkcffyzkywnh1fcwr9d.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175502/BeautyStore/Gummy_Images/p5snd3wlevgpuyqniqza.jpg",
     ],
     "video": "",
     "categories": [
@@ -1650,10 +1650,10 @@ Thanks to the formulation - the moisturizers -; It helps the hair get the moistu
 
 Fonex, a professional cosmetics brand for men, has become an essential choice for men's hair studies and consumers in Europe and the world.`,
     "img": [
-      "Gummy_Images/Hair Gel 220ml_1.jpg",
-      "Gummy_Images/Hair Gel 220ml_2.jpg",
-      "Gummy_Images/Hair Gel 220ml_3.jpg",
-      "Gummy_Images/Hair Gel 220ml_4.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175495/BeautyStore/Gummy_Images/wkjg786c7dmezpezuwey.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175497/BeautyStore/Gummy_Images/niqsmdql7ae1v89htv75.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175498/BeautyStore/Gummy_Images/j0r2epyrc8jq8ledvxxj.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175499/BeautyStore/Gummy_Images/n0bbobyzjalcjfgwrhmv.jpg",
     ],
     "video": "",
     "categories": [
@@ -1705,10 +1705,10 @@ Thanks to the formulation - the moisturizers -; It helps the hair get the moistu
 
 Fonex, a professional cosmetics brand for men, has become an essential choice for men's hair studies and consumers in Europe and the world.`,
     "img": [
-      "Gummy_Images/Hair Gel Plus_1.jpg",
-      "Gummy_Images/Hair Gel Plus_2.jpg",
-      "Gummy_Images/Hair Gel Plus_3.jpg",
-      "Gummy_Images/Hair Gel Plus_4.jpg"
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175508/BeautyStore/Gummy_Images/jzoepchee2lahfx9mxaa.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175509/BeautyStore/Gummy_Images/xofl25ct1xzsohfgqorm.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175510/BeautyStore/Gummy_Images/kehsb5iecz8p7hjvu770.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175511/BeautyStore/Gummy_Images/dqk6exobhyvzdrlqvldq.jpg"
     ],
     "video": "",
     "categories": [
@@ -1760,10 +1760,10 @@ It leaves no residue.
 
 Fonex, a professional cosmetics brand for men, has become an indispensable choice for men’s hair salons and consumers in Europe and around the world.`,
     "img": [
-      "Gummy_Images/Hair Gel Keratin_1.jpg",
-      "Gummy_Images/Hair Gel Keratin_2.jpg",
-      "Gummy_Images/Hair Gel Keratin_3.jpg",
-      "Gummy_Images/Hair Gel Keratin_4.jpg"
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175504/BeautyStore/Gummy_Images/fkeodrmiyizqfcvq7vfm.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175505/BeautyStore/Gummy_Images/zwrcclpslfnzsuzf2x1m.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175506/BeautyStore/Gummy_Images/verzilknou5uay7rr14m.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175507/BeautyStore/Gummy_Images/ixmru5icdip9i6cq0kiy.jpg"
     ],
     "video": "",
     "categories": [
@@ -1815,10 +1815,10 @@ Thanks to the formulation - the moisturizers -; It helps the hair get the moistu
 
 Fonex, a professional cosmetics brand for men, has become an essential choice for men's hair studies and consumers in Europe and the world.`,
     "img": [
-      "Gummy_Images/Hair Gel 220ml_1.jpg",
-      "Gummy_Images/Hair Gel 220ml_2.jpg",
-      "Gummy_Images/Hair Gel 220ml_3.jpg",
-      "Gummy_Images/Hair Gel 220ml_4.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175495/BeautyStore/Gummy_Images/wkjg786c7dmezpezuwey.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175497/BeautyStore/Gummy_Images/niqsmdql7ae1v89htv75.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175498/BeautyStore/Gummy_Images/j0r2epyrc8jq8ledvxxj.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175499/BeautyStore/Gummy_Images/n0bbobyzjalcjfgwrhmv.jpg",
     ],
     "video": "",
     "categories": [
@@ -1870,10 +1870,10 @@ It leaves no residue.
 
 Fonex, a professional cosmetics brand for men, has become an indispensable choice for men’s hair salons and consumers in Europe and around the world.`,
     "img": [
-      "Gummy_Images/Hair Gel Keratin_1.jpg",
-      "Gummy_Images/Hair Gel Keratin_2.jpg",
-      "Gummy_Images/Hair Gel Keratin_3.jpg",
-      "Gummy_Images/Hair Gel Keratin_4.jpg"
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175504/BeautyStore/Gummy_Images/fkeodrmiyizqfcvq7vfm.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175505/BeautyStore/Gummy_Images/zwrcclpslfnzsuzf2x1m.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175506/BeautyStore/Gummy_Images/verzilknou5uay7rr14m.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175507/BeautyStore/Gummy_Images/ixmru5icdip9i6cq0kiy.jpg"
     ],
     "video": "",
     "categories": [
@@ -1925,10 +1925,10 @@ Thanks to the formulation - the moisturizers -; It helps the hair get the moistu
 
 Fonex, a professional cosmetics brand for men, has become an essential choice for men's hair studies and consumers in Europe and the world.`,
     "img": [
-      "Gummy_Images/Hair Gel Plus_1.jpg",
-      "Gummy_Images/Hair Gel Plus_2.jpg",
-      "Gummy_Images/Hair Gel Plus_3.jpg",
-      "Gummy_Images/Hair Gel Plus_4.jpg"
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175508/BeautyStore/Gummy_Images/jzoepchee2lahfx9mxaa.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175509/BeautyStore/Gummy_Images/xofl25ct1xzsohfgqorm.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175510/BeautyStore/Gummy_Images/kehsb5iecz8p7hjvu770.jpg",
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175511/BeautyStore/Gummy_Images/dqk6exobhyvzdrlqvldq.jpg"
     ],
     "video": "",
     "categories": [
@@ -1970,7 +1970,7 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     "title": "Hair Gel Tube",
     "desc": "Gummy Plus Hair Gel Tube, 5 Fluid Ounce (Pack of 1) - Maximum Hold & Extreme Look",
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175513/BeautyStore/Gummy_Images/vsdkp9ttx8ynf0cjlzxn.jpg"
     ],
     "video": "",
     "categories": [
@@ -2010,7 +2010,7 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     "title": "GUMMY POWDER HAIR WAX MATTE EFFECT",
     "desc": `Gummy Powder Hair Wax Matte Effect 20g is the ultimate styling solution for anyone looking to add texture, volume, and natural hold to their hair. Available now at CssSalonSupplies.com, this lightweight, innovative powder wax provides a matte finish while offering 3 different effects in one product: volume, texture, and natural hold. Ideal for creating tousled, voluminous hairstyles with a non-greasy finish, it’s perfect for fine or thinning hair. The unique formula is designed to absorb excess oil and provide a long-lasting hold without weighing down the hair. Whether you want to add volume at the roots, create a textured look, or achieve a natural hold, Gummy Powder Hair Wax Matte Effect has got you covered. It’s easy to apply and works well on all hair types, making it a versatile addition to your styling routine. Experience the benefits of this professional-grade product and elevate your hairstyling game with Gummy Powder Hair Wax Matte Effect.`,
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175477/BeautyStore/Gummy_Images/kst6dtwo2zj6nxmmrros.png"
     ],
     "video": "",
     "categories": [
@@ -2101,7 +2101,7 @@ Suitable for all hair types: for men and women, ideal for thin, fine, or oily ha
     "title": "Magic Styling Powder",
     "desc": `It adds volume and a matte look. Powder texture hair on white leaves no residue. With creatine, the building block of keratin. It helps nourish and repair the hair with creatine, which is a building block of keratin It provides ease of use thanks to its 360-degree movable head. Experience the benefits of this professional-grade product and elevate your hairstyling game with Gummy Powder Hair Wax Volume Effect.`,
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175542/BeautyStore/Gummy_Images/mwoc6sajo8ychtf1nz1i.jpg"
     ],
     "video": "",
     "categories": [
@@ -2140,7 +2140,7 @@ Suitable for all hair types: for men and women, ideal for thin, fine, or oily ha
     "title": "Styling Powder",
     "desc": `Rubber powder wax 20gr |Mattifying Volume Hair Styling Powder Wax |Matting Volume Pulzach |Powderwachs |Hair volume powder |20gr - (1 piece) 20 g (1 Pack) - Mattifying Volume Hair Styling Powder Wax |Matting Volume Pulzach |Powderwachs |Hair volume powder |20gr - (1 piece) 20 g (1 Pack)`,
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175550/BeautyStore/Gummy_Images/nt9qplgu7tvtlxxhv7iq.jpg"
     ],
     "video": "",
     "categories": [
@@ -2181,7 +2181,7 @@ Suitable for all hair types: for men and women, ideal for thin, fine, or oily ha
     "title": "Hair Mousse",
     "desc": `Gummy Hair Mousse has a specific formula that adds body and volume to styles, which makes styling easier and gives hair shine and flexibility. It will protect heat during heat styling and will not weigh down the hair. It is ideal for all hair types, especially fine and thin hair. Experience the benefits of this professional-grade product and elevate your hairstyling game with Gummy Hair Mousse.`,
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175517/BeautyStore/Gummy_Images/wpdens8uyxdmqe5kk6wd.jpg"
     ],
     "video": "",
     "categories": [
@@ -2222,7 +2222,7 @@ Suitable for all hair types: for men and women, ideal for thin, fine, or oily ha
     "title": "Hair Spray",
     "desc": "Professional hair spray product: Hair Spray. High quality and reliable performance.",
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175519/BeautyStore/Gummy_Images/hulnqhitcugecvtbqf3a.jpg"
     ],
     "video": "",
     "categories": [
@@ -2263,7 +2263,7 @@ Suitable for all hair types: for men and women, ideal for thin, fine, or oily ha
     "title": "Sea Salt Hair Spray",
     "desc": "Professional hair spray product: Sea Salt Hair Spray. High quality and reliable performance.",
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175544/BeautyStore/Gummy_Images/bj3crq2gr8p7rjlmovrs.webp"
     ],
     "video": "",
     "categories": [
@@ -2302,7 +2302,7 @@ Suitable for all hair types: for men and women, ideal for thin, fine, or oily ha
     "title": "GUMMY EDGE CONTROL HAIR WAX",
     "desc": "Professional hair wax product: GUMMY EDGE CONTROL HAIR WAX. High quality and reliable performance.",
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175228/BeautyStore/Gummy_Images/y7ekwcl9fhimz9imheos.jpg"
     ],
     "video": "",
     "categories": [
@@ -2342,7 +2342,7 @@ Suitable for all hair types: for men and women, ideal for thin, fine, or oily ha
     "title": "GUMMY STYLING WAX MASTER MATTEST",
     "desc": "Professional hair wax product: GUMMY STYLING WAX MASTER MATTEST. High quality and reliable performance.",
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175494/BeautyStore/Gummy_Images/uso6rz3tok4whqlt8rqg.jpg"
     ],
     "video": "",
     "categories": [
@@ -2384,7 +2384,7 @@ Suitable for all hair types: for men and women, ideal for thin, fine, or oily ha
     "title": "Gummy Fiber Styling Wax Spider",
     "desc": "Professional hair wax product: Gummy Fiber Styling Wax Spider. High quality and reliable performance.",
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175229/BeautyStore/Gummy_Images/iogicmzpzuofanxwbeab.jpg"
     ],
     "video": "",
     "categories": [
@@ -2426,7 +2426,7 @@ Suitable for all hair types: for men and women, ideal for thin, fine, or oily ha
     "title": "Gummy No Touch Max Hold Hair Gel",
     "desc":`Gummy Professional No Touch Hair Gel for Men and Women – Maximum Hold Styling Gel for Slick Back Look, Curls, Twists, and Ultra Edge Control – Clear Gel for Shine, Neat Styles, and Conditioning Benefits. Experience the benefits of this professional-grade product and elevate your hairstyling game with Gummy No Touch Max Hold Hair Gel.`,
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175243/BeautyStore/Gummy_Images/ggh2y9xricuym2dctjm5.jpg"
     ],
     "video": "",
     "categories": [
@@ -2476,7 +2476,7 @@ Thanks to the formulation - the moisturizers -; It helps the hair regain the moi
 
 Fonex, a professional cosmetics brand for men, has become an essential choice for men's hair studies and consumers in Europe and the world. Experience the benefits of this professional-grade product and elevate your hairstyling game with Gummy No Touch Wax Dynamic.`,
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175381/BeautyStore/Gummy_Images/jffhlayf8kp8m8q3peun.jpg"
     ],
     "video": "",
     "categories": [
@@ -2526,7 +2526,7 @@ Thanks to the formulation - the moisturizers -; It helps the hair regain the moi
 
 Fonex, a professional cosmetics brand for men, has become an essential choice for men's hair studies and consumers in Europe and the world. Experience the benefits of this professional-grade product and elevate your hairstyling game with Gummy No Touch Wax Matte.`,
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175474/BeautyStore/Gummy_Images/q8mdxyz70syvbew3vy6a.jpg"
     ],
     "video": "",
     "categories": [
@@ -2576,7 +2576,7 @@ Thanks to the formula - which moisturizes -; It helps hair regain needed moistur
 
 Fonex, a professional cosmetics brand for men, has become an essential choice for men's hair studies and consumers in Europe and the world.`,
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175535/BeautyStore/Gummy_Images/gwv2844sfbqikmsvh0r7.jpg"
     ],
     "video": "",
     "categories": [
@@ -2626,7 +2626,7 @@ Thanks to the formula - which moisturizes -; It helps hair regain needed moistur
 
 Fonex, a professional cosmetics brand for men, has become an essential choice for men's hair studies and consumers in Europe and the world.`,
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175532/BeautyStore/Gummy_Images/ykv8t0pl9nyisdg5s8ez.jpg"
     ],
     "video": "",
     "categories": [
@@ -2676,7 +2676,7 @@ Thanks to the formula - which moisturizes -; It helps hair regain needed moistur
 
 Fonex, a professional cosmetics brand for men, has become an essential choice for men's hair studies and consumers in Europe and the world. Experience the benefits of this professional-grade product and elevate your hairstyling game with Gummy Hair Styling Wax Bright Finish.`,
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175522/BeautyStore/Gummy_Images/p71nmkhdsv99fefryrjf.jpg"
     ],
     "video": "",
     "categories": [
@@ -2726,7 +2726,7 @@ Thanks to the formula - which moisturizes -; It helps hair regain needed moistur
 
 Fonex, a professional cosmetics brand for men, has become an essential choice for men's hair studies and consumers in Europe and the world. Experience the benefits of this professional-grade product and elevate your hairstyling game with Gummy Hair Styling Wax Ultra Hold.`,
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175539/BeautyStore/Gummy_Images/ucff2stzr6pqggdramp4.jpg"
     ],
     "video": "",
     "categories": [
@@ -2776,7 +2776,7 @@ Thanks to the formula - which moisturizes -; It helps hair regain needed moistur
 
 Fonex, a professional cosmetics brand for men, has become an essential choice for men's hair studies and consumers in Europe and the world. Experience the benefits of this professional-grade product and elevate your hairstyling game with Gummy Hair Styling Wax Extra Gloss.`,
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175529/BeautyStore/Gummy_Images/bacrfupucfhoxpzlmdrw.jpg"
     ],
     "video": "",
     "categories": [
@@ -2826,7 +2826,7 @@ Thanks to the formula - which moisturizes -; It helps hair regain needed moistur
 
 Fonex, a professional cosmetics brand for men, has become an essential choice for men's hair studies and consumers in Europe and the world. Experience the benefits of this professional-grade product and elevate your hairstyling game with Gummy Hair Styling Wax Casual Look.`,
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175525/BeautyStore/Gummy_Images/yy8sj6ird4ynexurkdmf.jpg"
     ],
     "video": "",
     "categories": [
@@ -2866,7 +2866,7 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     "title": "Wax Keratin",
     "desc":`Fonex Gummy Wax Matte Keratin Maximum Hold Extreme Look 140 ml`,
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175574/BeautyStore/Gummy_Images/frut40gipok54mxkmhql.jpg"
     ],
     "video": "",
     "categories": [
@@ -2909,7 +2909,7 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     "title": "REDONE HAIR POWDER WAX",
     "desc": "Professional hair powder product: REDONE HAIR POWDER WAX. High quality and reliable performance.",
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175066/BeautyStore/Redone_Images/qyozlo4bftu7klfaqdmr.jpg"
     ],
     "video": "",
     "categories": [
@@ -2951,7 +2951,7 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     "title": "REDONE HAIR SPRAY BLACK",
     "desc": "Professional hair spray product: REDONE HAIR SPRAY BLACK. High quality and reliable performance.",
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175070/BeautyStore/Redone_Images/clp7xkeoi2nqt29qlswd.jpg"
     ],
     "video": "",
     "categories": [
@@ -2992,7 +2992,7 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     "title": "REDONE HAIR SPRAY BLUE",
     "desc": "Professional hair spray product: REDONE HAIR SPRAY BLUE. High quality and reliable performance.",
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175072/BeautyStore/Redone_Images/wvuscp7t5y7scw5tltcz.jpg"
     ],
     "video": "",
     "categories": [
@@ -3033,7 +3033,7 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     "title": "REDONE HAIR SPRAY RED",
     "desc": "Professional hair spray product: REDONE HAIR SPRAY RED. High quality and reliable performance.",
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175074/BeautyStore/Redone_Images/coidtwsryy1vjq4jiveu.jpg"
     ],
     "video": "",
     "categories": [
@@ -3074,7 +3074,7 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     "title": "REDONE HAIR WAX BLUE",
     "desc": `Achieve bold, defined, and long-lasting hairstyles with RedOne Aqua Hair Wax Blue  — the ultimate styling essential for men who demand control and confidence. This professional-grade, water-based wax delivers maximum hold and shine without flakes or stiffness, keeping your look sharp and fresh from day to night. Perfect for sleek, textured, or creative hairstyles, it’s the go-to choice for effortless styling and easy washout. Infused with nourishing ingredients, it provides a non-greasy finish that keeps your hair healthy and manageable. Whether you’re going for a classic slick-back or a modern textured look, RedOne Aqua Hair Wax Blue is your secret weapon for all-day style and confidence.`,
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175077/BeautyStore/Redone_Images/ktdtet4d2neyatyfpzgm.jpg"
     ],
     "video": "",
     "categories": [
@@ -3116,7 +3116,7 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     "title": "REDONE HAIR WAX BLACK",
     "desc": `RedOne Aqua Hair  Gel Wax Black is the ultimate styling product that combines the benefits of both gel and wax. Designed for long-lasting hold and a sleek, polished finish, this high-performance styling gel-wax provides an extra strong, flexible hold without the greasiness or flaking. Infused with vitamin-rich ingredients, it hydrates while styling, making it perfect for all hair types, from straight to wavy to curly.`,
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175076/BeautyStore/Redone_Images/l9uqbysnpueeyqe04tso.jpg"
     ],
     "video": "",
     "categories": [
@@ -3158,7 +3158,7 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     "title": "REDONE HAIR WAX COBRA",
     "desc":  `REDONE Cobra Aqua Hair Wax Full Force delivers bold style with strong hold and shine. Its non-greasy, lasting formula lets you shape sleek or textured looks with ease. Infused with nourishing ingredients, it keeps hair healthy while providing a professional salon finish. Perfect for all hair types, this versatile wax is your go-to for confident, all-day style.`,
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175078/BeautyStore/Redone_Images/ymwvkoildqsmae27sexi.jpg"
     ],
     "video": "",
     "categories": [
@@ -3201,7 +3201,7 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     "title": "REDONE HAIR WAX MATTE GREEN",
     "desc": "Professional hair wax product: REDONE HAIR WAX MATTE GREEN. High quality and reliable performance.",
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175079/BeautyStore/Redone_Images/qjpphfmljbobl6qdft8w.jpg"
     ],
     "video": "",
     "categories": [
@@ -3288,7 +3288,7 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
 
 Its creamy texture allows for easy application, adding definition without stickiness or flaking. Whether you want a natural finish or bold sculpted look, this wax gives flexibility and control for any hairstyle. Infused with nourishing ingredients, it helps keep hair healthy while providing a professional salon-quality finish. Suitable for all hair types, RedOne Olive Hair Wax is your go-to styling product for confidence and effortless style.`,
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175085/BeautyStore/Redone_Images/eleq5tmxvgta3yfhc9c3.jpg"
     ],
     "video": "",
     "categories": [
@@ -3330,7 +3330,7 @@ Its creamy texture allows for easy application, adding definition without sticki
     "title": "REDONE HAIR WAX ORANGE",
     "desc": "Professional hair wax product: REDONE HAIR WAX ORANGE. High quality and reliable performance.",
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175089/BeautyStore/Redone_Images/onnoxjtrjggukdfv5kma.avif"
     ],
     "video": "",
     "categories": [
@@ -3372,7 +3372,7 @@ Its creamy texture allows for easy application, adding definition without sticki
     "title": "REDONE HAIR WAX QUICKSILVER",
     "desc": "Professional hair wax product: REDONE HAIR WAX QUICKSILVER. High quality and reliable performance.",
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175093/BeautyStore/Redone_Images/jrblpxoabpm6zus5dn09.jpg"
     ],
     "video": "",
     "categories": [
@@ -3414,7 +3414,7 @@ Its creamy texture allows for easy application, adding definition without sticki
     "title": "REDONE HAIR WAX RED",
     "desc": "Professional hair wax product: REDONE HAIR WAX RED. High quality and reliable performance.",
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175097/BeautyStore/Redone_Images/zs8zr0oeqbyy3aznemzz.jpg"
     ],
     "video": "",
     "categories": [
@@ -3456,7 +3456,7 @@ Its creamy texture allows for easy application, adding definition without sticki
     "title": "REDONE HAIR WAX VIOLETTA",
     "desc": "Professional hair wax product: REDONE HAIR WAX VIOLETTA. High quality and reliable performance.",
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175101/BeautyStore/Redone_Images/aht4lbbstcudwnrpw20p.jpg"
     ],
     "video": "",
     "categories": [
@@ -3498,7 +3498,7 @@ Its creamy texture allows for easy application, adding definition without sticki
     "title": "REDONE HAIR WAX WHITE",
     "desc": "Professional hair wax product: REDONE HAIR WAX WHITE. High quality and reliable performance.",
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175105/BeautyStore/Redone_Images/z8dmwangtvzdzaftavsq.jpg"
     ],
     "video": "",
     "categories": [
@@ -3540,7 +3540,7 @@ Its creamy texture allows for easy application, adding definition without sticki
     "title": "REDONE SHAVING GEL FRUIT",
     "desc": "Professional shaving gel product: REDONE SHAVING GEL FRUIT. High quality and reliable performance.",
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175113/BeautyStore/Redone_Images/skowibmmzpp62vaylqvd.jpg"
     ],
     "video": "",
     "categories": [
@@ -3582,7 +3582,7 @@ Its creamy texture allows for easy application, adding definition without sticki
     "title": "REDONE SHAVING GEL GOLD",
     "desc": "Professional shaving gel product: REDONE SHAVING GEL GOLD. High quality and reliable performance.",
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175118/BeautyStore/Redone_Images/in8dfaclrigwdh9y0s2s.jpg"
     ],
     "video": "",
     "categories": [
@@ -3624,7 +3624,7 @@ Its creamy texture allows for easy application, adding definition without sticki
     "title": "REDONE SHAVING GEL SILVER",
     "desc": "Professional shaving gel product: REDONE SHAVING GEL SILVER. High quality and reliable performance.",
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175120/BeautyStore/Redone_Images/yjfa5t93oq0xugihysnp.jpg"
     ],
     "video": "",
     "categories": [
@@ -3667,7 +3667,7 @@ Its creamy texture allows for easy application, adding definition without sticki
     "title": "REDONE SHAVING GEL FACE FRESH",
     "desc": "Professional shaving gel product: REDONE SHAVING GEL FACE FRESH. High quality and reliable performance.",
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175109/BeautyStore/Redone_Images/dbrqrkp31jhe5snizyua.png"
     ],
     "video": "",
     "categories": [
@@ -3709,7 +3709,7 @@ Its creamy texture allows for easy application, adding definition without sticki
     "title": "REDONE NECK STRIP",
     "desc": "Professional accessories product: REDONE NECK STRIP. High quality and reliable performance.",
     "img": [
-      ""
+      "https://res.cloudinary.com/dmd3jsqxe/image/upload/v1781175108/BeautyStore/Redone_Images/d9sm9uteowcotz7qhe3a.jpg"
     ],
     "video": "",
     "categories": [
