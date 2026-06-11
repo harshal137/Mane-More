@@ -202,7 +202,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     "brand": "Gummy",
     "originalPrice": 3.58,
     "discountedPrice": 3.11,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
       "Aftershave"
     ],
@@ -286,7 +286,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     "brand": "Gummy",
     "originalPrice": 4.84,
     "discountedPrice": 4.21,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
       "Beard Conditioner"
     ],
@@ -391,7 +391,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     "brand": "Gummy",
     "originalPrice": 4.84,
     "discountedPrice": 4.21,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
       "Beard Shampoo"
     ],
@@ -1182,7 +1182,7 @@ Fonex, a professional cosmetics brand for men, has become an indispensable choic
     "brand": "Gummy",
     "originalPrice": 4.85,
     "discountedPrice": 4.22,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
       "Clay Mask"
     ],
@@ -2875,7 +2875,7 @@ Fonex, a professional cosmetics brand for men, has become an essential choice fo
     "brand": "Gummy",
     "originalPrice": 3.44,
     "discountedPrice": 2.99,
-    "items_per_box": 0,
+    "items_per_box": 1,
     "type": [
       "Hair Wax"
     ],

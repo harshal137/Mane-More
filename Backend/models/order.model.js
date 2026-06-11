@@ -80,6 +80,11 @@ const OrderSchema = mongoose.Schema(
       enum: ["Placed", "Processing", "Shipped", "Delivered", "Cancelled"],
       default: "Placed",
     },
+    deliveryMarkedBy: {
+      adminId: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+      name: { type: String, default: "" },
+      markedAt: { type: Date, default: null },
+    },
     cancellationReason: { type: String, default: "" },
     cancelledAt: { type: Date, default: null },
     cancelledBy: {

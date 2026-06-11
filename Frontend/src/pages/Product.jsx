@@ -552,7 +552,7 @@ const Product = () => {
             <h3 className="font-bold mb-5">ITEMS PER BOX</h3>
             <FaBoxOpen className="text-5xl mb-4" />
             <p className="font-bold">
-              {product.itemsPerBox || product.itemPerBox || "1 Unit"}
+              {product.items_per_box || "1 Unit"}
             </p>
           </div>
 

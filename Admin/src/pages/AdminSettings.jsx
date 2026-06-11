@@ -4,6 +4,7 @@ import {
   FaCog,
   FaEnvelope,
   FaLock,
+  FaPhone,
   FaSave,
   FaUser,
 } from 'react-icons/fa';
@@ -14,6 +15,7 @@ const AdminSettings = () => {
   const { user, updateUser } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [status, setStatus] = useState('');
@@ -28,6 +30,7 @@ const AdminSettings = () => {
         const profile = await getUserById(user._id);
         setName(profile.name || '');
         setEmail(profile.email || '');
+        setPhone(profile.phone || '');
       } catch {
         setError('Unable to load admin profile. Please refresh and try again.');
       }
@@ -57,6 +60,7 @@ const AdminSettings = () => {
       const payload = {
         name: name.trim(),
         email: email.trim().toLowerCase(),
+        phone: phone.trim(),
       };
       if (password) payload.password = password;
 
@@ -64,6 +68,7 @@ const AdminSettings = () => {
       updateUser(updatedUser);
       setName(updatedUser.name || '');
       setEmail(updatedUser.email || '');
+      setPhone(updatedUser.phone || '');
       setStatus('Admin profile updated successfully.');
       setPassword('');
       setConfirmPassword('');
@@ -81,7 +86,7 @@ const AdminSettings = () => {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-slate-900">Admin Settings</h1>
-            <p className="mt-2 text-slate-500">Update the authenticated admin name, email, and password securely.</p>
+            <p className="mt-2 text-slate-500">Update the authenticated admin name, email, mobile number, and password securely.</p>
           </div>
           <div className="rounded-2xl bg-violet-100 px-4 py-3 text-violet-700">
             <FaCog className="text-2xl" />
@@ -107,6 +112,9 @@ const AdminSettings = () => {
               {name || user?.name || 'Administrator'}
             </p>
             <p className="text-sm text-slate-500">{email || user?.email}</p>
+            {(phone || user?.phone) && (
+              <p className="text-sm text-slate-500">{phone || user?.phone}</p>
+            )}
           </div>
         </div>
 
@@ -137,6 +145,21 @@ const AdminSettings = () => {
                 className="w-full rounded-2xl border border-slate-300 bg-slate-50 py-4 pl-12 pr-4 text-slate-900 outline-none focus:border-violet-500"
                 placeholder="Enter admin email"
                 required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-slate-700">Mobile Number</label>
+            <div className="relative">
+              <FaPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full rounded-2xl border border-slate-300 bg-slate-50 py-4 pl-12 pr-4 text-slate-900 outline-none focus:border-violet-500"
+                placeholder="Enter mobile number"
+                autoComplete="tel"
               />
             </div>
           </div>

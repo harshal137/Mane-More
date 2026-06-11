@@ -293,6 +293,17 @@ const updateOrder = asyncHandler(async (req, res) => {
   const isCOD = order.mode_of_transaction === "COD";
   const oldDeliveryStatus = normalizeStatus(order.delivery_status);
   const oldOrderStatus = normalizeStatus(order.order_status);
+  const updateData = { ...req.body };
+
+  delete updateData.deliveryMarkedBy;
+
+  if (normalizeStatus(nextDeliveryStatus) !== oldDeliveryStatus) {
+    updateData.deliveryMarkedBy = {
+      adminId: req.user._id,
+      name: req.user.name || req.user.email || "Administrator",
+      markedAt: new Date(),
+    };
+  }
 
   if (
     (oldDeliveryStatus === "cancelled" || oldOrderStatus === "cancelled") &&
@@ -303,18 +314,18 @@ const updateOrder = asyncHandler(async (req, res) => {
   }
 
   if (isDelivered && isCOD) {
-    req.body.status_of_transaction = "paid";
-    req.body.payment_status = "success";
+    updateData.status_of_transaction = "paid";
+    updateData.payment_status = "success";
   }
 
   if (!isDelivered && isCOD) {
-    req.body.status_of_transaction = "unpaid";
-    req.body.payment_status = "pending";
+    updateData.status_of_transaction = "unpaid";
+    updateData.payment_status = "pending";
   }
 
   const updatedOrder = await Order.findByIdAndUpdate(
     req.params.id,
-    { $set: req.body },
+    { $set: updateData },
     { new: true }
   ).populate("paymentId");
   const newDeliveryStatus = normalizeStatus(updatedOrder.delivery_status);

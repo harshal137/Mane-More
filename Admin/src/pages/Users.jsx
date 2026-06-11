@@ -27,7 +27,7 @@ const Users = () => {
     email: "",
     phone: "",
     password: "",
-    role: "user",
+    role: "admin",
   });
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -61,7 +61,7 @@ const Users = () => {
       email: "",
       phone: "",
       password: "",
-      role: "user",
+      role: "admin",
     });
   };
 
@@ -71,7 +71,10 @@ const Users = () => {
 
     try {
       setCreatingUser(true);
-      const res = await userRequest.post("/users", newUser);
+      const res = await userRequest.post("/users", {
+        ...newUser,
+        role: "admin",
+      });
       setUsers((currentUsers) => [res.data, ...currentUsers]);
       closeAddUser(true);
     } catch (error) {
@@ -260,7 +263,7 @@ const Users = () => {
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-violet-700 px-4 py-2 font-semibold text-white hover:bg-violet-800"
             >
               <FaPlus />
-              Add User
+              Add Admin
             </button>
             <button
               onClick={() => fetchUsers({ silent: true })}
@@ -405,10 +408,10 @@ const Users = () => {
             <div className="mb-6 flex items-start justify-between gap-4">
               <div>
                 <h2 id="add-user-title" className="text-2xl font-bold text-gray-900">
-                  Add User
+                  Add Administrator Account
                 </h2>
                 <p className="mt-1 text-sm text-gray-500">
-                  Create a customer or administrator account.
+                  Create an Administrator account.
                 </p>
               </div>
               <button
@@ -516,7 +519,6 @@ const Users = () => {
                     }
                     className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none"
                   >
-                    <option value="user">Customer</option>
                     <option value="admin">Administrator</option>
                   </select>
                 </div>
@@ -536,7 +538,7 @@ const Users = () => {
                   disabled={creatingUser}
                   className="rounded-lg bg-violet-700 px-5 py-2.5 font-semibold text-white hover:bg-violet-800 disabled:opacity-60"
                 >
-                  {creatingUser ? "Creating..." : "Create User"}
+                  {creatingUser ? "Creating..." : "Create Administrator"}
                 </button>
               </div>
             </form>

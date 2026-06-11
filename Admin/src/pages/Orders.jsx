@@ -103,6 +103,7 @@ const Orders = () => {
         order.mode_of_transaction,
         order.transactionId,
         order.transaction_id,
+        order.deliveryMarkedBy?.name,
         delivery,
         payment,
       ]
@@ -197,6 +198,25 @@ const Orders = () => {
           </span>
         );
       },
+    },
+    {
+      field: "deliveryMarkedBy",
+      headerName: "Marked By",
+      width: 170,
+      sortable: false,
+      valueGetter: (_value, row) => row.deliveryMarkedBy?.name || "",
+      renderCell: (params) => (
+        <div>
+          <div className="text-sm font-semibold text-gray-800">
+            {params.row.deliveryMarkedBy?.name || "Not marked"}
+          </div>
+          {params.row.deliveryMarkedBy?.markedAt && (
+            <div className="text-xs text-gray-400">
+              {formatDate(params.row.deliveryMarkedBy.markedAt)}
+            </div>
+          )}
+        </div>
+      ),
     },
     {
       field: "status_of_transaction",
