@@ -16,6 +16,7 @@ import Payments from './pages/Payments';
 import Analytics from './pages/Analytics';
 import AdminSettings from './pages/AdminSettings';
 import OrderDetail from "./pages/OrderDetail";
+import ShippingCharges from "./pages/ShippingCharges";
 
 function App () {
   const Layout = () => {
@@ -83,6 +84,10 @@ function App () {
           element: <Analytics />,
         },
         
+        {
+          path: '/shipping-charges',
+          element: <ShippingCharges />,
+        },
         {
           path: '/settings',
           element: <AdminSettings />,

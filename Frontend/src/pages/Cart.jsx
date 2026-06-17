@@ -51,6 +51,11 @@ const Cart = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [phoneError, setPhoneError] = useState("");
+  const [shippingCharges, setShippingCharges] = useState({
+    withinLondon: 2,
+    outsideLondon: 4,
+  });
+  const [shippingChargesLoading, setShippingChargesLoading] = useState(true);
 
   const [orderDetails, setOrderDetails] = useState({
     name: "",
@@ -69,6 +74,25 @@ const Cart = () => {
     pickupOption: "delivery",
     locationType: "",
   });
+
+  useEffect(() => {
+    const loadShippingCharges = async () => {
+      try {
+        const { data } = await userRequest.get("/shipping");
+        setShippingCharges({
+          withinLondon: Number(data.withinLondon),
+          outsideLondon: Number(data.outsideLondon),
+        });
+      } catch (error) {
+        console.error("Could not load shipping charges:", error);
+        toast.error("Could not refresh shipping charges. Please reload the page.");
+      } finally {
+        setShippingChargesLoading(false);
+      }
+    };
+
+    loadShippingCharges();
+  }, []);
 
   useEffect(() => {
     trackPageView("cart_page");
@@ -126,9 +150,9 @@ const Cart = () => {
   const calculateShippingFee = () => {
     switch (orderDetails.locationType) {
       case "Within London":
-        return 2;
+        return shippingCharges.withinLondon;
       case "Outside London":
-        return 4;
+        return shippingCharges.outsideLondon;
       default:
         return 0;
     }
@@ -254,10 +278,25 @@ const Cart = () => {
     }));
   };
 
-  const handleProceedToCheckout = () => {
+  const handleProceedToCheckout = async () => {
     if (!user.currentUser) {
       toast.error("Please login to place an order");
       return;
+    }
+
+    setShippingChargesLoading(true);
+    try {
+      const { data } = await userRequest.get("/shipping");
+      setShippingCharges({
+        withinLondon: Number(data.withinLondon),
+        outsideLondon: Number(data.outsideLondon),
+      });
+    } catch (error) {
+      console.error("Could not refresh shipping charges:", error);
+      toast.error("Could not refresh shipping charges. Please try again.");
+      return;
+    } finally {
+      setShippingChargesLoading(false);
     }
 
     setModalStep(1);
@@ -329,7 +368,6 @@ const Cart = () => {
         phone: formattedPhone.toString(),
         address: fullAddress,
         addressDetails,
-        shippingFee,
         locationType: orderDetails.locationType,
       };
 
@@ -548,7 +586,9 @@ const Cart = () => {
               }
             >
               <span className="font-semibold">Within London</span>
-              <p className="mt-1 text-xs">$2 Shipping</p>
+              <p className="mt-1 text-xs">
+                $ {shippingCharges.withinLondon.toLocaleString("en-US")} Shipping
+              </p>
             </button>
 
             <button
@@ -562,7 +602,9 @@ const Cart = () => {
               }
             >
               <span className="font-semibold">Outside London</span>
-              <p className="mt-1 text-xs">$4 Shipping</p>
+              <p className="mt-1 text-xs">
+                $ {shippingCharges.outsideLondon.toLocaleString("en-US")} Shipping
+              </p>
             </button>
           </div>
         </div>
@@ -1094,7 +1136,9 @@ const Cart = () => {
 
                   <div className="flex justify-between" style={{ color: THEME.TEXT }}>
                     <span>Shipping</span>
-                    <span className="font-semibold">Select at checkout</span>
+                    <span className="font-semibold">
+                      {shippingChargesLoading ? "Loading rates..." : "Select at checkout"}
+                    </span>
                   </div>
 
                   <div
@@ -1105,24 +1149,44 @@ const Cart = () => {
                     }}
                   >
                     <strong>Shipping Options</strong>
-                    <ul className="mt-2 space-y-1 text-xs">
-                      <li>Delivery within London: $ 2</li>
-                      <li>Delivery outside London: $ 4</li>
-                    </ul>
+                    {shippingChargesLoading ? (
+                      <p className="mt-2 text-xs">Loading current rates...</p>
+                    ) : (
+                      <ul className="mt-2 space-y-1 text-xs">
+                        <li>
+                          Delivery within London: ${" "}
+                          {shippingCharges.withinLondon.toLocaleString("en-US")}
+                        </li>
+                        <li>
+                          Delivery outside London: ${" "}
+                          {shippingCharges.outsideLondon.toLocaleString("en-US")}
+                        </li>
+                      </ul>
+                    )}
                   </div>
                 </div>
 
                 <button
                   onClick={handleProceedToCheckout}
-                  className="mb-4 flex w-full items-center justify-center rounded-full px-6 py-4 font-semibold transition-all duration-300 hover:scale-[1.02]"
+                  disabled={shippingChargesLoading}
+                  className="mb-4 flex w-full items-center justify-center rounded-full px-6 py-4 font-semibold transition-all duration-300 hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
                   style={{
                     backgroundColor: THEME.PRIMARY,
                     color: "#FFFFFF",
                     boxShadow: "0 12px 25px rgba(74,49,95,0.22)",
                   }}
                 >
-                  <FaBox className="mr-2" />
-                  Proceed to Checkout
+                  {shippingChargesLoading ? (
+                    <>
+                      <FaSpinner className="mr-2 animate-spin" />
+                      Loading Shipping Rates...
+                    </>
+                  ) : (
+                    <>
+                      <FaBox className="mr-2" />
+                      Proceed to Checkout
+                    </>
+                  )}
                 </button>
 
                 {!user.currentUser && (

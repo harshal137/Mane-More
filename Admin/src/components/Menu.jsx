@@ -11,6 +11,7 @@ import {
   FaGift,
   FaBars,
   FaTimes,
+  FaShippingFast,
 } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -32,6 +33,7 @@ const Menu = () => {
     { icon: FaClipboard, label: "Tracking users", path: "/tracking" },
     { icon: FaGift, label: "Bundles", path: "/bundles" },
     { icon: FaElementor, label: "Banners", path: "/banners" },
+    { icon: FaShippingFast, label: "Shipping Charges", path: "/shipping-charges" },
     { icon: FaCog, label: "Admin Settings", path: "/settings" },
   ];
 

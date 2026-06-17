@@ -5,6 +5,7 @@ import Payment from "../models/payment.model.js";
 import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
 import User from "../models/user.model.js";
+import { getShippingFeeForLocation } from "../utils/shippingSettings.js";
 import protect from "../Middleware/auth.middleware.js";
 import adminAuth from "../Middleware/adminAuth.middleware.js";
 import { sendInngestEventSafely } from "../utils/sendInngestEventSafely.js";
@@ -399,7 +400,6 @@ router.post("/create-checkout-session", protect, express.json(), async (req, res
       phone,
       address,
       addressDetails,
-      shippingFee = 0,
       locationType = "",
     } = req.body;
     const userId = await resolveCheckoutUserId(req, email);
@@ -413,7 +413,7 @@ router.post("/create-checkout-session", protect, express.json(), async (req, res
 
     // SECURITY FIX: amount is recalculated from DB. Frontend amount is ignored.
     const { products, amount } = await buildOrderSnapshotFromCart(cart?.products);
-    const safeShippingFee = Number(shippingFee || 0);
+    const safeShippingFee = await getShippingFeeForLocation(locationType);
     const totalAmount = amount + safeShippingFee;
 
     const line_items = products.map((product) => ({

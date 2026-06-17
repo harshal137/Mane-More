@@ -4,6 +4,7 @@ import Product from "../models/product.model.js";
 import User from "../models/user.model.js";
 import asyncHandler from "express-async-handler";
 import { sendInngestEventSafely } from "../utils/sendInngestEventSafely.js";
+import { getShippingFeeForLocation } from "../utils/shippingSettings.js";
 
 const normalizeProductId = (item) => item.productId || item._id;
 const normalizeStatus = (status = "") => String(status || "").trim().toLowerCase();
@@ -192,7 +193,6 @@ const createCODOrder = asyncHandler(async (req, res) => {
     phone,
     address,
     addressDetails,
-    shippingFee = 0,
     locationType = "",
   } = req.body;
   const userId = await resolveCheckoutUserId(req, email);
@@ -210,7 +210,7 @@ const createCODOrder = asyncHandler(async (req, res) => {
   }
 
   const { products, amount, totalQuantity } = await buildOrderSnapshotFromCart(cart?.products);
-  const safeShippingFee = Number(shippingFee || 0);
+  const safeShippingFee = await getShippingFeeForLocation(locationType);
   const totalAmount = amount + safeShippingFee;
   const codReferenceId = `COD-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
 
