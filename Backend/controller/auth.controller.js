@@ -13,6 +13,61 @@ const publicUser = (user) => ({
   role: user.role,
 });
 
+const getGoogleProfile = async (accessToken) => {
+  const response = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+
+  if (!response.ok) {
+    throw new Error("Google sign-in could not be verified");
+  }
+
+  const profile = await response.json();
+
+  if (!profile.email || profile.email_verified === false) {
+    throw new Error("Google account email is not verified");
+  }
+
+  return {
+    email: profile.email,
+    name: profile.name || profile.given_name || profile.email.split("@")[0],
+  };
+};
+
+const getFacebookProfile = async (accessToken) => {
+  const url = new URL("https://graph.facebook.com/me");
+  url.searchParams.set("fields", "id,name,email");
+  url.searchParams.set("access_token", accessToken);
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error("Facebook sign-in could not be verified");
+  }
+
+  const profile = await response.json();
+
+  if (!profile.email) {
+    throw new Error("Facebook account email permission is required");
+  }
+
+  return {
+    email: profile.email,
+    name: profile.name || profile.email.split("@")[0],
+  };
+};
+
+const getSocialProfile = async (provider, accessToken) => {
+  if (!accessToken) {
+    throw new Error("Social access token is required");
+  }
+
+  if (provider === "google") return getGoogleProfile(accessToken);
+  if (provider === "facebook") return getFacebookProfile(accessToken);
+
+  throw new Error("Unsupported social login provider");
+};
+
 // REGISTER USER
 // route POST /api/v1/auth/register
 // @access public
@@ -74,6 +129,40 @@ const loginUser = asyncHandler(async (req, res) => {
     res.status(401);
     throw new Error("Invalid email or password");
   }
+});
+
+const socialLoginUser = asyncHandler(async (req, res) => {
+  const provider = String(req.body.provider || "").trim().toLowerCase();
+  const accessToken = String(req.body.accessToken || "").trim();
+  const profile = await getSocialProfile(provider, accessToken);
+  const normalizedEmail = String(profile.email || "").trim().toLowerCase();
+
+  let user = await User.findOne({ email: normalizedEmail });
+
+  if (user && user.role !== "user") {
+    res.status(403);
+    throw new Error("Please use the admin login page for this account");
+  }
+
+  if (!user) {
+    user = await User.create({
+      name: profile.name,
+      email: normalizedEmail,
+      password: crypto.randomBytes(32).toString("hex"),
+      role: "user",
+    });
+
+    await sendInngestEventSafely({
+      name: "user.registered",
+      data: {
+        email: user.email,
+        name: user.name,
+      },
+    });
+  }
+
+  generateToken(res, user._id, "jwt");
+  res.status(200).json(publicUser(user));
 });
 
 const loginAdmin = asyncHandler(async (req, res) => {
@@ -311,5 +400,6 @@ export {
   registerUser,
   resetAdminPassword,
   resetUserPassword,
+  socialLoginUser,
   verifyResetCode,
 };

@@ -101,6 +101,7 @@ const loadMoreProducts = async () => {
   if (isLoading) {
     return (
       <div
+        id="premium-collection"
         className="relative min-h-screen overflow-hidden px-4 py-12"
         style={{ backgroundColor: THEME.BG }}
       >
@@ -176,6 +177,7 @@ const loadMoreProducts = async () => {
 
   return (
     <div
+      id="premium-collection"
       className="relative min-h-screen overflow-hidden px-4 py-12"
       style={{ backgroundColor: THEME.BG }}
     >

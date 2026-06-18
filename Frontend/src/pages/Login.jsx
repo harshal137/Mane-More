@@ -3,8 +3,10 @@ import { toast, ToastContainer } from "react-toastify";
 import { useState, useEffect } from "react";
 import { login } from "../redux/apiCalls";
 import { userRequest } from "../requestMethods";
+import { socialSignIn } from "../utils/socialAuth";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
+import { loginSuccess } from "../redux/userRedux";
 import {
   FaEye,
   FaEyeSlash,
@@ -13,7 +15,6 @@ import {
   FaArrowLeft,
   FaHeart,
   FaStar,
-  FaGem,
 } from "react-icons/fa";
 
 const THEME = {
@@ -29,6 +30,9 @@ const THEME = {
   SOFT_GREEN: "#E8F1D8",
 };
 
+const HAIR_AUTH_IMAGE =
+  "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=1200&auto=format&fit=crop";
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,6 +40,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showForgotModal, setShowForgotModal] = useState(false);
+  const [socialLoading, setSocialLoading] = useState("");
   const [forgotEmail, setForgotEmail] = useState("");
   const [resetCode, setResetCode] = useState("");
   const [resetStep, setResetStep] = useState("email");
@@ -118,19 +123,36 @@ const Login = () => {
     }
   };
 
-  const handleSocialLogin = (provider) => {
-    toast.info(
-      <div className="text-center">
-        <div className="mb-2 flex items-center justify-center">
-          <FaGem className="mr-2" style={{ color: THEME.PRIMARY }} />
-          <span className="font-medium">{provider} Login Coming Soon!</span>
+  const handleSocialLogin = async (provider) => {
+    try {
+      setSocialLoading(provider);
+      const loggedInUser = await socialSignIn(provider.toLowerCase());
+
+      if (loggedInUser?.role !== "user") {
+        throw new Error("Please use the admin login page for this account");
+      }
+
+      dispatch(loginSuccess(loggedInUser));
+      setIsTransitioning(true);
+
+      toast.success(
+        <div className="text-center">
+          <div className="mb-2 flex items-center justify-center">
+            <FaStar className="mr-2" style={{ color: THEME.GOLD }} />
+            <span className="font-bold">Welcome back to Mane & More!</span>
+          </div>
+          <p className="text-sm">Your grooming essentials are ready.</p>
         </div>
-        <p className="text-sm">
-          For now, please use your email and password.
-        </p>
-      </div>,
-      { autoClose: 5000, closeOnClick: true }
-    );
+      );
+
+      setTimeout(() => {
+        navigate("/");
+      }, 800);
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message || `${provider} login failed`);
+    } finally {
+      setSocialLoading("");
+    }
   };
 
   const resetForgotForm = () => {
@@ -234,7 +256,12 @@ const Login = () => {
       className={`flex min-h-screen items-center justify-center px-4 pb-12 pt-24 transition-all duration-700 ease-in-out sm:px-6 lg:px-8 ${
         isTransitioning ? "scale-105 opacity-0" : "opacity-100"
       }`}
-      style={{ backgroundColor: THEME.BG }}
+      style={{
+        backgroundColor: THEME.BG,
+        backgroundImage: `linear-gradient(rgba(248,245,241,0.86), rgba(248,245,241,0.94)), url(${HAIR_AUTH_IMAGE})`,
+        backgroundPosition: "center",
+        backgroundSize: "cover",
+      }}
     >
       <div className="w-full max-w-5xl">
         <ToastContainer position="top-right" autoClose={3000} theme="light" />
@@ -362,7 +389,7 @@ const Login = () => {
         >
           <div className="relative hidden md:block md:w-1/2">
             <img
-              src="/lotion1.jpg"
+              src={HAIR_AUTH_IMAGE}
               alt="Login to Mane & More"
               className="h-full w-full object-cover"
             />
@@ -379,7 +406,7 @@ const Login = () => {
                   Welcome Back
                 </h2>
                 <p className="text-white/85">
-                  Your beauty sanctuary awaits.
+                  Your grooming essentials are waiting.
                 </p>
               </div>
             </div>
@@ -570,7 +597,7 @@ const Login = () => {
                       color: THEME.MUTED,
                     }}
                   >
-                    Future DB access options
+                    Continue with
                   </span>
                 </div>
               </div>
@@ -579,6 +606,7 @@ const Login = () => {
                 <button
                   type="button"
                   onClick={() => handleSocialLogin("Google")}
+                  disabled={!!socialLoading || loading}
                   className="inline-flex w-full justify-center rounded-xl px-4 py-2 text-sm font-semibold transition-colors"
                   style={{
                     backgroundColor: THEME.CARD,
@@ -586,12 +614,13 @@ const Login = () => {
                     color: THEME.TEXT,
                   }}
                 >
-                  Google
+                  {socialLoading === "Google" ? "Connecting..." : "Google"}
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleSocialLogin("Facebook")}
+                  disabled={!!socialLoading || loading}
                   className="inline-flex w-full justify-center rounded-xl px-4 py-2 text-sm font-semibold transition-colors"
                   style={{
                     backgroundColor: THEME.CARD,
@@ -599,12 +628,12 @@ const Login = () => {
                     color: THEME.TEXT,
                   }}
                 >
-                  Facebook
+                  {socialLoading === "Facebook" ? "Connecting..." : "Facebook"}
                 </button>
               </div>
 
               <p className="mt-4 text-center text-xs italic" style={{ color: THEME.MUTED }}>
-                DB Tip: Use your email and password for instant access.
+                Use your social account or email and password for instant access.
               </p>
             </div>
           </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { userRequest } from "../requestMethods";
+import { socialSignIn } from "../utils/socialAuth";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
@@ -31,6 +32,9 @@ const THEME = {
   SOFT_GREEN: "#E8F1D8",
 };
 
+const HAIR_AUTH_IMAGE =
+  "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=1200&auto=format&fit=crop";
+
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -40,6 +44,7 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [socialLoading, setSocialLoading] = useState("");
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
 
@@ -174,6 +179,44 @@ const Register = () => {
     }
   };
 
+  const handleSocialRegister = async (provider) => {
+    try {
+      if (!agreeToTerms) {
+        toast.error("Please agree to the Terms and Conditions");
+        return;
+      }
+
+      setSocialLoading(provider);
+      const loggedInUser = await socialSignIn(provider.toLowerCase());
+
+      if (loggedInUser?.role !== "user") {
+        throw new Error("Please use the admin login page for this account");
+      }
+
+      dispatch(loginSuccess(loggedInUser));
+      setIsTransitioning(true);
+
+      toast.success(
+        <div className="text-center">
+          <div className="mb-2 flex items-center justify-center">
+            <FaStar className="mr-2" style={{ color: THEME.GOLD }} />
+            <span className="font-bold">Welcome to Mane & More!</span>
+          </div>
+          <p className="text-sm">Your grooming account is ready.</p>
+        </div>
+      );
+
+      setTimeout(() => {
+        navigate("/");
+        window.location.reload();
+      }, 1200);
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message || `${provider} sign up failed`);
+    } finally {
+      setSocialLoading("");
+    }
+  };
+
   const inputStyle = {
     backgroundColor: THEME.BG,
     border: `1px solid ${THEME.BORDER}`,
@@ -185,7 +228,12 @@ const Register = () => {
       className={`flex min-h-screen items-center justify-center px-4 pb-12 pt-24 transition-all duration-700 ease-in-out sm:px-6 lg:px-8 ${
         isTransitioning ? "scale-105 opacity-0" : "opacity-100"
       }`}
-      style={{ backgroundColor: THEME.BG }}
+      style={{
+        backgroundColor: THEME.BG,
+        backgroundImage: `linear-gradient(rgba(248,245,241,0.86), rgba(248,245,241,0.94)), url(${HAIR_AUTH_IMAGE})`,
+        backgroundPosition: "center",
+        backgroundSize: "cover",
+      }}
     >
       <div className="w-full max-w-5xl">
         <ToastContainer position="top-right" autoClose={4000} theme="light" />
@@ -210,7 +258,7 @@ const Register = () => {
           {/* Image Section */}
           <div className="relative hidden md:block md:w-1/2">
             <img
-              src="/lotion1.jpg"
+              src={HAIR_AUTH_IMAGE}
               alt="Join Mane & More"
               className="h-full w-full object-cover"
             />
@@ -227,7 +275,7 @@ const Register = () => {
                   Begin Your Journey
                 </h2>
                 <p className="text-white/85">
-                  Join Mane & More for a personalized beauty experience.
+                  Join Mane & More for premium hair and grooming essentials.
                 </p>
               </div>
             </div>
@@ -254,7 +302,7 @@ const Register = () => {
               </h1>
 
               <p style={{ color: THEME.TEXT }}>
-                Start your  journey with us today.
+                Start your grooming journey with us today.
               </p>
             </div>
 
@@ -453,7 +501,7 @@ const Register = () => {
 
               <button
                 type="submit"
-                disabled={loading || isTransitioning}
+                disabled={loading || !!socialLoading || isTransitioning}
                 className="flex w-full items-center justify-center rounded-2xl px-5 py-3 font-semibold transition-all duration-300 hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
                 style={{
                   backgroundColor: THEME.PRIMARY,
@@ -490,6 +538,59 @@ const Register = () => {
                 )}
               </button>
             </form>
+
+            <div className="mt-8">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div
+                    className="w-full border-t"
+                    style={{ borderColor: THEME.BORDER }}
+                  />
+                </div>
+
+                <div className="relative flex justify-center text-sm">
+                  <span
+                    className="px-3"
+                    style={{
+                      backgroundColor: THEME.CARD,
+                      color: THEME.MUTED,
+                    }}
+                  >
+                    Continue with
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => handleSocialRegister("Google")}
+                  disabled={loading || !!socialLoading || isTransitioning}
+                  className="inline-flex w-full justify-center rounded-xl px-4 py-2 text-sm font-semibold transition-colors disabled:opacity-60"
+                  style={{
+                    backgroundColor: THEME.CARD,
+                    border: `1px solid ${THEME.BORDER}`,
+                    color: THEME.TEXT,
+                  }}
+                >
+                  {socialLoading === "Google" ? "Connecting..." : "Google"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleSocialRegister("Facebook")}
+                  disabled={loading || !!socialLoading || isTransitioning}
+                  className="inline-flex w-full justify-center rounded-xl px-4 py-2 text-sm font-semibold transition-colors disabled:opacity-60"
+                  style={{
+                    backgroundColor: THEME.CARD,
+                    border: `1px solid ${THEME.BORDER}`,
+                    color: THEME.TEXT,
+                  }}
+                >
+                  {socialLoading === "Facebook" ? "Connecting..." : "Facebook"}
+                </button>
+              </div>
+            </div>
 
             <div className="mt-8 text-center">
               <p style={{ color: THEME.TEXT }}>

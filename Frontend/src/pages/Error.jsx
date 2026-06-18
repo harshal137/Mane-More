@@ -81,7 +81,7 @@ const Error = () => {
           </Link>
 
           <Link
-            to="/products"
+            to="/#premium-collection"
             className="inline-flex items-center justify-center px-8 py-3 rounded-2xl font-semibold transition-all duration-300 hover:scale-105"
             style={{
               backgroundColor: THEME.CARD,

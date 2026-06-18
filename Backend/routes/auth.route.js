@@ -11,6 +11,7 @@ import {
   registerUser,
   resetAdminPassword,
   resetUserPassword,
+  socialLoginUser,
   verifyResetCode,
 } from "../controller/auth.controller.js";
 import protect from "../Middleware/auth.middleware.js";
@@ -22,6 +23,9 @@ router.post("/register", registerUser);
 
 //LOGIN USER ROUTER
 router.post("/login", loginUser);
+
+// SOCIAL LOGIN / SIGNUP USER ROUTER
+router.post("/social-login", socialLoginUser);
 
 // USER FORGOT PASSWORD
 router.post("/forgot-password", forgotPassword);

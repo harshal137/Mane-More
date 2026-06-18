@@ -65,7 +65,7 @@ const Wishlist = () => {
             </p>
 
             <Link
-              to="/products"
+              to="/#premium-collection"
               className="inline-block rounded-full px-8 py-3 font-semibold"
               style={{
                 backgroundColor: THEME.PRIMARY,

@@ -317,7 +317,7 @@ useEffect(() => {
             </p>
 
             <Link
-              to="/products"
+              to="/#premium-collection"
               className="inline-block rounded-full px-8 py-3 font-semibold transition-all duration-300 hover:scale-105"
               style={{
                 backgroundColor: THEME.PRIMARY,
@@ -558,7 +558,7 @@ useEffect(() => {
                               </Link>
 
                               <Link
-                                to="/products"
+                                to="/#premium-collection"
                                 className="rounded-xl px-4 py-2 text-center text-sm font-semibold"
                                 style={{
                                   backgroundColor: THEME.CARD,
@@ -749,7 +749,7 @@ useEffect(() => {
         {orders.length > 0 && (
           <div className="mt-10 text-center">
             <Link
-              to="/products"
+              to="/#premium-collection"
               className="inline-block rounded-full px-8 py-3 font-semibold transition-all duration-300 hover:scale-105"
               style={{
                 backgroundColor: THEME.PRIMARY,

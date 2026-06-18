@@ -11,6 +11,7 @@ const TEXT = '#2F2A35';
 const MUTED = '#6D6875';
 const BORDER = '#ECEAE6';
 const ACCENT = '#DDE7C7';
+const HERO_BG = "/hero-bg2.jpg";
 
 const Banner = () => {
   const [bannerData, setBannerData] = useState(null);
@@ -129,7 +130,7 @@ const Banner = () => {
   };
 
   const handleDiscoverProducts = () => {
-    navigate("/products");
+    navigate("/#premium-collection");
   };
 
   const handleLearnMore = () => {
@@ -182,27 +183,31 @@ const Banner = () => {
       <section className="relative min-h-screen overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://plus.unsplash.com/premium_photo-1773818743479-154e2e3fc22c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt="Premium Barber"
+            src={HERO_BG}
+            alt="Long hair styling"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 style={{background: 'linear-gradient(90deg, rgba(248,247,245,0.95), rgba(248,247,245,0.75), rgba(248,247,245,0.9))'}} via-slate-900/40 to-slate-950/80"></div>
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(90deg, rgba(28,20,16,0.86), rgba(57,39,31,0.62), rgba(248,247,245,0.28))",
+            }}
+          ></div>
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center w-full px-8 py-24">
           {/* Left side: Text */}
           <div className="space-y-6"
-            style={{ color: TEXT }}>
-            <h3 className="uppercase tracking-[0.35em] text-sm font-semibold text-black/50">
+            style={{ color: "#F8F1E7" }}>
+            <h3 className="uppercase tracking-[0.35em] text-sm font-semibold" style={{ color: "#EFC65A" }}>
               {bannerData.subtitle}
             </h3>
 
             {/* Improved Animated title */}
             <div className="relative">
-              <h1 className="text-6xl font-bold text-slate-200 leading-tight min-h-[150px] flex items-center">
-                <span className="style={{
-  color: PRIMARY
-}} to-slate-100">
+              <h1 className="text-6xl font-bold leading-tight min-h-[150px] flex items-center" style={{ color: "#FFF7ED" }}>
+                <span>
                   {displayedTitle}
                 </span>
                 <span className={`inline-block w-1 h-12 bg-amber-300 ml-2 align-middle ${isTyping ? 'animate-pulse' : 'opacity-0'
@@ -211,7 +216,7 @@ const Banner = () => {
 
               {/* Subtle background text effect */}
               <div className="absolute inset-0 flex items-center opacity-5 pointer-events-none">
-                <span className="text-7xl font-black text-white whitespace-nowrap">
+                <span className="text-7xl font-black whitespace-nowrap" style={{ color: "#F8F1E7" }}>
                   {bannerData.titleOptions?.[currentTitleIndex] || "BEAUTIFUL SKIN"}
                 </span>
               </div>
@@ -219,8 +224,8 @@ const Banner = () => {
 
             {/* Static description text */}
             <div className="mt-8 max-w-xl">
-              <p className="text-xl  leading-relaxed"
-              style={{ color: "#4B5563" }}>
+              <p className="text-xl leading-relaxed"
+              style={{ color: "#F4E9DA" }}>
                 {bannerData.description}
               </p>
             </div>
@@ -229,8 +234,8 @@ const Banner = () => {
               <button
                 onClick={handleDiscoverProducts}
                 style={{
-                  backgroundColor: PRIMARY,
-                  color: '#fff'
+                  backgroundColor: "#EFC65A",
+                  color: "#2F211B"
                 }}
                 className="px-8 py-4 rounded-2xl font-semibold"      >
                 Discover Products
@@ -238,9 +243,9 @@ const Banner = () => {
               <button
                 onClick={handleLearnMore}
                 style={{
-                  backgroundColor: CARD,
-                  color: TEXT,
-                  border: `1px solid ${BORDER}`
+                  backgroundColor: "rgba(255,247,237,0.12)",
+                  color: "#FFF7ED",
+                  border: "1px solid rgba(255,247,237,0.35)"
                 }}
                 className="px-8 py-4 rounded-2xl font-semibold"    >
                 Learn More

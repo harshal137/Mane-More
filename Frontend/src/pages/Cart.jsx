@@ -989,7 +989,7 @@ const Cart = () => {
             </p>
 
             <Link
-              to="/products"
+              to="/#premium-collection"
               className="inline-block rounded-full px-8 py-3 font-semibold transition-all duration-300 hover:scale-105"
               style={{
                 backgroundColor: THEME.PRIMARY,

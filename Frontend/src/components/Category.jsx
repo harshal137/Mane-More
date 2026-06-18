@@ -51,7 +51,13 @@ const Category = () => {
   };
 
   const handleDiscoverProducts = () => {
-    navigate("/products");
+    navigate("/#premium-collection");
+
+    setTimeout(() => {
+      document
+        .getElementById("premium-collection")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 0);
   };
 
   return (
