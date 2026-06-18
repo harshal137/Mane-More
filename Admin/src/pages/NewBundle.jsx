@@ -445,9 +445,9 @@ const CreateBundle = () => {
                           <p className="text-gray-600 text-sm line-clamp-2">{product.desc}</p>
                           <div className="flex items-center justify-between mt-2">
                             <div className="flex items-center space-x-2">
-                              <span className="text-pink-600 font-bold">KES {getProductPrice(product)}</span>
+                              <span className="text-pink-600 font-bold">£ {getProductPrice(product)}</span>
                               {product.discountedPrice && product.originalPrice > product.discountedPrice && (
-                                <span className="text-gray-500 line-through text-sm">KES {product.originalPrice}</span>
+                                <span className="text-gray-500 line-through text-sm">£ {product.originalPrice}</span>
                               )}
                             </div>
                             <button
@@ -489,7 +489,7 @@ const CreateBundle = () => {
                         />
                         <div>
                           <h4 className="font-medium text-gray-800">{product.title}</h4>
-                          <p className="text-pink-600 font-bold">KES {getProductPrice(product)}</p>
+                          <p className="text-pink-600 font-bold">£ {getProductPrice(product)}</p>
                         </div>
                       </div>
                       <button
@@ -643,15 +643,15 @@ const CreateBundle = () => {
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span>Individual Product Prices:</span>
-                      <span className="font-medium">KES {bundleData.originalPrice}</span>
+                      <span className="font-medium">£ {bundleData.originalPrice}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Bundle Discounted Price:</span>
-                      <span className="font-medium text-pink-600">KES {bundleData.discountedPrice}</span>
+                      <span className="font-medium text-pink-600">£ {bundleData.discountedPrice}</span>
                     </div>
                     <div className="flex justify-between border-t border-gray-200 pt-2">
                       <span>Customer Savings:</span>
-                      <span className="font-medium text-green-600">KES {calculateSavings()}</span>
+                      <span className="font-medium text-green-600">£ {calculateSavings()}</span>
                     </div>
                   </div>
                 </div>
@@ -721,9 +721,9 @@ const CreateBundle = () => {
                       </div>
                     )}
                     <div className="mt-2">
-                      <span className="text-2xl font-bold text-pink-600">KES {bundleData.discountedPrice}</span>
+                      <span className="text-2xl font-bold text-pink-600">£ {bundleData.discountedPrice}</span>
                       {bundleData.originalPrice > bundleData.discountedPrice && (
-                        <span className="text-gray-500 line-through ml-2">KES {bundleData.originalPrice}</span>
+                        <span className="text-gray-500 line-through ml-2">£ {bundleData.originalPrice}</span>
                       )}
                     </div>
                   </div>

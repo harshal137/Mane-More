@@ -18,7 +18,7 @@ const BORDER = '#ECEAE6';
 const ACCENT = '#DDE7C7';
 
 const socials = [
-  { icon: <FaInstagram />, link: "#" },
+  { icon: <FaInstagram />, link: "https://www.instagram.com/maneandmore.12/" },
   { icon: <FaFacebookF />, link: "#" },
   { icon: <FaPinterestP />, link: "#" },
   { icon: <FaTwitter />, link: "#" }
@@ -59,6 +59,9 @@ const Footer = () => {
                 <a
                   key={index}
                   href={item.link}
+                  target={item.link === "#" ? undefined : "_blank"}
+                  rel={item.link === "#" ? undefined : "noopener noreferrer"}
+                  aria-label="Social profile"
                   className="h-11 w-11 rounded-full flex items-center justify-center transition-all duration-300"
                   style={{
                     backgroundColor: FOOTER_CARD,
@@ -82,7 +85,7 @@ const Footer = () => {
             </h3>
 
             <ul className="space-y-3">
-              {['Hair Care', 'Barber Tools', 'Fragrance', 'Gift Sets'].map((item) => (
+              {['HairExtensions', 'Hair Care', 'Barber Tools', 'Gift Sets'].map((item) => (
                 <li key={item}>
                   <a
                     href="#"

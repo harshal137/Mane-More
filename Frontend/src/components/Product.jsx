@@ -166,7 +166,7 @@ const Product = ({ product }) => {
               className="text-2xl font-bold"
               style={{ color: THEME.PRIMARY }}
             >
-              ${product.discountedPrice}
+              £{product.discountedPrice}
             </div>
 
             {product.originalPrice > product.price && (
@@ -174,7 +174,7 @@ const Product = ({ product }) => {
                 className="text-sm line-through"
                 style={{ color: THEME.MUTED }}
               >
-                ${product.price}
+                £{product.price}
               </div>
             )}
           </div>

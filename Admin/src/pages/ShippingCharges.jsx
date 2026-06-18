@@ -86,7 +86,7 @@ const ShippingCharges = () => {
                 <p className="mb-3 text-sm text-slate-500">{field.help}</p>
                 <div className="relative">
                   <FaMapMarkerAlt className="absolute left-4 top-1/2 -translate-y-1/2 text-violet-500" />
-                  <span className="absolute left-11 top-1/2 -translate-y-1/2 font-semibold text-slate-600">$</span>
+                  <span className="absolute left-11 top-1/2 -translate-y-1/2 font-semibold text-slate-600">£</span>
                   <input
                     id={field.name}
                     type="number"

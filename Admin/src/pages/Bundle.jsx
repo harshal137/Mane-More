@@ -8,7 +8,7 @@ import {
   FaSearch, 
   FaBoxOpen,
   FaUsers,
-  FaDollarSign,
+  FaPoundSign,
   FaStar
 } from 'react-icons/fa';
 import { userRequest } from '../requestMethods';
@@ -116,7 +116,7 @@ const Bundles = () => {
   };
 
   const formatPrice = (price) => {
-    return `KES ${price}`;
+    return `£ ${price}`;
   };
 
   if (isLoading) {
@@ -203,10 +203,10 @@ const Bundles = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm">Total Revenue</p>
-                <p className="text-2xl font-bold text-gray-900">KES {stats.totalRevenue.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-gray-900">£ {stats.totalRevenue.toLocaleString()}</p>
               </div>
               <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                <FaDollarSign className="text-purple-600 text-xl" />
+                <FaPoundSign className="text-purple-600 text-xl" />
               </div>
             </div>
             <p className="text-green-600 text-sm mt-2">From bundle sales</p>
@@ -284,7 +284,7 @@ const Bundles = () => {
                 </div>
                 {calculateSavings(bundle) > 0 && (
                   <div className="absolute bottom-3 left-3 bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">
-                    Save KES {calculateSavings(bundle)}
+                    Save £ {calculateSavings(bundle)}
                   </div>
                 )}
               </div>

@@ -113,7 +113,7 @@ const Product = () => {
         brand: inputs.brand,
         originalPrice: Number(inputs.originalPrice),
         discountedPrice: Number(inputs.discountedPrice),
-        items_per_box: Number(inputs.items_per_box),
+        items_per_box: Number(inputs.items_per_box || 1),
         stock: Number(inputs.stock),
         categories: inputs.categories
           .split(",")
@@ -235,7 +235,7 @@ const Product = () => {
                       id="items_per_box"
                       type="number"
                       name="items_per_box"
-                      value={inputs.items_per_box || ""}
+                      value={inputs.items_per_box || 1}
                       onChange={handleChange}
                       placeholder="Items per box"
                       className="w-full p-3 border rounded-lg"

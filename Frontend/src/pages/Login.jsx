@@ -73,9 +73,9 @@ const Login = () => {
             <div className="text-center">
               <div className="mb-2 flex items-center justify-center">
                 <FaStar className="mr-2" style={{ color: THEME.GOLD }} />
-                <span className="font-bold">Welcome to Mane & More!</span>
+                <span className="font-bold">Welcome back to Mane & More!</span>
               </div>
-              <p className="text-sm">Your beauty journey continues...</p>
+              <p className="text-sm">Your grooming essentials are ready.</p>
             </div>
           );
 

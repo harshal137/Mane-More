@@ -56,7 +56,7 @@ const OrderDetail = () => {
   }, [id]);
 
   const formatCurrency = (amount) => {
-    return `$${Number(amount || 0).toLocaleString()}`;
+    return `£${Number(amount || 0).toLocaleString()}`;
   };
 
   const formatDate = (date) => {

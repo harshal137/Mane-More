@@ -18,6 +18,13 @@ const Category = () => {
 
   const categories = [
     {
+      id: 4,
+      name: "HairExtensions",
+      icon: "✨",
+      image:
+        "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?q=80&w=687&auto=format&fit=crop",
+    },
+    {
       id: 5,
       name: "Hair Care",
       icon: "💈",
@@ -36,12 +43,6 @@ const Category = () => {
       tag: "POPULAR",
       icon: "✨",
       image: "https://images.unsplash.com/photo-1596755389378-c31d21fd1273",
-    },
-    {
-      id: 8,
-      name: "Fragrance",
-      icon: "🔥",
-      image: "https://images.unsplash.com/photo-1541643600914-78b084683601",
     },
   ];
 
@@ -97,7 +98,7 @@ const Category = () => {
             style={{ color: THEME.TEXT }}
           >
             Discover premium barber-grade products crafted for modern gentlemen.
-            From hair styling and beard care to skincare and fragrances,
+            From hair extensions and styling to beard care and skincare,
             everything you need for the perfect grooming routine.
           </p>
         </div>
@@ -199,7 +200,7 @@ const Category = () => {
             </h2>
 
             <p className="mb-8" style={{ color: THEME.MUTED }}>
-              Premium styling, grooming, beard care and fragrance products
+              Premium extensions, styling, grooming and beard care products
               trusted by professional barbers worldwide.
             </p>
 

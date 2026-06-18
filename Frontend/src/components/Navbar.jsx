@@ -37,10 +37,10 @@ const Navbar = () => {
   const wishlist = useSelector((s) => s.wishlist || { products: [] });
 
   const navItems = [
+    { key: "HairExtensions", to: "/products/hairextensions" },
     { key: "HairCare", to: "/products/haircare" },
     { key: "Beard & Shaving", to: "/products/beardshaving" },
     { key: "SkinCare", to: "/products/skincare" },
-    { key: "Fragrance", to: "/products/fragrance" },
   ];
 
   const userName =

@@ -11,7 +11,6 @@ import {
   FaPlay,
   FaShoppingCart,
   FaTruck,
-  FaShieldAlt,
   FaBoxOpen,
   FaPen,
   FaTimesCircle,
@@ -53,6 +52,7 @@ const Product = () => {
   const [reviewLoading, setReviewLoading] = useState(false);
 
   const autoSlideRef = useRef(null);
+  const reviewsRef = useRef(null);
 
   const isWishlisted = wishlist.some((item) => item._id === product._id);
 
@@ -70,6 +70,9 @@ const Product = () => {
     }
   };
 
+  const scrollToReviews = () => {
+    reviewsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   let price;
 
@@ -421,24 +424,29 @@ const Product = () => {
               {product.title}
             </h1>
 
-            <div className="flex items-center gap-3 mb-5">
+            <button
+              type="button"
+              onClick={scrollToReviews}
+              className="flex items-center gap-3 mb-5 text-left"
+              aria-label="Go to product reviews"
+            >
               {showAverageRating(product)}
               <span className="text-gray-600 text-sm">
                 {averageRating} ({ratings.length} reviews)
               </span>
-            </div>
+            </button>
 
             <p className="text-gray-700 leading-7 mb-6">{product.desc}</p>
 
             {/* Price */}
             <div className="flex items-center gap-4 mb-5">
               <span className="text-4xl font-bold text-red-600">
-                 $ {currentPrice}
+                 £ {currentPrice}
               </span>
 
               {product.discountedPrice && product.originalPrice && (
                 <span className="text-xl text-gray-400 line-through">
-                  $ {product.originalPrice}
+                  £ {product.originalPrice}
                 </span>
               )}
             </div>
@@ -459,10 +467,6 @@ const Product = () => {
                 Out of Stock
               </p>
             )}
-
-            <p className="text-gray-700 flex items-center gap-2 mb-6">
-              <FaTruck /> Free delivery on orders over $ 5
-            </p>
 
             {/* Quantity */}
             <div className="mb-5">
@@ -505,15 +509,10 @@ const Product = () => {
               BUY NOW
             </button>
 
-            <div className="grid grid-cols-3 gap-4 text-center text-sm mb-6">
+            <div className="grid grid-cols-2 gap-4 text-center text-sm mb-6">
               <div className="flex flex-col items-center gap-2">
                 <FaTruck className="text-xl" />
-                <span>30-Day Returns</span>
-              </div>
-
-              <div className="flex flex-col items-center gap-2">
-                <FaShieldAlt className="text-xl" />
-                <span>2-Year Warranty</span>
+                <span>7-Day Returns</span>
               </div>
 
               <div className="flex flex-col items-center gap-2">
@@ -546,34 +545,9 @@ const Product = () => {
           </div>
         </div>
 
-        {/* Items / Included / Features */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-white rounded-xl p-6 lg:p-8 shadow-sm">
+        {/* Features / Items */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white rounded-xl p-6 lg:p-8 shadow-sm">
           <div className="border-r border-gray-200 last:border-r-0">
-            <h3 className="font-bold mb-5">ITEMS PER BOX</h3>
-            <FaBoxOpen className="text-5xl mb-4" />
-            <p className="font-bold">
-              {product.items_per_box || "1 Unit"}
-            </p>
-          </div>
-
-          <div className="border-r border-gray-200 last:border-r-0">
-            <h3 className="font-bold mb-5">WHAT’S INCLUDED</h3>
-
-            <ul className="space-y-3 text-gray-700">
-              {(product.whatsIncluded || product.included || [
-                `1 x ${product.title}`,
-                "1 x User Manual",
-                "1 x Product Box",
-              ]).map((item, index) => (
-                <li key={index} className="flex items-center gap-3">
-                  <FaCheck className="text-black" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
             <h3 className="font-bold mb-5">KEY FEATURES</h3>
 
             <ul className="space-y-3 text-gray-700">
@@ -593,10 +567,21 @@ const Product = () => {
                 ))}
             </ul>
           </div>
+
+          <div>
+            <h3 className="font-bold mb-5">ITEMS PER BOX</h3>
+            <FaBoxOpen className="text-5xl mb-4" />
+            <p className="font-bold">
+              1
+            </p>
+          </div>
         </div>
 
         {/* Reviews */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 bg-white rounded-xl p-6 lg:p-8 shadow-sm">
+        <div
+          ref={reviewsRef}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-8 bg-white rounded-xl p-6 lg:p-8 shadow-sm scroll-mt-24"
+        >
           <div>
             <h3 className="text-2xl font-bold mb-8">REVIEWS</h3>
 

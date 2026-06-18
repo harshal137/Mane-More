@@ -14,6 +14,7 @@ dotenv.config();
 
 const router = express.Router();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const STRIPE_CURRENCY = "gbp";
 
 const normalizeProductId = (item) => item.productId || item._id;
 
@@ -51,8 +52,8 @@ const getCheckoutPaymentMethodTypes = () => {
   }
 
   // Stripe does not support "netbanking" as a Checkout payment_method_types value.
-  // USD Checkout works with card by default. Add more methods through
-  // STRIPE_PAYMENT_METHOD_TYPES only if Stripe supports them for USD.
+  // GBP Checkout works with card by default. Add more methods through
+  // STRIPE_PAYMENT_METHOD_TYPES only if Stripe supports them for GBP.
   return ["card"];
 };
 
@@ -418,7 +419,7 @@ router.post("/create-checkout-session", protect, express.json(), async (req, res
 
     const line_items = products.map((product) => ({
       price_data: {
-        currency: "usd",
+        currency: STRIPE_CURRENCY,
         product_data: {
           name: product.title,
           images: product.img ? [product.img] : [],
@@ -433,7 +434,7 @@ router.post("/create-checkout-session", protect, express.json(), async (req, res
     if (safeShippingFee > 0) {
       line_items.push({
         price_data: {
-          currency: "usd",
+          currency: STRIPE_CURRENCY,
           product_data: { name: `Shipping - ${locationType || "Delivery"}` },
           unit_amount: Math.round(safeShippingFee * 100),
         },
@@ -447,7 +448,7 @@ router.post("/create-checkout-session", protect, express.json(), async (req, res
       amount,
       shippingFee: safeShippingFee,
       totalAmount,
-      currency: "usd",
+      currency: STRIPE_CURRENCY,
       payment_status: "pending",
       status: "initiated",
       status_of_transaction: "unpaid",
@@ -462,6 +463,7 @@ router.post("/create-checkout-session", protect, express.json(), async (req, res
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
+      adaptive_pricing: { enabled: false },
       payment_method_types: getCheckoutPaymentMethodTypes(),
       customer_email: email,
       line_items,

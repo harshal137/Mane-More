@@ -83,8 +83,8 @@ def gen_type(categories):
             t.update(['Professional','Hair Care'])
         if 'wax' in c_low or 'styling' in c_low or 'gel' in c_low:
             t.update(['Styling','Salon Product'])
-        if 'cologne' in c_low or 'aftershave' in c_low:
-            t.update(['Fragrance','Personal Care'])
+        if 'extension' in c_low or 'extensions' in c_low:
+            t.update(['Hair Extensions', 'Hair Care'])
         if 'blade' in c_low or 'accessories' in c_low:
             t.update(['Accessories'])
     if not t:

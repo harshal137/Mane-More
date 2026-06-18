@@ -45,7 +45,7 @@ const Products = () => {
   }, []);
 
   const formatCurrency = (amount) =>
-    `$ ${Number(amount || 0).toLocaleString("en-US", {
+    `£ ${Number(amount || 0).toLocaleString("en-US", {
       maximumFractionDigits: 2,
     })}`;
 

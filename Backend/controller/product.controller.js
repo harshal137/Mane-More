@@ -71,7 +71,7 @@ const getALLproducts = asyncHandler(async (req, res) => {
   const filter = {};
 
   // CATEGORY FILTER
-  // DB categories: Hair Care, Beard & Shaving, Skin Care, Fragrance
+  // DB categories: HairExtensions, HairCare, Beard & Shaving, SkinCare
   if (qCategory) {
     filter.categories = { $in: [qCategory] };
   }

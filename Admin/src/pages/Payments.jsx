@@ -85,7 +85,7 @@ const Payments = () => {
   });
 
   const formatCurrency = (amount) =>
-    `$ ${Number(amount || 0).toLocaleString("en-US", {
+    `£ ${Number(amount || 0).toLocaleString("en-US", {
       maximumFractionDigits: 2,
     })}`;
 
@@ -354,7 +354,7 @@ const Payments = () => {
             #{params.row._id.slice(-8).toUpperCase()}
           </div>
           <div className="text-xs text-gray-400">
-            {params.row.currency?.toUpperCase() || "USD"}
+            {params.row.currency?.toUpperCase() || "GBP"}
           </div>
         </div>
       ),

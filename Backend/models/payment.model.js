@@ -23,7 +23,7 @@ const PaymentSchema = mongoose.Schema(
     amount: { type: Number, required: true }, // subtotal before shipping
     shippingFee: { type: Number, default: 0 },
     totalAmount: { type: Number, required: true },
-    currency: { type: String, default: "usd" },
+    currency: { type: String, default: "gbp" },
 
     // ADDED/UPDATED: normalized payment states
     payment_status: {

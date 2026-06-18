@@ -122,7 +122,7 @@ useEffect(() => {
   }, [fetchUserOrders, user.currentUser]);
 
   const formatCurrency = (amount) => {
-    return `$ ${Number(amount || 0).toLocaleString("en-US")}`;
+    return `£ ${Number(amount || 0).toLocaleString("en-US")}`;
   };
 
   const formatDate = (dateString) => {

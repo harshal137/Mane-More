@@ -112,7 +112,7 @@ const Home = () => {
     Number(payment.totalAmount ?? payment.amount ?? payment.orderId?.totalAmount ?? 0);
 
   const formatCurrency = (amount) =>
-    `$ ${Number(amount || 0).toLocaleString("en-US", {
+    `£ ${Number(amount || 0).toLocaleString("en-US", {
       maximumFractionDigits: 2,
     })}`;
 

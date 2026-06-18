@@ -8,7 +8,7 @@ const NewProduct = () => {
   const navigate = useNavigate();
 
   const [selectedImages, setSelectedImages] = useState([]);
-  const [inputs, setInputs] = useState({});
+  const [inputs, setInputs] = useState({ items_per_box: 1 });
   const [uploading, setUploading] = useState("Ready to upload");
   const [openDropdown, setOpenDropdown] = useState(null);
 
@@ -28,10 +28,10 @@ const NewProduct = () => {
 
   const productOptions = {
     categories: [
+      "HairExtensions",
       "HairCare",
       "Beard & Shaving",
       "SkinCare",
-      "Fragrance",
     ],
 
     type: [
@@ -443,7 +443,7 @@ const NewProduct = () => {
                       name="originalPrice"
                       value={inputs.originalPrice || ""}
                       onChange={handleChange}
-                      placeholder="Example: $5"
+                      placeholder="Example: £5"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
@@ -457,7 +457,7 @@ const NewProduct = () => {
                       name="discountedPrice"
                       value={inputs.discountedPrice || ""}
                       onChange={handleChange}
-                      placeholder="Example: $3"
+                      placeholder="Example: £3"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
@@ -471,9 +471,9 @@ const NewProduct = () => {
                     type="number"
                     name="items_per_box"
                     min="1"
-                    value={inputs.items_per_box || ""}
+                    value={inputs.items_per_box || 1}
                     onChange={handleChange}
-                    placeholder="Example: 12"
+                    placeholder="Example: 1"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
                 </div>

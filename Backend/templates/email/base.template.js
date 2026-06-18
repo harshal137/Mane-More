@@ -7,9 +7,9 @@ export const escapeHtml = (value = "") =>
     .replace(/'/g, "&#039;");
 
 export const formatCurrency = (amount) =>
-  new Intl.NumberFormat("en-US", {
+  new Intl.NumberFormat("en-GB", {
     style: "currency",
-    currency: "USD",
+    currency: "GBP",
   }).format(Number(amount || 0));
 
 export const normalizeClientUrl = (clientUrl = "") =>

@@ -16,6 +16,13 @@ const THEME = {
 };
 
 const typeOptionsByCategory = {
+  hairextensions: [
+    "Clip-In Extensions",
+    "Tape-In Extensions",
+    "Weft Extensions",
+    "Ponytail Extensions",
+    "Hair Bundles",
+  ],
   haircare: [
     "Hair Wax",
     "Hair Gel",
@@ -46,7 +53,6 @@ const typeOptionsByCategory = {
     "Neck Strips",
   ],
   skincare: ["Face Scrub", "Face Tonic", "Clay Mask", "Coffee Scrub"],
-  fragrance: ["Cologne", "Aftershave Cologne", "Cream Cologne"],
 };
 
 const normalizeCategoryKey = (value) =>
@@ -73,6 +79,11 @@ const defaultTypeOptions = [
   "Hair Clay",
   "Hair Paste",
   "Hair Oil",
+  "Clip-In Extensions",
+  "Tape-In Extensions",
+  "Weft Extensions",
+  "Ponytail Extensions",
+  "Hair Bundles",
   "Beard Oil",
   "Beard Shampoo",
   "Beard Conditioner",
@@ -82,9 +93,6 @@ const defaultTypeOptions = [
   "Razor Blades",
   "Aftershave",
   "Bump Repair Spray",
-  "Cologne",
-  "Aftershave Cologne",
-  "Cream Cologne",
   "Face Scrub",
   "Face Tonic",
   "Clay Mask",
@@ -103,10 +111,10 @@ const brandOptions = [
 
 // Convert navbar URL category into exact DB category value
 const categoryMap = {
+  hairextensions: "HairExtensions",
   haircare: "HairCare",
   beardshaving: "Beard & Shaving",
   skincare: "SkinCare",
-  fragrance: "Fragrance",
 };
 
 const ProductList = () => {
