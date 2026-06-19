@@ -12,6 +12,10 @@ const recalculateCart = (state) => {
   );
 };
 
+const isSameCartItem = (item, payload) =>
+  item._id === payload._id &&
+  (item.selectedSize || null) === (payload.selectedSize || null);
+
 const cartSlice = createSlice({
   name: "cart",
   initialState: {
@@ -22,13 +26,14 @@ const cartSlice = createSlice({
   reducers: {
    addProduct: (state, action) => {
   const existingProduct = state.products.find(
-    (item) => item._id === action.payload._id
+    (item) => isSameCartItem(item, action.payload)
   );
 
   if (existingProduct) {
-    // Same product: only increase item quantity
+    // Same product and size: only increase item quantity.
     existingProduct.quantity += action.payload.quantity;
     existingProduct.price = action.payload.price;
+    existingProduct.selectedSizePrice = action.payload.selectedSizePrice || null;
   } else {
     // New product: add to cart
     state.products.push(action.payload);
@@ -39,7 +44,7 @@ const cartSlice = createSlice({
 
 removeProduct: (state, action) => {
   state.products = state.products.filter(
-    (item) => item._id !== action.payload._id
+    (item) => !isSameCartItem(item, action.payload)
   );
 
   recalculateCart(state);
@@ -47,7 +52,7 @@ removeProduct: (state, action) => {
 
 updateQuantity: (state, action) => {
   const product = state.products.find(
-    (item) => item._id === action.payload._id
+    (item) => isSameCartItem(item, action.payload)
   );
 
   if (product) {

@@ -1,9 +1,59 @@
 import Product from "../models/product.model.js";
 import asyncHandler from "express-async-handler";
 
+const normalizeSizes = (sizes = []) => {
+  if (!Array.isArray(sizes)) return [];
+
+  return sizes
+    .map((size) => {
+      const label = String(size?.label || "").trim();
+      const price = Number(size?.price);
+      const stock =
+        size?.stock === "" || size?.stock === undefined || size?.stock === null
+          ? undefined
+          : Number(size.stock);
+
+      // Keep only complete, safely typed size rows.
+      if (!label || Number.isNaN(price)) return null;
+
+      return {
+        label,
+        price,
+        ...(Number.isNaN(stock) || stock === undefined ? {} : { stock }),
+      };
+    })
+    .filter(Boolean);
+};
+
+const escapeRegex = (value) => String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const getCategoryAliases = (category) => {
+  const normalizedCategory = String(category || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "");
+
+  if (
+    normalizedCategory === "hairextension" ||
+    normalizedCategory === "hairextensions" ||
+    normalizedCategory === "extension" ||
+    normalizedCategory === "extensions"
+  ) {
+    return ["HairExtensions", "Hairextension", "Hair Extension", "Hair Extensions", "extension"];
+  }
+
+  if (normalizedCategory === "skincare") {
+    return ["SkinCare", "Skin Care"];
+  }
+
+  return [category];
+};
+
 // CREATE PRODUCT
 const createProduct = asyncHandler(async (req, res) => {
-  const product = await Product.create(req.body);
+  const product = await Product.create({
+    ...req.body,
+    sizes: normalizeSizes(req.body.sizes),
+  });
 
   if (product) {
     res.status(201).json(product);
@@ -15,10 +65,18 @@ const createProduct = asyncHandler(async (req, res) => {
 
 // UPDATE PRODUCT
 const updateProduct = asyncHandler(async (req, res) => {
+  const updateData = {
+    ...req.body,
+  };
+
+  if ("sizes" in req.body) {
+    updateData.sizes = normalizeSizes(req.body.sizes);
+  }
+
   const updatedProduct = await Product.findByIdAndUpdate(
     req.params.id,
     {
-      $set: req.body,
+      $set: updateData,
     },
     { new: true }
   );
@@ -73,7 +131,11 @@ const getALLproducts = asyncHandler(async (req, res) => {
   // CATEGORY FILTER
   // DB categories: HairExtensions, HairCare, Beard & Shaving, SkinCare
   if (qCategory) {
-    filter.categories = { $in: [qCategory] };
+    filter.categories = {
+      $in: getCategoryAliases(qCategory).map(
+        (category) => new RegExp(`^${escapeRegex(category)}$`, "i")
+      ),
+    };
   }
 
   // TYPE FILTER

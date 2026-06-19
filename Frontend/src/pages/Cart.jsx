@@ -243,6 +243,7 @@ const Cart = () => {
     dispatch(
       updateQuantity({
         _id: product._id,
+        selectedSize: product.selectedSize || null,
         quantity: newQuantity,
       })
     );
@@ -1030,7 +1031,7 @@ const Cart = () => {
               <div className="space-y-6">
                 {cart.products?.map((product, index) => (
                   <div
-                    key={index}
+                    key={`${product._id}-${product.selectedSize || "default"}-${index}`}
                     className="flex flex-col gap-6 border-b pb-6 last:border-0 sm:flex-row"
                     style={{ borderColor: THEME.BORDER }}
                   >
@@ -1061,6 +1062,13 @@ const Cart = () => {
                       <p className="mb-4 line-clamp-2 text-sm" style={{ color: THEME.TEXT }}>
                         {product.desc}
                       </p>
+
+                      {product.selectedSize && (
+                        <p className="mb-4 text-sm font-semibold" style={{ color: THEME.PRIMARY }}>
+                          Size / Length: {product.selectedSize} - {"\u00a3"}
+                          {Number(product.selectedSizePrice || product.price).toFixed(2)}
+                        </p>
+                      )}
 
                       <div className="flex items-center justify-between">
                         <div

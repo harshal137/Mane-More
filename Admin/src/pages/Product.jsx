@@ -11,10 +11,10 @@ const Product = () => {
 
   const fileInputRef = useRef(null);
 
-  const [product, setProduct] = useState({});
   const [inputs, setInputs] = useState({});
   const [existingImages, setExistingImages] = useState([]);
   const [newImages, setNewImages] = useState([]);
+  const [sizes, setSizes] = useState([]);
   const [uploading, setUploading] = useState("Ready");
 
   useEffect(() => {
@@ -22,7 +22,6 @@ const Product = () => {
       try {
         const res = await userRequest.get("/products/find/" + id);
 
-        setProduct(res.data);
         setInputs({
           title: res.data.title || "",
           desc: res.data.desc || "",
@@ -38,6 +37,14 @@ const Product = () => {
         });
 
         setExistingImages(Array.isArray(res.data.img) ? res.data.img : [res.data.img]);
+        setSizes(
+          Array.isArray(res.data.sizes)
+            ? res.data.sizes.map((size) => ({
+                label: size.label || "",
+                price: size.price ?? "",
+              }))
+            : []
+        );
       } catch (error) {
         console.log(error);
       }
@@ -75,6 +82,30 @@ const Product = () => {
   const removeNewImage = (index) => {
     setNewImages((prev) => prev.filter((_, i) => i !== index));
   };
+
+  const handleAddSize = () => {
+    setSizes((prev) => [...prev, { label: "", price: "" }]);
+  };
+
+  const handleSizeChange = (index, field, value) => {
+    setSizes((prev) =>
+      prev.map((size, sizeIndex) =>
+        sizeIndex === index ? { ...size, [field]: value } : size
+      )
+    );
+  };
+
+  const handleRemoveSize = (index) => {
+    setSizes((prev) => prev.filter((_, sizeIndex) => sizeIndex !== index));
+  };
+
+  const getValidSizes = () =>
+    sizes
+      .map((size) => ({
+        label: String(size.label || "").trim(),
+        price: Number(size.price),
+      }))
+      .filter((size) => size.label && !Number.isNaN(size.price));
 
   const uploadImagesToCloudinary = async () => {
     const uploadedUrls = [];
@@ -127,6 +158,7 @@ const Product = () => {
           .split(",")
           .map((item) => item.trim())
           .filter(Boolean),
+        sizes: getValidSizes(), // Hair extension length/price variants.
         img: [...existingImages, ...uploadedUrls],
       };
 
@@ -340,6 +372,69 @@ const Product = () => {
                 <p className="text-xs text-gray-500 mt-2">
                   Add multiple values separated by comma.
                 </p>
+              </div>
+
+              <div>
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-xl font-semibold text-gray-800">
+                    Product Sizes
+                  </h2>
+
+                  <button
+                    type="button"
+                    onClick={handleAddSize}
+                    className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-3 py-2 text-sm font-semibold text-white hover:bg-black"
+                  >
+                    <FaPlus className="text-xs" />
+                    Add Size
+                  </button>
+                </div>
+
+                {sizes.length === 0 ? (
+                  <p className="rounded-lg border border-dashed border-gray-300 p-4 text-sm text-gray-500">
+                    Add length-specific prices for hair extension products.
+                  </p>
+                ) : (
+                  <div className="space-y-3">
+                    {sizes.map((size, index) => (
+                      <div
+                        key={index}
+                        className="grid grid-cols-1 gap-3 rounded-lg border border-gray-200 p-3 md:grid-cols-[1fr_1fr_auto]"
+                      >
+                        <input
+                          type="text"
+                          value={size.label}
+                          onChange={(e) =>
+                            handleSizeChange(index, "label", e.target.value)
+                          }
+                          placeholder="Size / Length, e.g. 10"
+                          className="w-full p-3 border rounded-lg"
+                        />
+
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={size.price}
+                          onChange={(e) =>
+                            handleSizeChange(index, "price", e.target.value)
+                          }
+                          placeholder="Price, e.g. 17.99"
+                          className="w-full p-3 border rounded-lg"
+                        />
+
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveSize(index)}
+                          className="inline-flex items-center justify-center gap-2 rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50"
+                        >
+                          <FaTrash size={12} />
+                          Remove
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 

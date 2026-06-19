@@ -15,6 +15,7 @@ import bundleRoute from "./routes/bundle.routes.js";
 import paymentRoute from "./routes/payment.route.js"; // Add this line
 import uploadRoute from "./routes/upload.route.js"; // Add this line
 import shippingRoute from "./routes/shipping.route.js";
+import catalogOptionsRoute from "./routes/catalogOptions.route.js";
 import { serve } from "inngest/express";
 import { inngest } from "./inngest/client.js";
 import { functions } from "./inngest/index.js";
@@ -108,6 +109,7 @@ app.use("/api/v1/analytics", analyticsRoute);
 app.use("/api/v1/payments", paymentRoute) // Add this line
 app.use("/api/v1/upload", uploadRoute); // Add this line
 app.use("/api/v1/shipping", shippingRoute);
+app.use("/api/v1/catalog-options", catalogOptionsRoute);
 
 // Error middleware
 app.use(notFound);

@@ -1,7 +1,7 @@
 import { FaPlus, FaTrash, FaSearch, FaArrowLeft } from "react-icons/fa";
 import axios from "axios";
 import { userRequest } from "../requestMethods";
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 const NewProduct = () => {
@@ -9,8 +9,16 @@ const NewProduct = () => {
 
   const [selectedImages, setSelectedImages] = useState([]);
   const [inputs, setInputs] = useState({ items_per_box: 1 });
+  const [sizes, setSizes] = useState([]);
   const [uploading, setUploading] = useState("Ready to upload");
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [catalogOptions, setCatalogOptions] = useState({
+    categories: [],
+    brands: [],
+    brandsByCategory: {},
+    sizes: [],
+    typesByCategory: {},
+  });
 
   const [selectedOptions, setSelectedOptions] = useState({
     categories: [],
@@ -19,6 +27,7 @@ const NewProduct = () => {
   });
 
   const [searchTerms, setSearchTerms] = useState({
+    brand: "",
     categories: "",
     type: "",
     size: "",
@@ -26,69 +35,80 @@ const NewProduct = () => {
 
   const fileInputRef = useRef(null);
 
-  const productOptions = {
-    categories: [
-      "HairExtensions",
-      "HairCare",
-      "Beard & Shaving",
-      "SkinCare",
-    ],
+  useEffect(() => {
+    const fetchCatalogOptions = async () => {
+      try {
+        const res = await userRequest.get("/catalog-options");
+        setCatalogOptions({
+          categories: res.data.categories || [],
+          brands: res.data.brands || [],
+          brandsByCategory: res.data.brandsByCategory || {},
+          sizes: res.data.sizes || [],
+          typesByCategory: res.data.typesByCategory || {},
+        });
+      } catch (error) {
+        console.log("Fetch catalog options error:", error);
+      }
+    };
 
-    type: [
-      "Hair Wax",
-      "Hair Gel",
-      "Hair Spray",
-      "Hair Powder",
-      "Hair Mousse",
-      "Pomade",
-      "Hair Cream",
-      "Hair Tonic",
-      "Shampoo",
-      "Sea Salt Spray",
-      "Foam",
-      "Styling Cream",
-      "Hair Clay",
-      "Hair Paste",
-      "Hair Oil",
-      "Beard Oil",
-      "Beard Shampoo",
-      "Beard Conditioner",
-      "Beard Wax",
-      "Shaving Gel",
-      "Shaving Cream",
-      "Razor Blades",
-      "Aftershave",
-      "Bump Repair Spray",
-      "Cologne",
-      "Aftershave Cologne",
-      "Cream Cologne",
-      "Face Scrub",
-      "Face Tonic",
-      "Clay Mask",
-      "Coffee Scrub",
-      "Neck Strips",
-    ],
+    fetchCatalogOptions();
+  }, []);
 
-    size: [
-      "50ML",
-      "100ML",
-      "150ML",
-      "200ML",
-      "250ML",
-      "500ML",
-      "1L",
-      "Small",
-      "Medium",
-      "Large",
-    ],
+  const isHairExtensionCategory = (category) => {
+    const normalizedCategory = String(category).toLowerCase().replace(/\s+/g, "");
+    return (
+      normalizedCategory === "hairextension" ||
+      normalizedCategory === "hairextensions" ||
+      normalizedCategory === "extension" ||
+      normalizedCategory.includes("extension")
+    );
+  };
+
+  const showProductSizes = selectedOptions.categories.some(isHairExtensionCategory);
+  const classificationFields = showProductSizes
+    ? ["categories", "type"]
+    : ["categories", "type", "size"];
+
+  const getTypeOptionsForCategories = (categories) => {
+    const categoryTypes = categories.flatMap(
+      (category) => catalogOptions.typesByCategory[category] || []
+    );
+
+    return [...new Set(categoryTypes)];
+  };
+
+  const getBrandOptionsForCategories = (categories) => {
+    const categoryBrands = categories.flatMap(
+      (category) => catalogOptions.brandsByCategory[category] || []
+    );
+
+    return categoryBrands.length
+      ? [...new Set(categoryBrands)]
+      : catalogOptions.brands;
+  };
+
+  const getOptionsForField = (field) => {
+    if (field === "brand") {
+      return getBrandOptionsForCategories(selectedOptions.categories);
+    }
+
+    if (field === "type") {
+      return getTypeOptionsForCategories(selectedOptions.categories);
+    }
+
+    if (field === "categories") return catalogOptions.categories;
+    if (field === "size") return catalogOptions.sizes;
+
+    return [];
   };
 
   const getFilteredOptions = (field) => {
     const searchTerm = searchTerms[field].toLowerCase();
+    const options = getOptionsForField(field);
 
-    if (!searchTerm) return productOptions[field];
+    if (!searchTerm) return options;
 
-    return productOptions[field].filter((option) =>
+    return options.filter((option) =>
       option.toLowerCase().includes(searchTerm)
     );
   };
@@ -197,6 +217,16 @@ const NewProduct = () => {
       setSelectedOptions((prev) => ({
         ...prev,
         [field]: [...prev[field], value],
+        ...(field === "categories"
+          ? {
+              type: prev.type.filter((type) =>
+                getTypeOptionsForCategories([...prev.categories, value]).includes(type)
+              ),
+              size: [...prev.categories, value].some(isHairExtensionCategory)
+                ? []
+                : prev.size,
+            }
+          : {}),
       }));
     }
 
@@ -212,8 +242,64 @@ const NewProduct = () => {
     setSelectedOptions((prev) => ({
       ...prev,
       [field]: prev[field].filter((option) => option !== value),
+      ...(field === "categories"
+        ? {
+            type: prev.type.filter((type) =>
+              getTypeOptionsForCategories(
+                prev.categories.filter((option) => option !== value)
+              ).includes(type)
+            ),
+            size: prev.categories
+              .filter((option) => option !== value)
+              .some(isHairExtensionCategory)
+              ? []
+              : prev.size,
+          }
+        : {}),
     }));
+
+    if (field === "categories" && isHairExtensionCategory(value)) {
+      setSizes([]);
+    }
   };
+
+  const handleBrandSelect = (brand) => {
+    setInputs((prev) => ({
+      ...prev,
+      brand,
+    }));
+
+    setSearchTerms((prev) => ({
+      ...prev,
+      brand: "",
+    }));
+
+    setOpenDropdown(null);
+  };
+
+  const handleAddSize = () => {
+    setSizes((prev) => [...prev, { label: "", price: "" }]);
+  };
+
+  const handleSizeChange = (index, field, value) => {
+    setSizes((prev) =>
+      prev.map((size, sizeIndex) =>
+        sizeIndex === index ? { ...size, [field]: value } : size
+      )
+    );
+  };
+
+  const handleRemoveSize = (index) => {
+    setSizes((prev) => prev.filter((_, sizeIndex) => sizeIndex !== index));
+  };
+
+  const getValidSizes = () =>
+    sizes
+      .map((size) => ({
+        label: String(size.label || "").trim(),
+        price: Number(size.price),
+      }))
+      .filter((size) => size.label && !Number.isNaN(size.price));
 
   const handleUpload = async (e) => {
     e.preventDefault();
@@ -274,7 +360,8 @@ const NewProduct = () => {
           : 1,
         stock: inputs.stock ? Number(inputs.stock) : 0,
         type: selectedOptions.type,
-        size: selectedOptions.size,
+        size: showProductSizes ? [] : selectedOptions.size,
+        sizes: showProductSizes ? getValidSizes() : [], // Hair extension length/price variants.
         ratings: [],
       };
 
@@ -284,12 +371,14 @@ const NewProduct = () => {
 
       setSelectedImages([]);
       setInputs({});
+      setSizes([]);
       setSelectedOptions({
         categories: [],
         type: [],
         size: [],
       });
       setSearchTerms({
+        brand: "",
         categories: "",
         type: "",
         size: "",
@@ -502,17 +591,66 @@ const NewProduct = () => {
                   <label className="block text-sm font-medium text-gray-600 mb-2">
                     Brand
                   </label>
-                  <input
-                    type="text"
-                    name="brand"
-                    value={inputs.brand || ""}
-                    onChange={handleChange}
-                    placeholder="Enter brand name"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
+
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setOpenDropdown(openDropdown === "brand" ? null : "brand")
+                      }
+                      className="w-full text-left px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50"
+                    >
+                      {inputs.brand || "Select brand"}
+                    </button>
+
+                    {openDropdown === "brand" && (
+                      <div className="absolute left-0 right-0 top-full z-50 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl max-h-56 overflow-y-auto">
+                        <div className="relative border-b border-gray-100">
+                          <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                          <input
+                            type="text"
+                            placeholder="Search brand"
+                            value={searchTerms.brand}
+                            onChange={(e) =>
+                              handleSearchChange("brand", e.target.value)
+                            }
+                            className="w-full pl-10 pr-4 py-2 outline-none rounded-t-lg"
+                          />
+                        </div>
+
+                        {getFilteredOptions("brand").map((brand) => (
+                          <div
+                            key={brand}
+                            onClick={() => handleBrandSelect(brand)}
+                            className="px-4 py-2 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                          >
+                            {brand}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {inputs.brand && (
+                    <div className="mt-2">
+                      <span className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                        {inputs.brand}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setInputs((prev) => ({ ...prev, brand: "" }))
+                          }
+                          className="text-blue-600 hover:text-blue-900"
+                        >
+                          <FaTrash className="text-xs" />
+                        </button>
+                      </span>
+                    </div>
+                  )}
+
                 </div>
 
-                {["categories", "type", "size"].map((field) => (
+                {classificationFields.map((field) => (
                   <div key={field} className="relative">
                     <label className="block text-sm font-medium text-gray-600 mb-2 capitalize">
                       {field}
@@ -523,12 +661,15 @@ const NewProduct = () => {
 
                     <button
                       type="button"
+                      disabled={field === "type" && selectedOptions.categories.length === 0}
                       onClick={() =>
                         setOpenDropdown(openDropdown === field ? null : field)
                       }
-                      className="w-full text-left px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50"
+                      className="w-full text-left px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
                     >
-                      Select {field}
+                      {field === "type" && selectedOptions.categories.length === 0
+                        ? "Select category first"
+                        : `Select ${field}`}
                     </button>
 
                     {openDropdown === field && (
@@ -575,6 +716,76 @@ const NewProduct = () => {
                     </div>
                   </div>
                 ))}
+
+                {showProductSizes && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-600">
+                          Product Sizes
+                        </h3>
+                        <p className="text-xs text-gray-500">
+                          Length-specific prices for hair extension products.
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={handleAddSize}
+                        className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-3 py-2 text-sm font-semibold text-white hover:bg-black"
+                      >
+                        <FaPlus className="text-xs" />
+                        Add Size
+                      </button>
+                    </div>
+
+                    {sizes.length === 0 ? (
+                      <p className="rounded-lg border border-dashed border-gray-300 p-4 text-sm text-gray-500">
+                        Add size rows instead of using the standard size dropdown.
+                      </p>
+                    ) : (
+                      <div className="space-y-3">
+                        {sizes.map((size, index) => (
+                          <div
+                            key={index}
+                            className="grid grid-cols-1 gap-3 rounded-lg border border-gray-200 p-3 sm:grid-cols-[1fr_1fr_auto]"
+                          >
+                            <input
+                              type="text"
+                              value={size.label}
+                              onChange={(e) =>
+                                handleSizeChange(index, "label", e.target.value)
+                              }
+                              placeholder="Size / Length, e.g. 10"
+                              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                            />
+
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={size.price}
+                              onChange={(e) =>
+                                handleSizeChange(index, "price", e.target.value)
+                              }
+                              placeholder="Price, e.g. 17.99"
+                              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                            />
+
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveSize(index)}
+                              className="inline-flex items-center justify-center gap-2 rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50"
+                            >
+                              <FaTrash className="text-xs" />
+                              Remove
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               <button

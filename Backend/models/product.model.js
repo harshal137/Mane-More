@@ -39,6 +39,16 @@ const ProductSchema = mongoose.Schema({
     type: [String], // Changed to array for multiple sizes
     default: [],
   },
+  sizes: {
+    type: [
+      {
+        label: { type: String, required: true },
+        price: { type: Number, required: true },
+        stock: { type: Number },
+      },
+    ],
+    default: [], // Hair extension length/price variants; legacy products keep normal pricing.
+  },
   stock: {
     type: Number,
     default: 20,

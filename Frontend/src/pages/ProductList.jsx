@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import Products from "../components/Products";
 import { useEffect, useState } from "react";
+import { userRequest } from "../requestMethods";
 
 const THEME = {
   BG: "#F8F5F1",
@@ -15,46 +16,6 @@ const THEME = {
   SOFT_GREEN: "#E8F1D8",
 };
 
-const typeOptionsByCategory = {
-  hairextensions: [
-    "Clip-In Extensions",
-    "Tape-In Extensions",
-    "Weft Extensions",
-    "Ponytail Extensions",
-    "Hair Bundles",
-  ],
-  haircare: [
-    "Hair Wax",
-    "Hair Gel",
-    "Hair Spray",
-    "Hair Powder",
-    "Hair Mousse",
-    "Pomade",
-    "Hair Cream",
-    "Hair Tonic",
-    "Shampoo",
-    "Sea Salt Spray",
-    "Foam",
-    "Styling Cream",
-    "Hair Clay",
-    "Hair Paste",
-    "Hair Oil",
-  ],
-  beardshaving: [
-    "Beard Oil",
-    "Beard Shampoo",
-    "Beard Conditioner",
-    "Beard Wax",
-    "Shaving Gel",
-    "Shaving Cream",
-    "Razor Blades",
-    "Aftershave",
-    "Bump Repair Spray",
-    "Neck Strips",
-  ],
-  skincare: ["Face Scrub", "Face Tonic", "Clay Mask", "Coffee Scrub"],
-};
-
 const normalizeCategoryKey = (value) =>
   value
     .toString()
@@ -63,71 +24,74 @@ const normalizeCategoryKey = (value) =>
     .replace(/[^a-z0-9]+/g, "_")
     .replace(/(^_|_$)/g, "");
 
-const defaultTypeOptions = [
-  "Hair Wax",
-  "Hair Gel",
-  "Hair Spray",
-  "Hair Powder",
-  "Hair Mousse",
-  "Pomade",
-  "Hair Cream",
-  "Hair Tonic",
-  "Shampoo",
-  "Sea Salt Spray",
-  "Foam",
-  "Styling Cream",
-  "Hair Clay",
-  "Hair Paste",
-  "Hair Oil",
-  "Clip-In Extensions",
-  "Tape-In Extensions",
-  "Weft Extensions",
-  "Ponytail Extensions",
-  "Hair Bundles",
-  "Beard Oil",
-  "Beard Shampoo",
-  "Beard Conditioner",
-  "Beard Wax",
-  "Shaving Gel",
-  "Shaving Cream",
-  "Razor Blades",
-  "Aftershave",
-  "Bump Repair Spray",
-  "Face Scrub",
-  "Face Tonic",
-  "Clay Mask",
-  "Coffee Scrub",
-  "Neck Strips",
-];
+const slugifyCategory = (category) =>
+  category.toLowerCase().replace(/&/g, " ").replace(/[^a-z0-9]+/g, "");
 
-const brandOptions = [
-  "Redone",
-  "Gummy",
-  "Astra",
-  "Derby",
-  "Dorco",
-  "Permasharp",
-];
-
-// Convert navbar URL category into exact DB category value
-const categoryMap = {
+const fallbackCategoryMap = {
+  hairextension: "HairExtensions",
   hairextensions: "HairExtensions",
+  extension: "HairExtensions",
+  extensions: "HairExtensions",
   haircare: "HairCare",
   beardshaving: "Beard & Shaving",
   skincare: "SkinCare",
+  skincareproducts: "SkinCare",
+  skincares: "SkinCare",
 };
 
 const ProductList = () => {
   const { searchterm } = useParams();
   const [filters, setFilters] = useState({});
   const [sort, setSort] = useState("newest");
+  const [catalogOptions, setCatalogOptions] = useState({
+    categories: [],
+    brands: [],
+    brandsByCategory: {},
+    typesByCategory: {},
+  });
+
+  useEffect(() => {
+    const fetchCatalogOptions = async () => {
+      try {
+        const res = await userRequest.get("/catalog-options");
+        setCatalogOptions({
+          categories: res.data.categories || [],
+          brands: res.data.brands || [],
+          brandsByCategory: res.data.brandsByCategory || {},
+          typesByCategory: res.data.typesByCategory || {},
+        });
+      } catch (error) {
+        console.log("Could not load product filters:", error);
+      }
+    };
+
+    fetchCatalogOptions();
+  }, []);
+
+  const categoryMap = catalogOptions.categories.reduce(
+    (map, category) => {
+      map[slugifyCategory(category)] = category;
+      return map;
+    },
+    { ...fallbackCategoryMap }
+  );
 
   const dbCategory = searchterm ? categoryMap[searchterm.toLowerCase()] : "";
 
   const selectedCategory = searchterm ? normalizeCategoryKey(searchterm) : "";
+  const selectedCategoryName = searchterm
+    ? categoryMap[searchterm.toLowerCase()]
+    : "";
+  const defaultTypeOptions = [
+    ...new Set(Object.values(catalogOptions.typesByCategory).flat()),
+  ];
   const selectedTypeOptions = searchterm
-    ? typeOptionsByCategory[selectedCategory] || []
+    ? catalogOptions.typesByCategory[selectedCategoryName] || []
     : defaultTypeOptions;
+  const selectedBrandOptions =
+    searchterm && selectedCategoryName
+      ? catalogOptions.brandsByCategory[selectedCategoryName] || catalogOptions.brands
+      : catalogOptions.brands;
 
   useEffect(() => {
     setFilters((prevFilters) => ({
@@ -235,7 +199,7 @@ const ProductList = () => {
                 >
                   <option value="">All Brands</option>
 
-                  {brandOptions.map((brand) => (
+                  {selectedBrandOptions.map((brand) => (
                     <option key={brand} value={brand}>
                       {brand}
                     </option>

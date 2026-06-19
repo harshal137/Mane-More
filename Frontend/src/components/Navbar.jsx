@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { trackButtonClick, trackUserAction } from "../utils/analytics";
 import { logOut } from "../redux/userRedux";
+import { userRequest } from "../requestMethods";
 import {
   FaSearch,
   FaUser,
@@ -23,10 +24,19 @@ const THEME = {
   SEARCH_BORDER: "#ECEAE6",
 };
 
+const slugifyCategory = (category) =>
+  category.toLowerCase().replace(/&/g, " ").replace(/[^a-z0-9]+/g, "");
+
 const Navbar = () => {
   const [search, setSearch] = useState("");
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [navItems, setNavItems] = useState([
+    { key: "HairExtensions", to: "/products/hairextensions" },
+    { key: "HairCare", to: "/products/haircare" },
+    { key: "Beard & Shaving", to: "/products/beardshaving" },
+    { key: "SkinCare", to: "/products/skincare" },
+  ]);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -36,12 +46,27 @@ const Navbar = () => {
   const user = useSelector((s) => s.user || {});
   const wishlist = useSelector((s) => s.wishlist || { products: [] });
 
-  const navItems = [
-    { key: "HairExtensions", to: "/products/hairextensions" },
-    { key: "HairCare", to: "/products/haircare" },
-    { key: "Beard & Shaving", to: "/products/beardshaving" },
-    { key: "SkinCare", to: "/products/skincare" },
-  ];
+  useEffect(() => {
+    const fetchCatalogOptions = async () => {
+      try {
+        const res = await userRequest.get("/catalog-options");
+        const categories = (res.data.categories || []).slice(0, 5);
+
+        if (categories.length) {
+          setNavItems(
+            categories.map((category) => ({
+              key: category,
+              to: `/products/${slugifyCategory(category)}`,
+            }))
+          );
+        }
+      } catch (error) {
+        console.log("Could not load navbar categories:", error);
+      }
+    };
+
+    fetchCatalogOptions();
+  }, []);
 
   const userName =
     user?.currentUser?.name || user?.currentUser?.username || "Account";

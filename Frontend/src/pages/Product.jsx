@@ -18,7 +18,7 @@ import {
 } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import { userRequest } from "../requestMethods";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -36,12 +36,12 @@ const Product = () => {
 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
-  const cart = useSelector((state) => state.cart);
   const wishlist = useSelector((state) => state.wishlist.products);
 
   const [product, setProduct] = useState({});
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [selectedSize, setSelectedSize] = useState(null);
   const [autoSlide, setAutoSlide] = useState(true);
   const [isHovering, setIsHovering] = useState(false);
 
@@ -76,6 +76,40 @@ const Product = () => {
 
   let price;
 
+  const formatPrice = (value) => `\u00a3${Number(value || 0).toFixed(2)}`;
+
+  const isHairExtensionProduct = useMemo(
+    () =>
+      (product.categories || []).some((category) => {
+        const normalizedCategory = String(category)
+          .toLowerCase()
+          .replace(/\s+/g, "");
+
+        return (
+          normalizedCategory === "hairextension" ||
+          normalizedCategory === "hairextensions" ||
+          normalizedCategory === "extension" ||
+          normalizedCategory.includes("extension")
+        );
+      }),
+    [product.categories]
+  );
+
+  const availableSizes = useMemo(
+    () =>
+      Array.isArray(product.sizes)
+        ? product.sizes.filter(
+            (size) =>
+              size?.label &&
+              size.price !== undefined &&
+              !Number.isNaN(Number(size.price))
+          )
+        : [],
+    [product.sizes]
+  );
+
+  const shouldShowSizeSelect = isHairExtensionProduct && availableSizes.length > 0;
+
   // Backend API base used to build image URLs
   const API_BASE =
     import.meta.env.VITE_API_URL || "http://localhost:4000/api/v1";
@@ -109,6 +143,21 @@ const Product = () => {
 
     getProduct();
   }, [id]);
+
+  useEffect(() => {
+    // Default hair extension products to the first saved size option.
+    if (shouldShowSizeSelect) {
+      setSelectedSize((currentSize) => {
+        const stillExists = availableSizes.some(
+          (size) => size.label === currentSize?.label
+        );
+
+        return stillExists ? currentSize : availableSizes[0];
+      });
+    } else {
+      setSelectedSize(null);
+    }
+  }, [availableSizes, shouldShowSizeSelect, product._id]);
 
   // Convert backend image paths into usable browser image URLs
   const productImages = (product.img || []).map((img) => {
@@ -210,12 +259,22 @@ const Product = () => {
     quantity
   );
 
+  const displayPrice = shouldShowSizeSelect && selectedSize
+    ? Number(selectedSize.price)
+    : currentPrice;
+
+  const displayStock = shouldShowSizeSelect && selectedSize?.stock !== undefined
+    ? Number(selectedSize.stock)
+    : Number(product.stock || 0);
+
   const handleAddToCart = () => {
     dispatch(
       addProduct({
         ...product,
         quantity,
-        price: currentPrice,
+        price: displayPrice,
+        selectedSize: selectedSize?.label || null,
+        selectedSizePrice: selectedSize ? Number(selectedSize.price) : null,
         email: user.currentUser?.email || "guest@gmail.com",
       })
     );
@@ -228,7 +287,9 @@ const Product = () => {
       addProduct({
         ...product,
         quantity,
-        price: currentPrice,
+        price: displayPrice,
+        selectedSize: selectedSize?.label || null,
+        selectedSizePrice: selectedSize ? Number(selectedSize.price) : null,
         email: user.currentUser?.email || "guest@gmail.com",
       })
     );
@@ -438,28 +499,57 @@ const Product = () => {
 
             <p className="text-gray-700 leading-7 mb-6">{product.desc}</p>
 
+            {shouldShowSizeSelect && (
+              <div className="mb-5">
+                <label
+                  htmlFor="hair-extension-size"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
+                  Size / Length
+                </label>
+
+                <select
+                  id="hair-extension-size"
+                  value={selectedSize?.label || ""}
+                  onChange={(e) => {
+                    const size = availableSizes.find(
+                      (item) => item.label === e.target.value
+                    );
+                    setSelectedSize(size || null);
+                  }}
+                  className="w-full md:max-w-md rounded-md border border-gray-200 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-black focus:ring-2 focus:ring-black/10"
+                >
+                  {availableSizes.map((size) => (
+                    <option key={size.label} value={size.label}>
+                      {size.label} - {formatPrice(size.price)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             {/* Price */}
             <div className="flex items-center gap-4 mb-5">
               <span className="text-4xl font-bold text-red-600">
-                 £ {currentPrice}
+                {formatPrice(displayPrice)}
               </span>
 
-              {product.discountedPrice && product.originalPrice && (
+              {!shouldShowSizeSelect && product.discountedPrice && product.originalPrice && (
                 <span className="text-xl text-gray-400 line-through">
-                  £ {product.originalPrice}
+                  {formatPrice(product.originalPrice)}
                 </span>
               )}
             </div>
 
-            {product.stock > 5 ? (
+            {displayStock > 5 ? (
               <p className="text-green-700 font-semibold flex items-center gap-2 mb-3">
                 <FaCheck />
                 In Stock
               </p>
-            ) : product.stock > 0 ? (
+            ) : displayStock > 0 ? (
               <p className="text-amber-600 font-semibold flex items-center gap-2 mb-3">
                 <FaExclamationTriangle />
-                Only {product.stock} left in stock
+                Only {displayStock} left in stock
               </p>
             ) : (
               <p className="text-red-600 font-semibold flex items-center gap-2 mb-3">
@@ -494,7 +584,7 @@ const Product = () => {
 
             {/* Buttons */}
             <button
-              disabled={product.stock === 0}
+              disabled={displayStock === 0}
               onClick={handleAddToCart}
               className="w-full bg-black text-white py-4 rounded-md font-bold flex items-center justify-center gap-3 mb-4 hover:bg-gray-900"
             >
@@ -502,7 +592,7 @@ const Product = () => {
             </button>
 
             <button
-              disabled={product.stock === 0}
+              disabled={displayStock === 0}
               onClick={handleBuyNow}
               className="w-full bg-orange-600 text-white py-4 rounded-md font-bold mb-6 hover:bg-orange-700"
             >
