@@ -66,8 +66,8 @@ const NewProduct = () => {
 
   const showProductSizes = selectedOptions.categories.some(isHairExtensionCategory);
   const classificationFields = showProductSizes
-    ? ["categories", "type"]
-    : ["categories", "type", "size"];
+    ? ["type"]
+    : ["type", "size"];
 
   const getTypeOptionsForCategories = (categories) => {
     const categoryTypes = categories.flatMap(
@@ -214,6 +214,9 @@ const NewProduct = () => {
 
   const handleSelectChange = (field, value) => {
     if (value && !selectedOptions[field].includes(value)) {
+      const nextCategories =
+        field === "categories" ? [...selectedOptions.categories, value] : selectedOptions.categories;
+
       setSelectedOptions((prev) => ({
         ...prev,
         [field]: [...prev[field], value],
@@ -228,6 +231,14 @@ const NewProduct = () => {
             }
           : {}),
       }));
+
+      if (
+        field === "categories" &&
+        inputs.brand &&
+        !getBrandOptionsForCategories(nextCategories).includes(inputs.brand)
+      ) {
+        setInputs((prev) => ({ ...prev, brand: "" }));
+      }
     }
 
     setSearchTerms((prev) => ({
@@ -239,6 +250,11 @@ const NewProduct = () => {
   };
 
   const handleRemoveOption = (field, value) => {
+    const nextCategories =
+      field === "categories"
+        ? selectedOptions.categories.filter((option) => option !== value)
+        : selectedOptions.categories;
+
     setSelectedOptions((prev) => ({
       ...prev,
       [field]: prev[field].filter((option) => option !== value),
@@ -260,6 +276,14 @@ const NewProduct = () => {
 
     if (field === "categories" && isHairExtensionCategory(value)) {
       setSizes([]);
+    }
+
+    if (
+      field === "categories" &&
+      inputs.brand &&
+      !getBrandOptionsForCategories(nextCategories).includes(inputs.brand)
+    ) {
+      setInputs((prev) => ({ ...prev, brand: "" }));
     }
   };
 
@@ -388,6 +412,73 @@ const NewProduct = () => {
       setUploading("Upload failed. Please try again.");
     }
   };
+
+  const renderClassificationField = (field) => (
+    <div key={field} className="relative">
+      <label className="block text-sm font-medium text-gray-600 mb-2 capitalize">
+        {field}
+        <span className="text-xs text-gray-500 ml-1">
+          ({selectedOptions[field].length} selected)
+        </span>
+      </label>
+
+      <button
+        type="button"
+        disabled={field === "type" && selectedOptions.categories.length === 0}
+        onClick={() =>
+          setOpenDropdown(openDropdown === field ? null : field)
+        }
+        className="w-full text-left px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
+      >
+        {field === "type" && selectedOptions.categories.length === 0
+          ? "Select category first"
+          : `Select ${field}`}
+      </button>
+
+      {openDropdown === field && (
+        <div className="absolute left-0 right-0 top-full z-50 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl max-h-48 overflow-y-auto">
+          <div className="relative border-b border-gray-100">
+            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder={`Search ${field}`}
+              value={searchTerms[field]}
+              onChange={(e) => handleSearchChange(field, e.target.value)}
+              className="w-full pl-10 pr-4 py-2 outline-none rounded-t-lg"
+            />
+          </div>
+
+          {getFilteredOptions(field).map((option) => (
+            <div
+              key={option}
+              onClick={() => handleSelectChange(field, option)}
+              className="px-4 py-2 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+            >
+              {option}
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="flex flex-wrap gap-2 mt-2">
+        {selectedOptions[field].map((option) => (
+          <span
+            key={option}
+            className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+          >
+            {option}
+            <button
+              type="button"
+              onClick={() => handleRemoveOption(field, option)}
+              className="text-blue-600 hover:text-blue-900"
+            >
+              <FaTrash className="text-xs" />
+            </button>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
@@ -587,6 +678,8 @@ const NewProduct = () => {
                   Product Classification
                 </h2>
 
+                {renderClassificationField("categories")}
+
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-2">
                     Brand
@@ -650,72 +743,7 @@ const NewProduct = () => {
 
                 </div>
 
-                {classificationFields.map((field) => (
-                  <div key={field} className="relative">
-                    <label className="block text-sm font-medium text-gray-600 mb-2 capitalize">
-                      {field}
-                      <span className="text-xs text-gray-500 ml-1">
-                        ({selectedOptions[field].length} selected)
-                      </span>
-                    </label>
-
-                    <button
-                      type="button"
-                      disabled={field === "type" && selectedOptions.categories.length === 0}
-                      onClick={() =>
-                        setOpenDropdown(openDropdown === field ? null : field)
-                      }
-                      className="w-full text-left px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
-                    >
-                      {field === "type" && selectedOptions.categories.length === 0
-                        ? "Select category first"
-                        : `Select ${field}`}
-                    </button>
-
-                    {openDropdown === field && (
-                      <div className="absolute left-0 right-0 top-full z-50 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl max-h-48 overflow-y-auto">
-                        <div className="relative border-b border-gray-100">
-                          <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                          <input
-                            type="text"
-                            placeholder={`Search ${field}`}
-                            value={searchTerms[field]}
-                            onChange={(e) => handleSearchChange(field, e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 outline-none rounded-t-lg"
-                          />
-                        </div>
-
-                        {getFilteredOptions(field).map((option) => (
-                          <div
-                            key={option}
-                            onClick={() => handleSelectChange(field, option)}
-                            className="px-4 py-2 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0"
-                          >
-                            {option}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {selectedOptions[field].map((option) => (
-                        <span
-                          key={option}
-                          className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
-                        >
-                          {option}
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveOption(field, option)}
-                            className="text-blue-600 hover:text-blue-900"
-                          >
-                            <FaTrash className="text-xs" />
-                          </button>
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+                {classificationFields.map((field) => renderClassificationField(field))}
 
                 {showProductSizes && (
                   <div className="space-y-4">

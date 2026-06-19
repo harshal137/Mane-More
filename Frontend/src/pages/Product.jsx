@@ -385,10 +385,18 @@ const Product = () => {
     ratings.filter((item) => Number(item.star) === star).length;
 
   return (
-    <div className="min-h-screen bg-[#faf8f5] pt-24 pb-10 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#faf8f5] pt-4 pb-10 px-4 sm:px-6 lg:px-8">
       <ToastContainer position="top-right" autoClose={3000} theme="light" />
 
-      <div className="max-w-7xl mx-auto space-y-4">
+      <div className="max-w-7xl mx-auto space-y-2">
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50"
+        >
+          <FaChevronLeft />
+          Back
+        </button>
 
 
         {/* Main Product Section */}
