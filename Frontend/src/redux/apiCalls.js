@@ -1,6 +1,7 @@
 import { userRequest } from "../requestMethods";
 import { loginFailure, loginStart, loginSuccess } from "./userRedux"
 
+/** Authenticates a user and updates the Redux authentication state. */
 export const login = async (dispatch, user) =>{
 
     dispatch(loginStart());

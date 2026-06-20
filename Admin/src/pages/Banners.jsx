@@ -137,21 +137,11 @@ const Banners = () => {
 
       setUploading("Creating banner...");
       
-      // Debug: Check if userRequest is properly configured
-      console.log("Creating banner with data:", { 
+      await userRequest.post("/banners", {
         img: url, 
         title: title.trim(), 
         subtitle: subtitle.trim() 
       });
-
-      // Try with explicit headers to ensure authentication
-      const response = await userRequest.post("/banners", { 
-        img: url, 
-        title: title.trim(), 
-        subtitle: subtitle.trim() 
-      });
-
-      console.log("Banner creation response:", response);
 
       setUploading("Banner created successfully with WebP image!");
       

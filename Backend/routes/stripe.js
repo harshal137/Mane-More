@@ -270,7 +270,21 @@ const buildOrderSnapshotFromCart = async (cartProducts = []) => {
     }
 
     const quantity = Math.max(Number(item.quantity || 1), 1);
-    const price = Number(dbProduct.price || dbProduct.discountedPrice || dbProduct.originalPrice || 0);
+    const requestedSize = String(item.selectedSize || "").trim();
+    const sizeOptions = Array.isArray(dbProduct.sizes) ? dbProduct.sizes : [];
+    const selectedSize = requestedSize
+      ? sizeOptions.find((size) => size.label === requestedSize)
+      : sizeOptions.find((size) => size?.label && !Number.isNaN(Number(size.price)));
+
+    if (requestedSize && !selectedSize) {
+      const error = new Error(`Selected size is no longer available for ${dbProduct.title}`);
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const price = Number(
+      selectedSize?.price ?? dbProduct.price ?? dbProduct.discountedPrice ?? dbProduct.originalPrice ?? 0
+    );
 
     amount += price * quantity;
     totalQuantity += quantity;
@@ -280,6 +294,7 @@ const buildOrderSnapshotFromCart = async (cartProducts = []) => {
       title: dbProduct.title,
       quantity,
       price,
+      selectedSize: selectedSize?.label || "",
       img: Array.isArray(dbProduct.img) ? dbProduct.img[0] : dbProduct.img || "",
       desc: dbProduct.desc || "",
     };

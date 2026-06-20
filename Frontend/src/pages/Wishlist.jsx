@@ -15,6 +15,7 @@ const THEME = {
   SOFT_GREEN: "#E8F1D8",
 };
 
+/** Displays and manages the customer's saved product wishlist. */
 const Wishlist = () => {
   const dispatch = useDispatch();
   const wishlist = useSelector((state) => state.wishlist.products);

@@ -1,5 +1,6 @@
 import { Typewriter } from "react-simple-typewriter";
 
+/** Renders the storefront announcement strip. */
 const Announcement = () => {
   return (
     <div className="flex items-center justify-center bg-[#e9acd9] text-white text-[18px] font-semibold h-[30px]">

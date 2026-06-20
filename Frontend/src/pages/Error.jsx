@@ -13,6 +13,7 @@ const THEME = {
   SOFT_GREEN: "#E8F1D8",
 };
 
+/** Renders the storefront fallback page for unmatched routes. */
 const Error = () => {
   return (
     <div

@@ -185,7 +185,6 @@ const CreateBundle = () => {
         setProducts(res.data);
         setFilteredProducts(res.data);
       } catch (error) {
-        console.log("Error fetching products:", error);
         showNotification("Failed to load products", "error");
       } finally {
         setIsLoading(false);

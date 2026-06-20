@@ -47,7 +47,6 @@ const NewProduct = () => {
           typesByCategory: res.data.typesByCategory || {},
         });
       } catch (error) {
-        console.log("Fetch catalog options error:", error);
       }
     };
 
@@ -373,12 +372,14 @@ const NewProduct = () => {
         video: inputs.video || "",
         categories: selectedOptions.categories,
         brand: inputs.brand || "",
-        originalPrice: inputs.originalPrice
-          ? Number(inputs.originalPrice)
-          : undefined,
-        discountedPrice: inputs.discountedPrice
-          ? Number(inputs.discountedPrice)
-          : undefined,
+        ...(!showProductSizes && {
+          originalPrice: inputs.originalPrice
+            ? Number(inputs.originalPrice)
+            : undefined,
+          discountedPrice: inputs.discountedPrice
+            ? Number(inputs.discountedPrice)
+            : undefined,
+        }),
         items_per_box: inputs.items_per_box
           ? Number(inputs.items_per_box)
           : 1,
@@ -613,6 +614,7 @@ const NewProduct = () => {
                   Price & Box Details
                 </h2>
 
+                {!showProductSizes ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-600 mb-2">
@@ -642,6 +644,11 @@ const NewProduct = () => {
                     />
                   </div>
                 </div>
+                ) : (
+                  <p className="text-sm text-gray-500">
+                    Hair extension prices are set by length below.
+                  </p>
+                )}
 
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-2">

@@ -32,7 +32,6 @@ const Orders = () => {
       const res = await userRequest.get("/orders");
       setOrders(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
-      console.log("Fetch orders error:", error);
       setOrders([]);
     } finally {
       setLoading(false);

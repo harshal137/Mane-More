@@ -26,6 +26,7 @@ const THEME = {
   SOFT_GREEN: "#E8F1D8",
 };
 
+/** Lets an authenticated customer manage their profile and password. */
 const Myaccount = () => {
   const user = useSelector((state) => state.user);
   const currentUser = user.currentUser;
@@ -66,7 +67,6 @@ const Myaccount = () => {
     try {
       await userRequest.post("/auth/logout");
     } catch (error) {
-      console.log(error);
     } finally {
       dispatch(logOut());
       localStorage.removeItem("currentUser");
@@ -516,6 +516,7 @@ const Myaccount = () => {
   );
 };
 
+/** Renders a consistently styled profile form field. */
 const ProfileInput = ({
   label,
   name,
@@ -554,6 +555,7 @@ const ProfileInput = ({
   </div>
 );
 
+/** Renders a password field with optional visibility control. */
 const PasswordInput = ({
   label,
   name,

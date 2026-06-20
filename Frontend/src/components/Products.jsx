@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { userRequest } from "../requestMethods";
 import { Link } from "react-router-dom";
 
+/** Fetches, filters, and paginates the storefront product collection. */
 const Products = ({ filters, sort, category, query }) => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -54,7 +55,6 @@ const Products = ({ filters, sort, category, query }) => {
       setFilteredProducts(res.data);
       setHasMore(res.data.length === 32);
     } catch (error) {
-      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -91,7 +91,6 @@ const loadMoreProducts = async () => {
     setPage(nextPage);
     setHasMore(newProducts.length === 32);
   } catch (error) {
-    console.log(error);
   } finally {
     setIsLoadingMore(false);
   }

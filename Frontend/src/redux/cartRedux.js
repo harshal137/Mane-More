@@ -1,6 +1,7 @@
 // In your cartRedux.js file
 import { createSlice } from "@reduxjs/toolkit";
 
+/** Recalculates cart totals after a product or quantity changes. */
 const recalculateCart = (state) => {
   // Badge count = unique products only
   state.quantity = state.products.length;
@@ -12,6 +13,7 @@ const recalculateCart = (state) => {
   );
 };
 
+/** Matches cart lines by product and selected extension length. */
 const isSameCartItem = (item, payload) =>
   item._id === payload._id &&
   (item.selectedSize || null) === (payload.selectedSize || null);

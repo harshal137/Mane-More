@@ -43,6 +43,7 @@ const CANCELLATION_REASONS = [
   "Other",
 ];
 
+/** Displays customer order history, status, and cancellation actions. */
 const Order = () => {
   const user = useSelector((state) => state.user);
   const [orders, setOrders] = useState([]);
@@ -61,7 +62,6 @@ const Order = () => {
       const res = await userRequest.get(`/orders/find/${user.currentUser._id}`);
       setOrders(res.data);
     } catch (error) {
-      console.log(error);
     }
   }, [user.currentUser?._id]);
 
@@ -105,7 +105,6 @@ useEffect(() => {
         await fetchUserOrders();
         navigate("/myorders", { replace: true });
       } catch (error) {
-        console.log(error);
         toast.error("Could not verify payment status. Please refresh My Orders.");
         navigate("/myorders", { replace: true });
       }
@@ -532,6 +531,12 @@ useEffect(() => {
                               <p className="mt-1 text-sm" style={{ color: THEME.TEXT }}>
                                 Quantity: {product.quantity}
                               </p>
+
+                              {product.selectedSize && (
+                                <p className="mt-1 text-sm" style={{ color: THEME.TEXT }}>
+                                  Length: {product.selectedSize}
+                                </p>
+                              )}
 
                               <p className="mt-1 text-sm" style={{ color: THEME.TEXT }}>
                                 Price: {formatCurrency(product.price)}

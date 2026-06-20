@@ -16,6 +16,7 @@ const THEME = {
   SOFT_GREEN: "#E8F1D8",
 };
 
+/** Normalizes a category label for catalog option lookups. */
 const normalizeCategoryKey = (value) =>
   value
     .toString()
@@ -24,6 +25,7 @@ const normalizeCategoryKey = (value) =>
     .replace(/[^a-z0-9]+/g, "_")
     .replace(/(^_|_$)/g, "");
 
+/** Converts a category label to its routing key. */
 const slugifyCategory = (category) =>
   category.toLowerCase().replace(/&/g, " ").replace(/[^a-z0-9]+/g, "");
 
@@ -39,6 +41,7 @@ const fallbackCategoryMap = {
   skincares: "SkinCare",
 };
 
+/** Provides catalog filtering, sorting, and category-specific options. */
 const ProductList = () => {
   const { searchterm } = useParams();
   const [filters, setFilters] = useState({});
@@ -61,7 +64,6 @@ const ProductList = () => {
           typesByCategory: res.data.typesByCategory || {},
         });
       } catch (error) {
-        console.log("Could not load product filters:", error);
       }
     };
 

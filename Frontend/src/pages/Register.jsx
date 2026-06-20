@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { userRequest } from "../requestMethods";
-import { socialSignIn } from "../utils/socialAuth";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
@@ -35,6 +34,7 @@ const THEME = {
 const HAIR_AUTH_IMAGE =
   "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=1200&auto=format&fit=crop";
 
+/** Provides customer account registration and validation. */
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -44,7 +44,6 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [socialLoading, setSocialLoading] = useState("");
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
 
@@ -179,42 +178,8 @@ const Register = () => {
     }
   };
 
-  const handleSocialRegister = async (provider) => {
-    try {
-      if (!agreeToTerms) {
-        toast.error("Please agree to the Terms and Conditions");
-        return;
-      }
-
-      setSocialLoading(provider);
-      const loggedInUser = await socialSignIn(provider.toLowerCase());
-
-      if (loggedInUser?.role !== "user") {
-        throw new Error("Please use the admin login page for this account");
-      }
-
-      dispatch(loginSuccess(loggedInUser));
-      setIsTransitioning(true);
-
-      toast.success(
-        <div className="text-center">
-          <div className="mb-2 flex items-center justify-center">
-            <FaStar className="mr-2" style={{ color: THEME.GOLD }} />
-            <span className="font-bold">Welcome to Mane & More!</span>
-          </div>
-          <p className="text-sm">Your grooming account is ready.</p>
-        </div>
-      );
-
-      setTimeout(() => {
-        navigate("/");
-        window.location.reload();
-      }, 1200);
-    } catch (error) {
-      toast.error(error.response?.data?.message || error.message || `${provider} sign up failed`);
-    } finally {
-      setSocialLoading("");
-    }
+  const handleSocialRegister = (provider) => {
+    toast.info(`${provider} login coming soon`);
   };
 
   const inputStyle = {
@@ -501,7 +466,7 @@ const Register = () => {
 
               <button
                 type="submit"
-                disabled={loading || !!socialLoading || isTransitioning}
+                disabled={loading || isTransitioning}
                 className="flex w-full items-center justify-center rounded-2xl px-5 py-3 font-semibold transition-all duration-300 hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
                 style={{
                   backgroundColor: THEME.PRIMARY,
@@ -565,7 +530,7 @@ const Register = () => {
                 <button
                   type="button"
                   onClick={() => handleSocialRegister("Google")}
-                  disabled={loading || !!socialLoading || isTransitioning}
+                  disabled={loading || isTransitioning}
                   className="inline-flex w-full justify-center rounded-xl px-4 py-2 text-sm font-semibold transition-colors disabled:opacity-60"
                   style={{
                     backgroundColor: THEME.CARD,
@@ -573,13 +538,13 @@ const Register = () => {
                     color: THEME.TEXT,
                   }}
                 >
-                  {socialLoading === "Google" ? "Connecting..." : "Google"}
+                  Google
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleSocialRegister("Facebook")}
-                  disabled={loading || !!socialLoading || isTransitioning}
+                  disabled={loading || isTransitioning}
                   className="inline-flex w-full justify-center rounded-xl px-4 py-2 text-sm font-semibold transition-colors disabled:opacity-60"
                   style={{
                     backgroundColor: THEME.CARD,
@@ -587,7 +552,7 @@ const Register = () => {
                     color: THEME.TEXT,
                   }}
                 >
-                  {socialLoading === "Facebook" ? "Connecting..." : "Facebook"}
+                  Facebook
                 </button>
               </div>
             </div>

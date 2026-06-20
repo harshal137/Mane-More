@@ -1,4 +1,5 @@
 import StarRating from "react-star-ratings";
+/** Calculates and renders a product's average star rating. */
 export const showAverageRating = (p) => {
   if (p && p.ratings) {
     let ratingsArray = p && p.ratings;
@@ -11,7 +12,6 @@ export const showAverageRating = (p) => {
     let highest = length * 5;
     let result = (totalReduced * 5) / highest;
 
-    console.log("result", result)
     return (
       <div
         style={{

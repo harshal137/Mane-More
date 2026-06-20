@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
+/** Displays the homepage category navigation cards. */
 const Category = () => {
   const navigate = useNavigate();
 

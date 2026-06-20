@@ -40,7 +40,6 @@ const Users = () => {
       const res = await userRequest.get("/users");
       setUsers(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
-      console.log("Fetch users error:", error);
       setUsers([]);
     } finally {
       setLoading(false);
@@ -102,7 +101,6 @@ const Users = () => {
         }\nPayments deleted: ${res.data?.deletedPayments || 0}`
       );
     } catch (error) {
-      console.log("Delete user error:", error);
       alert(error.response?.data?.message || "User delete failed");
     }
   };

@@ -2,6 +2,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
+/** Restores the viewport to the top after storefront navigation. */
 const ScrollToTop = () => {
   const { hash, pathname } = useLocation();
 

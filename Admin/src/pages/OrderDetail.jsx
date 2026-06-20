@@ -11,7 +11,6 @@ import {
   FaMapMarkerAlt,
   FaPhone,
   FaSave,
-  FaTruck,
   FaUser,
   FaUndo,
 } from "react-icons/fa";
@@ -46,7 +45,6 @@ const OrderDetail = () => {
         setOrder(res.data);
         setDeliveryStatus(res.data.delivery_status || "Placed");
       } catch (error) {
-        console.log(error);
       } finally {
         setLoading(false);
       }
@@ -126,7 +124,6 @@ const OrderDetail = () => {
         alert("Coordinates were not found. You can still open the map link by address.");
       }
     } catch (error) {
-      console.log(error);
       setLocationData({
         address,
         mapsLink,
@@ -164,7 +161,6 @@ const OrderDetail = () => {
 
       alert("Order status updated successfully");
     } catch (error) {
-      console.log(error);
       alert("Failed to update order status");
     } finally {
       setUpdating(false);
@@ -199,7 +195,6 @@ const OrderDetail = () => {
       setOrder(res.data.order || order);
       alert(res.data.message || "Refund submitted successfully");
     } catch (error) {
-      console.log(error);
       alert(error.response?.data?.message || "Failed to refund this order");
     } finally {
       setRefunding(false);
@@ -625,6 +620,12 @@ const OrderDetail = () => {
                         Quantity: {product.quantity}
                       </p>
 
+                      {product.selectedSize && (
+                        <p className="mt-1 text-sm" style={{ color: THEME.TEXT }}>
+                          Length: {product.selectedSize}
+                        </p>
+                      )}
+
                       <p className="mt-1 text-sm" style={{ color: THEME.TEXT }}>
                         Unit Price: {formatCurrency(product.price)}
                       </p>
@@ -716,25 +717,6 @@ const OrderDetail = () => {
               )}
             </div>
 
-            {/* Admin Notes */}
-            <div
-              className="rounded-3xl p-6"
-              style={{
-                backgroundColor: THEME.SOFT_GREEN,
-                color: THEME.PRIMARY,
-              }}
-            >
-              <h2 className="mb-3 flex items-center gap-2 font-bold">
-                <FaTruck />
-                Admin Processing
-              </h2>
-
-              <p className="text-sm leading-relaxed">
-                Update the order status as the order moves from processing to
-                shipped and then delivered. Email notification logic is already
-                marked in comments inside the update function.
-              </p>
-            </div>
           </div>
         </div>
       </div>

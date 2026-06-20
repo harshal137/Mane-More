@@ -19,6 +19,7 @@ import { useEffect } from "react";
 import { userRequest } from "./requestMethods";
 import { logOut } from "./redux/userRedux";
 
+/** Defines the storefront route tree and application-wide layout. */
 function App() {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();

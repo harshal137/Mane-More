@@ -3,11 +3,23 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToWishlist, removeFromWishlist } from "../redux/wishlistRedux";
 import { FaHeart } from "react-icons/fa";
 
+/** Displays one product card, including size-aware Hair Extension pricing. */
 const Product = ({ product }) => {
   const dispatch = useDispatch();
   const wishlist = useSelector((state) => state.wishlist.products);
 
   const isWishlisted = wishlist.some((item) => item._id === product._id);
+  const isHairExtensionProduct = (product.categories || []).some((category) =>
+    ["hairextension", "hairextensions", "extension", "extensions"].includes(
+      String(category).toLowerCase().replace(/[^a-z0-9]/g, "")
+    )
+  );
+  const firstSize = (product.sizes || []).find(
+    (size) => size?.price !== undefined && !Number.isNaN(Number(size.price))
+  );
+  const productType = Array.isArray(product.type)
+    ? product.type.filter(Boolean).join(", ")
+    : product.type;
 
   const handleWishlist = (e) => {
     e.preventDefault();
@@ -123,12 +135,14 @@ const Product = ({ product }) => {
       {/* Content */}
       <div className="flex flex-grow flex-col p-5">
         {/* Category Label */}
-        <div
-          className="mb-2 text-xs font-semibold uppercase tracking-[0.25em]"
-          style={{ color: THEME.PRIMARY }}
-        >
-          Premium Grooming
-        </div>
+        {productType && (
+          <div
+            className="mb-2 text-xs font-semibold uppercase tracking-[0.25em]"
+            style={{ color: THEME.PRIMARY }}
+          >
+            {productType}
+          </div>
+        )}
 
         {/* Product Title */}
         <h2
@@ -161,7 +175,7 @@ const Product = ({ product }) => {
 
         {/* Price + Button */}
         <div className="mt-auto flex items-center justify-between">
-          <div>
+          <div className={isHairExtensionProduct ? "hidden" : undefined}>
             <div
               className="text-2xl font-bold"
               style={{ color: THEME.PRIMARY }}
@@ -169,7 +183,7 @@ const Product = ({ product }) => {
               £{product.discountedPrice}
             </div>
 
-            {product.originalPrice > product.price && (
+            {product.originalPrice > product.discountedPrice && (
               <div
                 className="text-sm line-through"
                 style={{ color: THEME.MUTED }}
@@ -178,6 +192,15 @@ const Product = ({ product }) => {
               </div>
             )}
           </div>
+
+          {isHairExtensionProduct && (
+            <div
+              className="text-2xl font-bold"
+              style={{ color: THEME.PRIMARY }}
+            >
+              {"\u00A3"}{Number(firstSize?.price || 0).toFixed(2)}
+            </div>
+          )}
 
           <button
             className="flex h-12 w-12 items-center justify-center rounded-full transition-all duration-300 hover:scale-110"

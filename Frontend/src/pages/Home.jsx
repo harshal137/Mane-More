@@ -4,6 +4,7 @@ import Products from '../components/Products';
 
 const HOME_BACKGROUND_IMAGE = "/hero-bg2.jpg";
 
+/** Composes the storefront homepage sections. */
 const Home = () => {
   return (
     <div

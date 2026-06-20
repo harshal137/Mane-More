@@ -208,7 +208,6 @@ const Payments = () => {
       const res = await userRequest.get("/payments");
       setPayments(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
-      console.log("Fetch payments error:", error);
       setPayments([]);
     } finally {
       setLoading(false);
@@ -243,7 +242,6 @@ const Payments = () => {
         prev.map((payment) => (payment._id === id ? res.data : payment))
       );
     } catch (error) {
-      console.log("Update payment error:", error);
       alert(error.response?.data?.message || "Payment update failed");
     }
   };
@@ -255,7 +253,6 @@ const Payments = () => {
       await userRequest.delete(`/payments/${id}`);
       setPayments((prev) => prev.filter((payment) => payment._id !== id));
     } catch (error) {
-      console.log("Delete payment error:", error);
       alert(error.response?.data?.message || "Payment delete failed");
     }
   };

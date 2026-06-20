@@ -26,6 +26,7 @@ import { addProduct } from "../redux/cartRedux";
 import { showAverageRating } from "../components/Ratings";
 import { addToWishlist, removeFromWishlist } from "../redux/wishlistRedux";
 
+/** Displays a product detail page and manages size-aware cart actions. */
 const Product = () => {
 
   const location = useLocation();
@@ -136,7 +137,6 @@ const Product = () => {
           setSelectedImage(0);
         }
       } catch (error) {
-        console.log(error);
         toast.error("Failed to load product");
       }
     };
@@ -364,7 +364,6 @@ const Product = () => {
 
       toast.success("Review added successfully!");
     } catch (error) {
-      console.log(error);
       toast.error("Failed to add review");
     } finally {
       setReviewLoading(false);
@@ -610,7 +609,11 @@ const Product = () => {
             <div className="grid grid-cols-2 gap-4 text-center text-sm mb-6">
               <div className="flex flex-col items-center gap-2">
                 <FaTruck className="text-xl" />
-                <span>7-Day Returns</span>
+                <span>
+                  {isHairExtensionProduct
+                    ? "No Returns or Exchanges"
+                    : "7-Day Returns"}
+                </span>
               </div>
 
               <div className="flex flex-col items-center gap-2">
@@ -652,7 +655,9 @@ const Product = () => {
               {(product.keyFeatures || product.features || [
                 product.brand && `Brand: ${product.brand}`,
                 product.categories?.[0] && `Category: ${product.categories[0]}`,
-                product.type && `Type: ${product.type}`,
+                Array.isArray(product.type)
+                  ? product.type.filter(Boolean).length && `Type: ${product.type.filter(Boolean).join(", ")}`
+                  : product.type && `Type: ${product.type}`,
                 "Quality checked product",
                 "Easy to use",
               ])

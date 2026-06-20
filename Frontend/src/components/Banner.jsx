@@ -13,6 +13,7 @@ const BORDER = '#ECEAE6';
 const ACCENT = '#DDE7C7';
 const HERO_BG = "/hero-bg2.jpg";
 
+/** Displays the homepage hero banner and its calls to action. */
 const Banner = () => {
   const [bannerData, setBannerData] = useState(null);
   const [displayedTitle, setDisplayedTitle] = useState("");

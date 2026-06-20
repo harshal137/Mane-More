@@ -46,7 +46,6 @@ const Product = () => {
             : []
         );
       } catch (error) {
-        console.log(error);
       }
     };
 
@@ -107,6 +106,13 @@ const Product = () => {
       }))
       .filter((size) => size.label && !Number.isNaN(size.price));
 
+  const isHairExtensionProduct = inputs.categories
+    ?.split(",")
+    .some((category) => {
+      const normalizedCategory = category.toLowerCase().replace(/[^a-z0-9]/g, "");
+      return ["hairextension", "hairextensions", "extension", "extensions"].includes(normalizedCategory);
+    });
+
   const uploadImagesToCloudinary = async () => {
     const uploadedUrls = [];
 
@@ -142,8 +148,10 @@ const Product = () => {
         desc: inputs.desc,
         video: inputs.video,
         brand: inputs.brand,
-        originalPrice: Number(inputs.originalPrice),
-        discountedPrice: Number(inputs.discountedPrice),
+        ...(!isHairExtensionProduct && {
+          originalPrice: Number(inputs.originalPrice),
+          discountedPrice: Number(inputs.discountedPrice),
+        }),
         items_per_box: Number(inputs.items_per_box || 1),
         stock: Number(inputs.stock),
         categories: inputs.categories
@@ -167,7 +175,6 @@ const Product = () => {
       setUploading("Product updated successfully");
       navigate("/products");
     } catch (error) {
-      console.log(error);
       setUploading("Update failed");
     }
   };
@@ -229,6 +236,7 @@ const Product = () => {
                     />
                   </div>
 
+                  {!isHairExtensionProduct && <>
                   <div>
                     <label htmlFor="originalPrice" className="mb-1.5 block text-sm font-semibold text-gray-700">
                       Original Price
@@ -258,6 +266,13 @@ const Product = () => {
                       className="w-full p-3 border rounded-lg"
                     />
                   </div>
+                  </>}
+
+                  {isHairExtensionProduct && (
+                    <p className="text-sm text-gray-500 md:col-span-2">
+                      Hair extension prices are set by length below.
+                    </p>
+                  )}
 
                   <div>
                     <label htmlFor="items_per_box" className="mb-1.5 block text-sm font-semibold text-gray-700">

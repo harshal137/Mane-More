@@ -40,6 +40,7 @@ const THEME = {
   SOFT_GREEN: "#E8F1D8",
 };
 
+/** Manages cart contents, delivery details, and checkout initiation. */
 const Cart = () => {
   const cart = useSelector((state) => state.cart);
   const user = useSelector((state) => state.user);

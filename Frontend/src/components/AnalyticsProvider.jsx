@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { trackPageView } from '../utils/analytics';
 
+/** Tracks page views whenever the active storefront route changes. */
 const AnalyticsProvider = ({ children }) => {
   const location = useLocation();
 

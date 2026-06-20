@@ -24,9 +24,11 @@ const THEME = {
   SEARCH_BORDER: "#ECEAE6",
 };
 
+/** Converts a category label to the URL segment used by product listings. */
 const slugifyCategory = (category) =>
   category.toLowerCase().replace(/&/g, " ").replace(/[^a-z0-9]+/g, "");
 
+/** Renders responsive navigation, account actions, and live categories. */
 const Navbar = () => {
   const [search, setSearch] = useState("");
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -61,7 +63,6 @@ const Navbar = () => {
           );
         }
       } catch (error) {
-        console.log("Could not load navbar categories:", error);
       }
     };
 

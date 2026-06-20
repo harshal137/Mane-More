@@ -66,7 +66,6 @@ const Analytics = () => {
       setActivity(Array.isArray(activityRes.data?.data) ? activityRes.data.data : []);
       setRowCount(activityRes.data?.pagination?.totalRecords || 0);
     } catch (error) {
-      console.log("Fetch analytics error:", error);
       setSummary(null);
       setActivity([]);
       setRowCount(0);

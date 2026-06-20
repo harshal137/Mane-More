@@ -24,6 +24,7 @@ const socials = [
   { icon: <FaTwitter />, link: "#" }
 ];
 
+/** Renders the storefront footer, links, and social shortcuts. */
 const Footer = () => {
   return (
     <footer

@@ -53,7 +53,6 @@ const Bundles = () => {
           totalRevenue
         });
       } catch (error) {
-        console.log("Error fetching bundles:", error);
       } finally {
         setIsLoading(false);
       }

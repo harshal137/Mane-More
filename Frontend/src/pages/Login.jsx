@@ -3,7 +3,6 @@ import { toast, ToastContainer } from "react-toastify";
 import { useState, useEffect } from "react";
 import { login } from "../redux/apiCalls";
 import { userRequest } from "../requestMethods";
-import { socialSignIn } from "../utils/socialAuth";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "../redux/userRedux";
@@ -33,6 +32,7 @@ const THEME = {
 const HAIR_AUTH_IMAGE =
   "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=1200&auto=format&fit=crop";
 
+/** Provides customer authentication and password-recovery workflows. */
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -40,7 +40,6 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showForgotModal, setShowForgotModal] = useState(false);
-  const [socialLoading, setSocialLoading] = useState("");
   const [forgotEmail, setForgotEmail] = useState("");
   const [resetCode, setResetCode] = useState("");
   const [resetStep, setResetStep] = useState("email");
@@ -123,36 +122,8 @@ const Login = () => {
     }
   };
 
-  const handleSocialLogin = async (provider) => {
-    try {
-      setSocialLoading(provider);
-      const loggedInUser = await socialSignIn(provider.toLowerCase());
-
-      if (loggedInUser?.role !== "user") {
-        throw new Error("Please use the admin login page for this account");
-      }
-
-      dispatch(loginSuccess(loggedInUser));
-      setIsTransitioning(true);
-
-      toast.success(
-        <div className="text-center">
-          <div className="mb-2 flex items-center justify-center">
-            <FaStar className="mr-2" style={{ color: THEME.GOLD }} />
-            <span className="font-bold">Welcome back to Mane & More!</span>
-          </div>
-          <p className="text-sm">Your grooming essentials are ready.</p>
-        </div>
-      );
-
-      setTimeout(() => {
-        navigate("/");
-      }, 800);
-    } catch (error) {
-      toast.error(error.response?.data?.message || error.message || `${provider} login failed`);
-    } finally {
-      setSocialLoading("");
-    }
+  const handleSocialLogin = (provider) => {
+    toast.info(`${provider} login coming soon`);
   };
 
   const resetForgotForm = () => {
@@ -606,7 +577,7 @@ const Login = () => {
                 <button
                   type="button"
                   onClick={() => handleSocialLogin("Google")}
-                  disabled={!!socialLoading || loading}
+                  disabled={loading}
                   className="inline-flex w-full justify-center rounded-xl px-4 py-2 text-sm font-semibold transition-colors"
                   style={{
                     backgroundColor: THEME.CARD,
@@ -614,13 +585,13 @@ const Login = () => {
                     color: THEME.TEXT,
                   }}
                 >
-                  {socialLoading === "Google" ? "Connecting..." : "Google"}
+                  Google
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleSocialLogin("Facebook")}
-                  disabled={!!socialLoading || loading}
+                  disabled={loading}
                   className="inline-flex w-full justify-center rounded-xl px-4 py-2 text-sm font-semibold transition-colors"
                   style={{
                     backgroundColor: THEME.CARD,
@@ -628,7 +599,7 @@ const Login = () => {
                     color: THEME.TEXT,
                   }}
                 >
-                  {socialLoading === "Facebook" ? "Connecting..." : "Facebook"}
+                  Facebook
                 </button>
               </div>
 

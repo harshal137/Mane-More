@@ -50,7 +50,6 @@ const Products = () => {
       });
       setProducts(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
-      console.log("Fetch products error:", error);
       setProducts([]);
     } finally {
       setLoading(false);
@@ -69,7 +68,6 @@ const Products = () => {
         typesByCategory: res.data.typesByCategory || {},
       });
     } catch (error) {
-      console.log("Fetch catalog options error:", error);
     }
   };
 
@@ -222,7 +220,6 @@ const Products = () => {
       await userRequest.delete(`/products/${id}`);
       setProducts((prev) => prev.filter((product) => product._id !== id));
     } catch (error) {
-      console.log("Product delete error:", error);
       alert(error.response?.data?.message || "Product delete failed");
     }
   };
